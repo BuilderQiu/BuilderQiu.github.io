@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Base64编码Java实现 | 一本正经的扯淡 | U Still Don&#39;t Know</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="加密解密,Base64">
+    <meta name="description" content="Base64EncoderDecoderJava实现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Base64编码Java实现">
+<meta property="og:url" content="http://builderqiu.com/2014/07/Base64EncoderDecoderBaseOnJava.html">
+<meta property="og:site_name" content="一本正经的扯淡">
+<meta property="og:description" content="Base64EncoderDecoderJava实现">
+<meta property="og:updated_time" content="2016-12-25T08:22:25.515Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Base64编码Java实现">
+<meta name="twitter:description" content="Base64EncoderDecoderJava实现">
+    
+        <link rel="alternative" href="/atom.xml" title="一本正经的扯淡" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.2">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">BuilderQiu</h5>
+          
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/BuilderQiu" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Base64编码Java实现</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Base64编码Java实现</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-07-23T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-07-24
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一、什么是Base64编码"><span class="post-toc-text">一、什么是Base64编码</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二、Base64原理"><span class="post-toc-text">二、Base64原理</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三、Base64应用"><span class="post-toc-text">三、Base64应用</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-mail"><span class="post-toc-text">1.mail</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-URL"><span class="post-toc-text">2.URL</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-HTML中内嵌图片"><span class="post-toc-text">3.HTML中内嵌图片</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-简单加密"><span class="post-toc-text">4.简单加密</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#四、Java编码实现"><span class="post-toc-text">四、Java编码实现</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-Base64EncoderDecoderBaseOnJava"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        
+          <h1 class="post-card-title" >[原]Base64编码Java实现</h1>
+        
+        <div class="post-meta">
+            <time class="post-time" title="2014-7-24 0:00" datetime="2014-07-23T16:00:00.000Z"  itemprop="datePublished">2014-07-24</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="一、什么是Base64编码"><a href="#一、什么是Base64编码" class="headerlink" title="一、什么是Base64编码"></a>一、什么是Base64编码</h2><p>Base64是网络上最常见的用于传输8Bit字节代码的编码方式之一。Base64 主要不是加密，它主要的用途是把一些二进制数转成普通字符用于网络传输。<br>由于一些二进制字符在传输协议中属于控制字符，不能直接传送需要转换一下。Base64编码就是把二进制字节序列转化为ASCII字符序列。一般增加1/3长度，而且也是不可读的。<br>使用的字符包括大小写字母各26个，加上10个数字，和加号“+”，斜杠“/”，一共64个字符，等号“=”用来作为后缀用途。<br><a id="more"></a></p>
+<h2 id="二、Base64原理"><a href="#二、Base64原理" class="headerlink" title="二、Base64原理"></a>二、Base64原理</h2><p><code>[源数据]</code>——&gt;<code>[获得源数据的二进制流]</code>——&gt;<code>[每3个8位二进制转换为4个6位二进制]</code>——&gt;<code>[每6位二进制转换为十进制]</code>——&gt;<code>[对照表转换为Base64数据]</code></p>
+<p>关键点：3个8位二进制转换4个6位二进制的方法<br>将输入的二进制数据流以每次读取6个bit的方式读取，不足6位的后补0,将每3个8位二进制转换为4个6位二进制，也就是说每3个8位字节将编码为4个6位字节（3×8 → 4×6）；不满4个字节的以“=”填充。其实这4个六位字节仍然是8位，只不过高两位被设置为0。当一个字节只有6位有效时，它的取值空间为0 到 2的6次方减1 即63，也就是说被转换的Base64编码的每一个编码的取值空间为（0-63）。事实上，0-63之间的ASCII码有许多不可见字符，所以应该再做一个映射，映射表（码表）为：</p>
+<table>
+<thead>
+<tr>
+<th>码字</th>
+<th>个数</th>
+<th>ASCII码</th>
+<th>对应的6bit值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 - 9</td>
+<td>10个</td>
+<td>48 - 57</td>
+<td>52 - 61</td>
+</tr>
+<tr>
+<td>A - Z</td>
+<td>26个</td>
+<td>65 - 90</td>
+<td>0 - 25</td>
+</tr>
+<tr>
+<td>a - z</td>
+<td>26个</td>
+<td>96 - 122</td>
+<td>26 - 51</td>
+</tr>
+<tr>
+<td>+</td>
+<td>1个</td>
+<td>43</td>
+<td>62</td>
+</tr>
+<tr>
+<td>/</td>
+<td>1个</td>
+<td>47</td>
+<td>63</td>
+</tr>
+</tbody>
+</table>
+<h2 id="三、Base64应用"><a href="#三、Base64应用" class="headerlink" title="三、Base64应用"></a>三、Base64应用</h2><h3 id="1-mail"><a href="#1-mail" class="headerlink" title="1.mail"></a>1.mail</h3><p>由于rfc821有以下两条限制：</p>
+<p>1)邮件的内容必须全部为7-比特的美国ascii码。</p>
+<p>2)每一行的长度不能超过1000的字符<br>当邮件中有其他的非ASCII字符或二进制数据时，就需要做转换。这个就叫做Content-Transfer-Encoding，Base64就是其中的一种方法。在firefox你可以设置自己发送邮件的内容传输编码方式。在收到的邮件里，你可以查看邮件原文，看看原文的编码。</p>
+<h3 id="2-URL"><a href="#2-URL" class="headerlink" title="2.URL"></a>2.URL</h3><p>有些应用需要把二进制数据放到URL里，URL只能是特定的一些ASCII字符。这时候，也需要用到BASE64编码。当然这也只是对二进制数据本身的编码，编码后的数据里面可能包含+/,真正放到URL里面时候，还需要URL-Encoding,变成%XX模式。</p>
+<h3 id="3-HTML中内嵌图片"><a href="#3-HTML中内嵌图片" class="headerlink" title="3.HTML中内嵌图片"></a>3.HTML中内嵌图片</h3><p>就是说这种状况下，图片不是以链接地址的方式嵌到HTML中去的，图片本身已被BASE64成字符串放到HTML页面文本中去了，成为HTML文本的一部分。当HTML页面拉取完成之后，图片数据也就下来了，不再需要再去拉取图片.如下格式：</p>
+<p><code>&lt;img src=&#39;data:image/png;base64，base64code&#39;&gt;</code></p>
+<p>这种标签图片的显示需要浏览器的支持，先Base64解码，再去显示不同格式的图片。<br>使用<code>data: URI</code>直接在网页中嵌入，<code>data: URI</code>定义于IETF标准的RFC 2397。<br><code>data: URI</code>的基本使用格式如下：</p>
+<p><code>data:[&lt;MIME-type&gt;][;base64|charset=some_charset],&lt;data&gt;</code></p>
+<p>mime-type是嵌入数据的mime类型，比如png图片就是image/png。如果后面跟base64，说明后面的data是采用base64方式进行编码的。<br>获得图片的base64编码，base64编码工具不少，对于前端制作，下面这个本地图片base64编码获取页面是值得推荐的： <strong>Encode Data URL By PuterJam </strong>。</p>
+<h3 id="4-简单加密"><a href="#4-简单加密" class="headerlink" title="4.简单加密"></a>4.简单加密</h3><p>迅雷等下载工具，就有他们自己特有的下载链接，如<code>thunder://</code>其实就是把一个HTTP URL资源地址加上了某些东西后再进行BASE64编码，然后加上<code>thunder://</code>头。<br>垃圾讯息传播者用Base64来避过反垃圾邮件工具，因为那些工具通常都不会翻译Base64的讯息。</p>
+<p>###5.百度地图地址转化</p>
+<p>百度地图api的地址转化（例如gps坐标-&gt;百度地图坐标）结果，使用了base64加密。</p>
+<h2 id="四、Java编码实现"><a href="#四、Java编码实现" class="headerlink" title="四、Java编码实现"></a>四、Java编码实现</h2><pre><code>/**
+ *
+ * @ClassName: SecurityBase64
+ * @Description: 用于编码请求参数
+ * @author BuilderQiu
+ * @date 2013-9-23 上午10:52:1
+ */
+public class SecurityBase64 {
+    //对照表
+    private static String base64hash = &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-/&quot;;
+    //&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-/&quot;;
+
+    private SecurityBase64(){}
+
+    private static class TEMP{
+        public static final SecurityBase64 instance = new SecurityBase64();
+    }
+
+    public static Security getInstance(){
+        return TEMP.instance;
+    }
+
+    private void checkSecurity(){
+        if(&quot;&quot;.equals(base64hash)||base64hash==null||base64hash.length()!=64){
+            throw new RuntimeException(Security.class+&quot;was initialize failed!&quot;);
+        }
+    }
+
+    /**
+     *
+     * @Title: encode
+     * @Description: 编码
+     * @param @param src
+     * @param @return
+     * @return String
+     * @throws
+     */
+    public String encode(String src){
+
+        checkSecurity();
+
+        StringBuilder result = new StringBuilder();
+        byte[] bytes = src.getBytes();
+        int length = bytes.length;
+        int mod = 0;
+        byte prev = 0;
+        for(int i=0;i&lt;length;i++){
+            mod = i%3;
+            if(mod==0){
+                result.append(base64hash.charAt((bytes[i] &gt;&gt; 2) &amp; 0x3F));
+            }else if(mod==1){
+                result.append(base64hash.charAt((prev &lt;&lt; 4 | bytes[i] &gt;&gt; 4  &amp;0x0F )&amp; 0x3F));
+            }else{
+                result.append(base64hash.charAt((bytes[i] &gt;&gt; 6 &amp; 0x03 | prev &lt;&lt; 2) &amp; 0x3F));
+                result.append(base64hash.charAt(bytes[i] &amp; 0x3F));
+            }
+            prev = bytes[i];
+        }
+
+        if(mod==0){
+            result.append(base64hash.charAt(prev &lt;&lt; 4 &amp; 0x3C));
+            result.append(&quot;==&quot;);
+        }else if(mod==1){
+            result.append(base64hash.charAt(prev &lt;&lt; 2 &amp; 0x3F));
+            result.append(&quot;=&quot;);
+        }
+
+        return result.toString();
+    }
+
+    /**
+     *
+     * @Title: decode
+     * @Description: 解码
+     * @param @param src
+     * @param @return
+     * @return String
+     * @throws
+     */
+    public String decode(String src){
+
+        if(StringUtil.isBlank(src)){
+            return &quot;&quot;;
+        }
+        checkSecurity();
+
+        byte temp = 0;
+        String result = &quot;&quot;;
+        for(int i=0;i&lt;src.length();i++){
+            temp = (byte) base64hash.indexOf(src.charAt(i));
+            if(temp==-1){
+                result+=&quot;000000&quot;;
+            }else{
+                String t = Integer.toBinaryString(temp);
+                if(t.length()==7){
+                    t = t.substring(1);
+                }else if(t.length()==8){
+                    t = t.substring(2);
+                }
+
+                while(t.length()&lt;6){
+                    t = &quot;0&quot;+t;
+                }
+                result+=t;
+            }
+        }
+        while(result.endsWith(&quot;00000000&quot;)){
+            result = result.substring(0,result.length()-8);
+        }
+
+        byte[] bytes = new byte[result.length()/8];
+        for(int i=0;i&lt;bytes.length;i++){
+            bytes[i]= Integer.valueOf(result.substring(i*8,(i+1)*8),2).byteValue();
+        }
+        return new String(bytes);
+    }
+
+    public void setBase64hash(String base64hash) {
+        Security.base64hash = base64hash;
+    }
+
+    /**
+     *
+     * @Title: randomTable
+     * @Description: 生成随机对照表
+     * @param @return
+     * @return String
+     * @throws
+     */
+    public static String randomTable(){
+        String base = &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-/&quot;;
+        List&lt;Character&gt; list = new ArrayList&lt;Character&gt;();
+        for(int i=0;i&lt;base.length();i++){
+            list.add(base.charAt(i));
+        }
+
+        Collections.shuffle(list);
+        base = &quot;&quot;;
+        for(Character ch:list){
+            base += ch;
+        }
+
+        return base;
+    }
+
+}
+</code></pre><p>可用于简单加密，不知道对照表顺序则不能容易的反推出源数据。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-12-25T08:22:25.515Z" title="2016-12-25 16:22" itemprop="dateUpdated">2016年12月25日 16:22</time>
+</span><br>
+
+
+        
+        转载请注明来源：<a href="/2014/07/Base64EncoderDecoderBaseOnJava.html" target="_blank" rel="external">http://builderqiu.com/2014/07/Base64EncoderDecoderBaseOnJava.html</a>
+        
+    </div>
+    <footer>
+        <a href="http://builderqiu.com">
+            <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" alt="BuilderQiu">
+            BuilderQiu
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Base64/">Base64</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/加密解密/">加密解密</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/07/Base64EncoderDecoderBaseOnJava.html&title=《Base64编码Java实现》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/07/Base64EncoderDecoderBaseOnJava.html&title=《Base64编码Java实现》 — 一本正经的扯淡&source=一、什么是Base64编码Base64是网络上最常见的用于传输8Bit字节代码的编码方式之一。Base64 主要不是加密，它主要的用途是把一些二进制数转成..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/07/Base64EncoderDecoderBaseOnJava.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Base64编码Java实现》 — 一本正经的扯淡&url=http://builderqiu.com/2014/07/Base64EncoderDecoderBaseOnJava.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/07/Base64EncoderDecoderBaseOnJava.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/07/MySQLExplainDetailFav.html" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">MySQL之Explain详解</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/07/JenkinsInstallOnCentOS.html" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">在CentOS中安装jenkins</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="Base64EncoderDecoderBaseOnJava" data-title="Base64编码Java实现" data-url="http://builderqiu.com/2014/07/Base64EncoderDecoderBaseOnJava.html"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'builderqiu', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.2');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/BuilderQiu/hexo-theme-indigo" target="_blank">indigo</a> Base On <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>一本正经的扯淡 &copy; 2016</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/07/Base64EncoderDecoderBaseOnJava.html&title=《Base64编码Java实现》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/07/Base64EncoderDecoderBaseOnJava.html&title=《Base64编码Java实现》 — 一本正经的扯淡&source=一、什么是Base64编码Base64是网络上最常见的用于传输8Bit字节代码的编码方式之一。Base64 主要不是加密，它主要的用途是把一些二进制数转成..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/07/Base64EncoderDecoderBaseOnJava.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Base64编码Java实现》 — 一本正经的扯淡&url=http://builderqiu.com/2014/07/Base64EncoderDecoderBaseOnJava.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/07/Base64EncoderDecoderBaseOnJava.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACrUlEQVR42u3a0W4qMQwE0P7/T/e+tkLQGTtp0dXZJ0RZyEmltTXOx0d8fT5cj+9/fefx3md/zd9/9pkDFx4eHt566a8ZCSbfguTXN3fh4eHh3eO1D+XP0fX66d1uWVRg8PDw8N6M15aN+rGOh4eH91/wNu3v/nfx8PDw3oeXhBHJIzsvFW1Eez1rwcPDw5tkAsVX/+3rK/M9PDw8vPVUfdM0t+O02bf9sFo8PDy8C7y2nZ0Fr8MQIWjco0/i4eHhHeW1Q/02qN0UiVnB+LY2PDw8vMu8WeTa/mQb17YHF+p9xcPDw1vw2rHTJoqdbVbd4uPh4eFd4LVxQPvgnoW/bSGpJ3h4eHh4a96msc7j2jzAPTUYw8PDw7vHa4807bfjdQnJ3ynWj4eHh3eINxvqt8ezziardcXDw8PDO8qbxRP5Uar26EAbf6wCCzw8PLwRrzjAtAh/2yFZXqh+eI2Hh4d3gZc8uPMWdh837OOP+mY8PDy8Ea994M6WNYuGk7Z+2F7j4eHhLT6fNNZtQJAfAjh14ODphuLh4eEd5bXLzRmz0dqmEa/ne3h4eHiHeHkL2wYZ+fdsIuP6DAIeHh7eiDc7IpC3wvtWu22mv7XUeHh4eEd5+QCpHXSthlWLkvBD9cPDw8M7xNuMl/JWOAG3RxNmrTkeHh7entdGrptgNykn7Uqi/xUeHh7eBd4saGjDiM3wLN8aPDw8vN/htcudxRBJqWiDkmLKh4eHh7fmfZbXPnjNv2dYBr7ei4eHh3eB1y53M9yajc3y9np14eHh4ZW82dI3B6c2a3i9TXh4eHi/ydsPxk5NoA5feHh4eG/Ja8vJPsIoShEeHh7eG/DqY0/BXe32FVEIHh4e3jVeHgTcw9dBQ14Y8PDw8I7yNoP8zetkWatF4+Hh4Z3n/QPCuMU6Dfs8fgAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

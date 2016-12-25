@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Mysql数据备份与恢复命令 | 一本正经的扯淡 | U Still Don&#39;t Know</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Mysql,备份,数据库">
+    <meta name="description" content="Mysql备份恢复命令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql数据备份与恢复命令">
+<meta property="og:url" content="http://builderqiu.com/2014/07/MysqlBackupAndRebackCommand.html">
+<meta property="og:site_name" content="一本正经的扯淡">
+<meta property="og:description" content="Mysql备份恢复命令">
+<meta property="og:updated_time" content="2016-12-24T14:31:29.085Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mysql数据备份与恢复命令">
+<meta name="twitter:description" content="Mysql备份恢复命令">
+    
+        <link rel="alternative" href="/atom.xml" title="一本正经的扯淡" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.2">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">BuilderQiu</h5>
+          
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/BuilderQiu" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Mysql数据备份与恢复命令</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Mysql数据备份与恢复命令</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-07-20T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-07-21
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一、备份常用操作基本命令"><span class="post-toc-text">一、备份常用操作基本命令</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1、备份命令mysqldump格式"><span class="post-toc-text">1、备份命令mysqldump格式</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2、备份MySQL数据库为带删除表的格式"><span class="post-toc-text">2、备份MySQL数据库为带删除表的格式</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3、直接将MySQL数据库压缩备份"><span class="post-toc-text">3、直接将MySQL数据库压缩备份</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4、备份MySQL数据库某个-些-表"><span class="post-toc-text">4、备份MySQL数据库某个(些)表</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5、同时备份多个MySQL数据库"><span class="post-toc-text">5、同时备份多个MySQL数据库</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6、仅备份份数据库结构"><span class="post-toc-text">6、仅备份份数据库结构</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7、备份服务器上所有数据库"><span class="post-toc-text">7、备份服务器上所有数据库</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#8、还原MySQL数据库的命令"><span class="post-toc-text">8、还原MySQL数据库的命令</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#9、还原压缩的MySQL数据库"><span class="post-toc-text">9、还原压缩的MySQL数据库</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#10、将数据库转移到新服务器"><span class="post-toc-text">10、将数据库转移到新服务器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#11、–master-data-和–single-transaction"><span class="post-toc-text">11、–master-data 和–single-transaction</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#12、导入数据库"><span class="post-toc-text">12、导入数据库</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#13、查看binlog日志"><span class="post-toc-text">13、查看binlog日志</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#14、general-log"><span class="post-toc-text">14、general_log</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二、增量备份"><span class="post-toc-text">二、增量备份</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三、恢复"><span class="post-toc-text">三、恢复</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1、首先导入全备数据"><span class="post-toc-text">1、首先导入全备数据</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2、恢复bin-log-000002"><span class="post-toc-text">2、恢复bin-log.000002</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3、恢复部分-bin-log-000003"><span class="post-toc-text">3、恢复部分 bin-log.000003</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-MysqlBackupAndRebackCommand"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        
+          <h1 class="post-card-title" >Mysql数据备份与恢复命令</h1>
+        
+        <div class="post-meta">
+            <time class="post-time" title="2014-7-21 0:00" datetime="2014-07-20T16:00:00.000Z"  itemprop="datePublished">2014-07-21</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p><a href="http://www.cnblogs.com/Cherie/p/3309456.html" target="_blank" rel="external">原文地址</a><br><a id="more"></a></p>
+<h2 id="一、备份常用操作基本命令"><a href="#一、备份常用操作基本命令" class="headerlink" title="一、备份常用操作基本命令"></a>一、备份常用操作基本命令</h2><h3 id="1、备份命令mysqldump格式"><a href="#1、备份命令mysqldump格式" class="headerlink" title="1、备份命令mysqldump格式"></a>1、备份命令mysqldump格式</h3><p>格式：<code>mysqldump -h主机名  -P端口 -u用户名 -p密码 –database 数据库名 &gt; 文件名.sql</code></p>
+<h3 id="2、备份MySQL数据库为带删除表的格式"><a href="#2、备份MySQL数据库为带删除表的格式" class="headerlink" title="2、备份MySQL数据库为带删除表的格式"></a>2、备份MySQL数据库为带删除表的格式</h3><p>备份MySQL数据库为带删除表的格式，能够让该备份覆盖已有数据库而不需要手动删除原有数据库。</p>
+<p><code>mysqldump  --add-drop-table -uusername -ppassword -database databasename &gt; backupfile.sql</code></p>
+<h3 id="3、直接将MySQL数据库压缩备份"><a href="#3、直接将MySQL数据库压缩备份" class="headerlink" title="3、直接将MySQL数据库压缩备份"></a>3、直接将MySQL数据库压缩备份</h3><p><code>mysqldump -hhostname -uusername -ppassword -database databasename | gzip &gt; backupfile.sql.gz</code></p>
+<h3 id="4、备份MySQL数据库某个-些-表"><a href="#4、备份MySQL数据库某个-些-表" class="headerlink" title="4、备份MySQL数据库某个(些)表"></a>4、备份MySQL数据库某个(些)表</h3><p><code>mysqldump -hhostname -uusername -ppassword databasename specific_table1 specific_table2 &gt; backupfile.sql</code></p>
+<h3 id="5、同时备份多个MySQL数据库"><a href="#5、同时备份多个MySQL数据库" class="headerlink" title="5、同时备份多个MySQL数据库"></a>5、同时备份多个MySQL数据库</h3><p><code>mysqldump -hhostname -uusername -ppassword –databases databasename1 databasename2 databasename3 &gt; multibackupfile.</code></p>
+<h3 id="6、仅备份份数据库结构"><a href="#6、仅备份份数据库结构" class="headerlink" title="6、仅备份份数据库结构"></a>6、仅备份份数据库结构</h3><p><code>mysqldump –no-data –databases databasename1 databasename2 databasename3 &gt; structurebackupfile.sql</code></p>
+<h3 id="7、备份服务器上所有数据库"><a href="#7、备份服务器上所有数据库" class="headerlink" title="7、备份服务器上所有数据库"></a>7、备份服务器上所有数据库</h3><p><code>mysqldump –all-databases &gt; allbackupfile.sql</code></p>
+<h3 id="8、还原MySQL数据库的命令"><a href="#8、还原MySQL数据库的命令" class="headerlink" title="8、还原MySQL数据库的命令"></a>8、还原MySQL数据库的命令</h3><p><code>mysql -hhostname -uusername -ppassword databasename &lt; backupfile.sql</code></p>
+<h3 id="9、还原压缩的MySQL数据库"><a href="#9、还原压缩的MySQL数据库" class="headerlink" title="9、还原压缩的MySQL数据库"></a>9、还原压缩的MySQL数据库</h3><p><code>gunzip &lt; backupfile.sql.gz | mysql -uusername -ppassword databasename</code></p>
+<h3 id="10、将数据库转移到新服务器"><a href="#10、将数据库转移到新服务器" class="headerlink" title="10、将数据库转移到新服务器"></a>10、将数据库转移到新服务器</h3><p><code>mysqldump -uusername -ppassword databasename | mysql –host=*.*.*.* -C databasename</code></p>
+<h3 id="11、–master-data-和–single-transaction"><a href="#11、–master-data-和–single-transaction" class="headerlink" title="11、–master-data 和–single-transaction"></a>11、–master-data 和–single-transaction</h3><p>在mysqldump中使用<code>--master-data=2</code>，会记录binlog文件和position的信息。<code>--single-transaction</code>会将隔离级别设置成<code>repeatable-commited</code></p>
+<h3 id="12、导入数据库"><a href="#12、导入数据库" class="headerlink" title="12、导入数据库"></a>12、导入数据库</h3><p>常用source命令，用use进入到某个数据库，<code>mysql&gt;source d:\test.sql</code>，后面的参数为脚本文件。</p>
+<h3 id="13、查看binlog日志"><a href="#13、查看binlog日志" class="headerlink" title="13、查看binlog日志"></a>13、查看binlog日志</h3><p>查看binlog日志可用用命令 mysqlbinlog  binlog日志名称|more</p>
+<h3 id="14、general-log"><a href="#14、general-log" class="headerlink" title="14、general_log"></a>14、general_log</h3><p>General_log记录数据库的任何操作，查看general_log 的状态和位置可以用命令<code>show variables like &quot;general_log%&quot;</code>,开启general_log可以用命令<code>set global general_log=on</code></p>
+<h2 id="二、增量备份"><a href="#二、增量备份" class="headerlink" title="二、增量备份"></a>二、增量备份</h2><p>小量的数据库可以每天进行完整备份，因为这也用不了多少时间，但当数据库很大时，就不太可能每天进行一次完整备份了，这时候就可以使用增量备份。增量备份的原理就是使用了mysql的binlog志。</p>
+<p>1、首先做一次完整备份：</p>
+<p><code>mysqldump -h10.6.208.183 -utest2 -p123  -P3310 --single-transaction  --master-data=2  test&gt;test.</code></p>
+<p>sql这时候就会得到一个全备文件test.sql</p>
+<p>在sql文件中我们会看到：<br><code>-- CHANGE MASTER TO MASTER_LOG_FILE=&#39;bin-log.000002&#39;, MASTER_LOG_POS=107;</code>是指备份后所有的更改将会保存到bin-log.000002二进制文件中。<br>2、在test库的t_student表中增加两条记录，然后执行flush logs命令。这时将会产生一个新的二进制日志文件bin-log.000003，bin-log.000002则保存了全备过后的所有更改，既增加记录的操作也保存在了bin-log.00002中。</p>
+<p>3、再在test库中的a表中增加两条记录，然后误删除t_student表和a表。a中增加记录的操作和删除表a和t_student的操作都记录在bin-log.000003中。</p>
+<h2 id="三、恢复"><a href="#三、恢复" class="headerlink" title="三、恢复"></a>三、恢复</h2><h3 id="1、首先导入全备数据"><a href="#1、首先导入全备数据" class="headerlink" title="1、首先导入全备数据"></a>1、首先导入全备数据</h3><p><code>mysql -h10.6.208.183 -utest2 -p123  -P3310 &lt; test.sql</code>，也可以直接在mysql命令行下面用source导入</p>
+<h3 id="2、恢复bin-log-000002"><a href="#2、恢复bin-log-000002" class="headerlink" title="2、恢复bin-log.000002"></a>2、恢复bin-log.000002</h3><p><code>mysqlbinlog bin-log.000002 |mysql -h10.6.208.183 -utest2 -p123  -P3310</code></p>
+<h3 id="3、恢复部分-bin-log-000003"><a href="#3、恢复部分-bin-log-000003" class="headerlink" title="3、恢复部分 bin-log.000003"></a>3、恢复部分 bin-log.000003</h3><p>在general_log中找到误删除的时间点，然后更加对应的时间点到bin-log.000003中找到相应的position点，需要恢复到误删除的前面一个position点。</p>
+<p>可以用如下参数来控制binlog的区间</p>
+<p><code>--start-position</code> 开始点 <code>--stop-position</code> 结束点</p>
+<p><code>--start-date</code> 开始时间  <code>--stop-date</code>  结束时间</p>
+<p>找到恢复点后，既可以开始恢复。</p>
+<p><code>mysqlbinlog mysql-bin.000003 --stop-position=208 |mysql -h10.6.208.183 -utest2 -p123  -P3310</code></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-12-24T14:31:29.085Z" title="2016-12-24 22:31" itemprop="dateUpdated">2016年12月24日 22:31</time>
+</span><br>
+
+
+        
+    </div>
+    <footer>
+        <a href="http://builderqiu.com">
+            <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" alt="BuilderQiu">
+            BuilderQiu
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mysql/">Mysql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/备份/">备份</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/07/MysqlBackupAndRebackCommand.html&title=《Mysql数据备份与恢复命令》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/07/MysqlBackupAndRebackCommand.html&title=《Mysql数据备份与恢复命令》 — 一本正经的扯淡&source=原文地址" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/07/MysqlBackupAndRebackCommand.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Mysql数据备份与恢复命令》 — 一本正经的扯淡&url=http://builderqiu.com/2014/07/MysqlBackupAndRebackCommand.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/07/MysqlBackupAndRebackCommand.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/07/JenkinsInstallOnCentOS.html" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">在CentOS中安装jenkins</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/07/NginxConfigDetailInfo.html" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Nginx配置文件常用部分详解</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="MysqlBackupAndRebackCommand" data-title="Mysql数据备份与恢复命令" data-url="http://builderqiu.com/2014/07/MysqlBackupAndRebackCommand.html"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'builderqiu', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.2');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/BuilderQiu/hexo-theme-indigo" target="_blank">indigo</a> Base On <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>一本正经的扯淡 &copy; 2016</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/07/MysqlBackupAndRebackCommand.html&title=《Mysql数据备份与恢复命令》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/07/MysqlBackupAndRebackCommand.html&title=《Mysql数据备份与恢复命令》 — 一本正经的扯淡&source=原文地址" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/07/MysqlBackupAndRebackCommand.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Mysql数据备份与恢复命令》 — 一本正经的扯淡&url=http://builderqiu.com/2014/07/MysqlBackupAndRebackCommand.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/07/MysqlBackupAndRebackCommand.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJUlEQVR42u3aS47CMBAFQO5/aWY9GiW814aRsMurCCXElUWrP3484vW8WMmdV/fcP/v4xMLAwPhaxvN23W/u6jqBzd57ScXAwDiAcR8W/96Tk+5fnzCikI2BgYERMPJ/mAV0DAwMjJaR1JLr5TEGBgZGW0wmSeH9h5gVxm+uxTEwML6QkYfF/7/+yHwDAwPjqxjPcs1e3448611hYGBszcgDXL6VWaHbBlwMDIxzGFft/raAXGnxJ7wXz2JgYBzGWGmWtQcpVorkX79gYGBszcj7V/fhL7k/+WT1Rts2HAYGxhcyZmVkgpmF7/wIyGURi4GBsR0jSeDa4w5t+ZpgilIWAwNjU0Y7jEwCaB5G1xNKDAyMcxjtcLHdUJv2tXgMDIxdGXmwa5PFugSNx6svylcMDIxNGXlV+J/Dy3pUiYGBsTUjb2a1qWFe+uaJ5uWZEQwMjAMYswZZXu62mCJ9xMDA2JqxEgTbMjVPFmctOQwMjNMYeTOuHSHMDodFgRgDA+MAxvrhrfWNtgH6xZQDAwNjO0aS5LVJZFsYr/wDBgbGOYz1VloSxPPDGcN5LAYGxkaMZ7lmzyYbbT8lBgbGOYx8vbe5tlISt8faMDAw9mC04TIvZWffbAbGwMA4gdEOA9oQ2Q4MhqUsBgYGxvKBjNnb664hBgbG8YxPBNaV1h4GBsY5jPxoxXu78flY9MWIFAMDY2vGUukYN93yxDH/HQMD4wDGDzJjS6n8mygUAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

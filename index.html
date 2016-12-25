@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>一本正经的扯淡 | U Still Don&#39;t Know</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="undefined">
+    <meta property="og:type" content="website">
+<meta property="og:title" content="一本正经的扯淡">
+<meta property="og:url" content="http://builderqiu.com/index.html">
+<meta property="og:site_name" content="一本正经的扯淡">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一本正经的扯淡">
+    
+        <link rel="alternative" href="/atom.xml" title="一本正经的扯淡" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.2">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">BuilderQiu</h5>
+          
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect active">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/BuilderQiu" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">一本正经的扯淡</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header index-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">一本正经的扯淡</h1>
+        <h5 class="subtitle">
+            
+                U Still Don't Know
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+<div class="container body-wrap">
+
+    <ul class="post-list">
+    
+        <li class="post-list-item fade">
+            <article id="post-BridgeMethod"
+  class="article-card article-type-post" itemprop="blogPost">
+
+
+    
+
+
+  
+    
+      <div style="background:url(http://ocf808fd2.bkt.clouddn.com/images/temp/java.png)" class="titleBackground">
+        <h3 class="post-title" itemprop="name" style="padding:200px 0 25px 25px;">
+          <a class="post-title-link" href="/2015/03/BridgeMethod.html" style="color: #fafafa!important;">
+            
+            Bridge Method (桥接方法)
+          </a>
+        </h3>
+      </div>
+    
+  
+
+
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-3-18 0:00" datetime="2015-03-17T16:00:00.000Z"  itemprop="datePublished">2015-03-18</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <p><a href="http://berdy.iteye.com/blog/810488">原文地址</a></p>
+<p>Bridge Method直译过来就是桥接方法。从字面意思可以很容易的理解出这个方法是在连接两个东西。那到底是在连接什么呢？废话少说，上代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">abstract</span> T <span class="title">get</span><span class="params">(T t)</span></span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span>&lt;<span class="title">String</span>&gt; </span>&#123;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function">String <span class="title">get</span><span class="params">(String s)</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">""</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestBridge</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		Class&lt;B&gt; clazz = B.class;</div><div class="line">		Method[] methods = clazz.getDeclaredMethods();</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; methods.length; i++) &#123;</div><div class="line">			Method m = methods[i];</div><div class="line">			System.out.println(getMethodInfo(m) + <span class="string">" is Bridge Method? "</span> + m.isBridge());</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getMethodInfo</span><span class="params">(Method m)</span></span>&#123;</div><div class="line">		StringBuilder sb = <span class="keyword">new</span> StringBuilder();</div><div class="line">		sb.append(m.getReturnType()).append(<span class="string">" "</span>);</div><div class="line">		sb.append(m.getName());</div><div class="line">		Class[]params = m.getParameterTypes();</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; params.length; i++) &#123;</div><div class="line">			sb.append(params[i].getName()).append(<span class="string">" "</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> sb.toString();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+    
+        <div>
+          <a href="/2015/03/BridgeMethod.html" class="post-more waves-effect waves-button">
+              ReadMore...
+          </a>
+        </div>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-ChatRoomBaseOnRedis"
+  class="article-card article-type-post" itemprop="blogPost">
+
+
+    
+
+
+  
+    
+      <h3 class="post-title" itemprop="name">
+        <a class="post-title-link" href="/2014/09/ChatRoomBaseOnRedis.html">
+          
+            [原]
+          
+          基于Redis与ActiveMQ、Spring的简单聊天室系统设计
+        </a>
+      </h3>
+    
+  
+
+
+
+    <div class="post-meta">
+        <time class="post-time" title="2014-9-15 0:00" datetime="2014-09-14T16:00:00.000Z"  itemprop="datePublished">2014-09-15</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="其他相关"><a href="#其他相关" class="headerlink" title="其他相关"></a>其他相关</h2><ul>
+<li><a href="/2014-05/OnlineListByRedis">基于Redis的在线用户列表解决方案</a></li>
+<li><a href="/2014-06/AsyncSystemBaseOnSpring">基于Spring的异步系统实现方案</a></li>
+</ul>
+<h2 id="系统概述"><a href="#系统概述" class="headerlink" title="系统概述"></a>系统概述</h2><h3 id="1-系统功能"><a href="#1-系统功能" class="headerlink" title="1.系统功能"></a>1.系统功能</h3><p>用于实现以页面为房间基数的聊天室系统，以达到访问同一页面的用户可以进行伪实时通讯交流的功能，之所以是伪实时通讯是因为实现技术基于WebAjax轮询完成，而非Socket之类真真双向通讯。<br>
+    
+        <div>
+          <a href="/2014/09/ChatRoomBaseOnRedis.html" class="post-more waves-effect waves-button">
+              ReadMore...
+          </a>
+        </div>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ActiveMQ/">ActiveMQ</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/">Redis</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-ShellDetails"
+  class="article-card article-type-post" itemprop="blogPost">
+
+
+    
+
+
+  
+    
+      <h3 class="post-title" itemprop="name">
+        <a class="post-title-link" href="/2014/09/ShellDetails.html">
+          
+          LinuxShell基础
+        </a>
+      </h3>
+    
+  
+
+
+
+    <div class="post-meta">
+        <time class="post-time" title="2014-9-10 0:00" datetime="2014-09-09T16:00:00.000Z"  itemprop="datePublished">2014-09-10</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="什么是Shell"><a href="#什么是Shell" class="headerlink" title="什么是Shell"></a>什么是Shell</h2><p>Shell本身是一个用C语言编写的程序，它是用户使用Unix/Linux的桥梁，用户的大部分工作都是通过Shell完成的。Shell既是一种命令语言，又是一种程序设计语言。作为命令语言，它交互式地解释和执行用户输入的命令；作为程序设计语言，它定义了各种变量和参数，并提供了许多在高级语言中才具有的控制结构，包括循环和分支。</p>
+<p>它虽然不是Unix/Linux系统内核的一部分，但它调用了系统核心的大部分功能来执行程序、建立文件并以并行的方式协调各个程序的运行。因此，对于用户来说，shell是最重要的实用程序，深入了解和熟练掌握shell的特性极其使用方法，是用好Unix/Linux系统的关键。</p>
+<p>可以说，shell使用的熟练程度反映了用户对Unix/Linux使用的熟练程度。</p>
+<p>注意：单独地学习 Shell 是没有意义的，请先了解 Unix/Linux 基础。</p>
+<p>Shell有两种执行命令的方式：<br>交互式（Interactive）：解释执行用户的命令，用户输入一条命令，Shell就解释执行一条。<br>批处理（Batch）：用户事先写一个Shell脚本(Script)，其中有很多条命令，让Shell一次把这些命令执行完，而不必一条一条地敲命令。</p>
+<p>Shell脚本和编程语言很相似，也有变量和流程控制语句，但Shell脚本是解释执行的，不需要编译，Shell程序从脚本中一行一行读取并执行这些命令，相当于一个用户把脚本中的命令一行一行敲到Shell提示符下执行。</p>
+<p>Shell初学者请注意，在平常应用中，建议不要用 root 帐号运行 Shell 。作为普通用户，不管您有意还是无意，都无法破坏系统；但如果是 root，那就不同了，只要敲几个字母，就可能导致灾难性后果。<br>
+    
+        <div>
+          <a href="/2014/09/ShellDetails.html" class="post-more waves-effect waves-button">
+              ReadMore...
+          </a>
+        </div>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/">Shell</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-SpringAntWildcards"
+  class="article-card article-type-post" itemprop="blogPost">
+
+
+    
+
+
+  
+    
+      <h3 class="post-title" itemprop="name">
+        <a class="post-title-link" href="/2014/09/SpringAntWildcards.html">
+          
+          Ant模式通配符
+        </a>
+      </h3>
+    
+  
+
+
+
+    <div class="post-meta">
+        <time class="post-time" title="2014-9-4 0:00" datetime="2014-09-03T16:00:00.000Z"  itemprop="datePublished">2014-09-04</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <p>Spring提供了强大的Ant模式通配符匹配，从同一个路径能匹配一批资源。</p>
+<p>Ant路径通配符支持<code>&quot;?&quot;</code>、<code>&quot;*&quot;</code>、<code>&quot;**&quot;</code>，注意通配符匹配不包括目录分隔符<code>“/”</code>。</p>
+<ol>
+<li><p><code>“?”</code>:匹配一个字符，如<code>&quot;config?.xml&quot;</code>可匹配<code>&quot;config1.xml&quot;</code>.</p>
+</li>
+<li><p><code>“*”</code>：匹配零个或多个字符串，如<code>“com/*/config.xml”</code>将匹配<code>“cn/feng/config.xml”</code>,但不匹配匹配<code>“com/config.xml”</code>(因为这里匹配的是字符串，如果是目录的话则可以)；而<code>“com/config-*.xml”</code>将匹配<code>“com/config-dao.xml”</code>；</p>
+</li>
+<li><p><code>&quot;**&quot;</code>：匹配路径中的零个或多个目录。如<code>“com/**/config.xml”</code>将匹配<code>“com/config.xml”</code>,也匹配<code>“com/feng/spring/config.xml”</code>；而<code>“com/feng/config-**.xml”</code>将匹配  <code>“com/feng/config-dao.xml”</code>，即把<code>“**”</code>当做两个<code>“*”</code>处理。</p>
+</li>
+</ol>
+
+    
+        <div>
+          <a href="/2014/09/SpringAntWildcards.html" class="post-more waves-effect waves-button">
+              ReadMore...
+          </a>
+        </div>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/通配符/">通配符</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-JavaCacheSampleImpl"
+  class="article-card article-type-post" itemprop="blogPost">
+
+
+    
+
+
+  
+    
+      <h3 class="post-title" itemprop="name">
+        <a class="post-title-link" href="/2014/09/JavaCacheSampleImpl.html">
+          
+          简单的Java缓存实现
+        </a>
+      </h3>
+    
+  
+
+
+
+    <div class="post-meta">
+        <time class="post-time" title="2014-9-3 0:00" datetime="2014-09-02T16:00:00.000Z"  itemprop="datePublished">2014-09-03</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <p>提到缓存，不得不提就是缓存算法(淘汰算法)，常见算法有LRU、LFU和FIFO等算法，每种算法各有各的优势和缺点及适应环境。</p>
+<h3 id="1、LRU-Least-Recently-Used-，最近最少使用"><a href="#1、LRU-Least-Recently-Used-，最近最少使用" class="headerlink" title="1、LRU(Least Recently Used ，最近最少使用)"></a>1、LRU(Least Recently Used ，最近最少使用)</h3><p>算法根据数据的最近访问记录来淘汰数据，其原理是如果数据最近被访问过，将来被访问的几概率相对比较高，最常见的实现是使用一个链表保存缓存数据，详细具体算法如下：</p>
+<ol>
+<li>新数据插入到链表头部；</li>
+<li>每当缓存数据命中，则将数据移到链表头部；</li>
+<li>当链表满的时候，将链表尾部的数据丢弃；</li>
+</ol>
+<h3 id="2、LFU-Least-Frequently-Used，最不经常使用"><a href="#2、LFU-Least-Frequently-Used，最不经常使用" class="headerlink" title="2、LFU(Least Frequently Used，最不经常使用)"></a>2、LFU(Least Frequently Used，最不经常使用)</h3><p>算法根据数据的历史访问频率来淘汰数据，其原理是如果数据过去被访问次数越多，将来被访问的几概率相对比较高。LFU的每个数据块都有一个引用计数，所有数据块按照引用计数排序，具有相同引用计数的数据块则按照时间排序。<br>具体算法如下：</p>
+<ol>
+<li>新加入数据插入到队列尾部（因为引用计数为1）；</li>
+<li>队列中的数据被访问后，引用计数增加，队列重新排序；</li>
+<li>当需要淘汰数据时，将已经排序的列表最后的数据块删除；</li>
+</ol>
+<h3 id="3、FIFO-First-In-First-Out-，先进先出"><a href="#3、FIFO-First-In-First-Out-，先进先出" class="headerlink" title="3、FIFO(First In First Out ，先进先出)"></a>3、FIFO(First In First Out ，先进先出)</h3><p>算法是根据先进先出原理来淘汰数据的，实现上是最简单的一种,具体算法如下：</p>
+<ol>
+<li>新访问的数据插入FIFO队列尾部，数据在FIFO队列中顺序移动；</li>
+<li>淘汰FIFO队列头部的数据；</li>
+</ol>
+    
+        <div>
+          <a href="/2014/09/JavaCacheSampleImpl.html" class="post-more waves-effect waves-button">
+              ReadMore...
+          </a>
+        </div>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Cache/">Cache</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-JavaWebSessionFramework"
+  class="article-card article-type-post" itemprop="blogPost">
+
+
+    
+
+
+  
+    
+      <h3 class="post-title" itemprop="name">
+        <a class="post-title-link" href="/2014/08/JavaWebSessionFramework.html">
+          
+          如何构建Java Web应用的session框架
+        </a>
+      </h3>
+    
+  
+
+
+
+    <div class="post-meta">
+        <time class="post-time" title="2014-8-30 0:00" datetime="2014-08-29T16:00:00.000Z"  itemprop="datePublished">2014-08-30</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <p><a href="http://imtiger.net/blog/2012/05/10/how-to-build-a-session-framework-for-java-web-application/">原文地址</a>  </p>
+<p>做web开发的朋友都知道，一个网站在发展的过程中，随着流量的不断增加，必然会遇到伸缩性的问题，虽然目前硬件的价格已经在减低，有时候可以通过垂直伸缩的方式来达到应对访问量不断增加的麻烦，但是垂直伸缩总是会遇到瓶颈，那么此时就需要水平伸缩了。当水平伸缩的时候，最重要的一点就是状态管理，而web应用的状态通产采用httpsession的管理方式，不同的web server(比如tomcat,jboss,jetty等等)都提供了对httpsession的支持，但是webserver通常采用了集群节点之间互相复制session状态的方式来进行状态管理，这样随着集群节点的增加，集群之间的复制的开销会越来越大，这从某种程度上来说也限制了应用的伸缩性。本文就简单总结一下构建一个Java web 应用的session框架的思路是什么样子。<br>
+    
+        <div>
+          <a href="/2014/08/JavaWebSessionFramework.html" class="post-more waves-effect waves-button">
+              ReadMore...
+          </a>
+        </div>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Session/">Session</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-JavaClassLoaderDetail"
+  class="article-card article-type-post" itemprop="blogPost">
+
+
+    
+
+
+  
+    
+      <h3 class="post-title" itemprop="name">
+        <a class="post-title-link" href="/2014/08/JavaClassLoaderDetail.html">
+          
+          Java类加载器
+        </a>
+      </h3>
+    
+  
+
+
+
+    <div class="post-meta">
+        <time class="post-time" title="2014-8-13 0:00" datetime="2014-08-12T16:00:00.000Z"  itemprop="datePublished">2014-08-13</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/classloader.gif" alt="ClassLoader" title="">
+                </div>
+                <div class="image-caption">ClassLoader</div>
+            </figure>
+<h2 id="一、分类："><a href="#一、分类：" class="headerlink" title="一、分类："></a>一、分类：</h2><p>1.BootStrap Class Loader：启动类加载器，负责加载rt.jar文件中所有的Java类，即Java的核心类都是由该ClassLoader加载。在Sun JDK中，这个类加载器是由C++实现的，并且在Java语言中无法获得它的引用。</p>
+<p>2.Extension Class Loader：扩展类加载器，负责加载一些扩展功能的jar包。</p>
+<p>3.System Class Loader：系统类加载器，负责加载启动参数中指定的Classpath中的jar包及目录，通常我们自己写的Java类也是由该ClassLoader加载。在Sun JDK中，系统类加载器的名字叫AppClassLoader。</p>
+<p>4.User Defined Class Loader：用户自定义类加载器，由用户自定义类的加载规则，可以手动控制加载过程中的步骤。<br>
+    
+        <div>
+          <a href="/2014/08/JavaClassLoaderDetail.html" class="post-more waves-effect waves-button">
+              ReadMore...
+          </a>
+        </div>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClassLoader/">ClassLoader</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-MySQLExplainDetailFav"
+  class="article-card article-type-post" itemprop="blogPost">
+
+
+    
+
+
+  
+    
+      <h3 class="post-title" itemprop="name">
+        <a class="post-title-link" href="/2014/07/MySQLExplainDetailFav.html">
+          
+          MySQL之Explain详解
+        </a>
+      </h3>
+    
+  
+
+
+
+    <div class="post-meta">
+        <time class="post-time" title="2014-7-27 0:00" datetime="2014-07-26T16:00:00.000Z"  itemprop="datePublished">2014-07-27</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <p><a href="http://www.cnitblog.com/aliyiyi08/archive/2008/09/09/48878.html">原文</a></p>
+<h2 id="一-语法"><a href="#一-语法" class="headerlink" title="一.语法"></a>一.语法</h2><p>explain &lt; table_name &gt;</p>
+<p>例如: <code>explain select * from t3 where id=3952602;</code><br>
+    
+        <div>
+          <a href="/2014/07/MySQLExplainDetailFav.html" class="post-more waves-effect waves-button">
+              ReadMore...
+          </a>
+        </div>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Explain/">Explain</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL/">SQL</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-Base64EncoderDecoderBaseOnJava"
+  class="article-card article-type-post" itemprop="blogPost">
+
+
+    
+
+
+  
+    
+      <h3 class="post-title" itemprop="name">
+        <a class="post-title-link" href="/2014/07/Base64EncoderDecoderBaseOnJava.html">
+          
+            [原]
+          
+          Base64编码Java实现
+        </a>
+      </h3>
+    
+  
+
+
+
+    <div class="post-meta">
+        <time class="post-time" title="2014-7-24 0:00" datetime="2014-07-23T16:00:00.000Z"  itemprop="datePublished">2014-07-24</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="一、什么是Base64编码"><a href="#一、什么是Base64编码" class="headerlink" title="一、什么是Base64编码"></a>一、什么是Base64编码</h2><p>Base64是网络上最常见的用于传输8Bit字节代码的编码方式之一。Base64 主要不是加密，它主要的用途是把一些二进制数转成普通字符用于网络传输。<br>由于一些二进制字符在传输协议中属于控制字符，不能直接传送需要转换一下。Base64编码就是把二进制字节序列转化为ASCII字符序列。一般增加1/3长度，而且也是不可读的。<br>使用的字符包括大小写字母各26个，加上10个数字，和加号“+”，斜杠“/”，一共64个字符，等号“=”用来作为后缀用途。<br>
+    
+        <div>
+          <a href="/2014/07/Base64EncoderDecoderBaseOnJava.html" class="post-more waves-effect waves-button">
+              ReadMore...
+          </a>
+        </div>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Base64/">Base64</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/加密解密/">加密解密</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-JenkinsInstallOnCentOS"
+  class="article-card article-type-post" itemprop="blogPost">
+
+
+    
+
+
+  
+    
+      <h3 class="post-title" itemprop="name">
+        <a class="post-title-link" href="/2014/07/JenkinsInstallOnCentOS.html">
+          
+          在CentOS中安装jenkins
+        </a>
+      </h3>
+    
+  
+
+
+
+    <div class="post-meta">
+        <time class="post-time" title="2014-7-22 0:00" datetime="2014-07-21T16:00:00.000Z"  itemprop="datePublished">2014-07-22</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="一、检查java是否安装"><a href="#一、检查java是否安装" class="headerlink" title="一、检查java是否安装"></a>一、检查java是否安装</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ java -version</div><div class="line">java version &quot;1.6.0_22&quot;</div><div class="line">OpenJDK Runtime Environment (IcedTea6 1.10.4) (rhel-1.41.1.10.4.el6-x86_64)</div><div class="line">OpenJDK 64-Bit Server VM (build 20.0-b11, mixed mode)</div></pre></td></tr></table></figure>
+<p>如果没有安装：<code>yum install java-1.7.0-openjdk* -y</code><br>
+    
+        <div>
+          <a href="/2014/07/JenkinsInstallOnCentOS.html" class="post-more waves-effect waves-button">
+              ReadMore...
+          </a>
+        </div>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CentOS/">CentOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Jenkins/">Jenkins</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+    </ul>
+
+    
+<nav id="page-nav">
+    <div class="inner">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
+    </div>
+</nav>
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/BuilderQiu/hexo-theme-indigo" target="_blank">indigo</a> Base On <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>一本正经的扯淡 &copy; 2016</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/&title=一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/&title=一本正经的扯淡&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=一本正经的扯淡&url=http://builderqiu.com/&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAAAAAAZai4+AAABSklEQVR42u3aQXLDIAwFUN//0ukBOqZfCHcm1mOVRQxvgwRC1xWPTzDW/7yeGFhYL2LtLfZ7hvX8+VpYWJNZyXT5Msk8fxiwsLBiSp5zsbCw/j9AJN9iYWHtHZrvvlov8PhZHgvrFaxOuq3+fqS+hYX15axPcayLSusgUlgFC2sYK9/A1eRaTcNYWFj9h5N1mWkzxGBhjWHtFYA6wSI6UmNhjWTlsSTZ9nmxODouY2ENY+Xp+VQF6/YrLKxhrL0QUH10qQYdLCysvTJu3n5XuB5jYWHFF9T8ipuHDyysyax8M3dKwIXwgYU1htVpOOg/pdxGAyysYay9vrhTTXvHegOxsF7Bei4o5FfcqPUHC2sAq7PJ8+aDA28vWFhYbWIhbWNhYRXLtdWSU/JcioU1k1WdaB0gDlyMsbCGsfZOsJ0r6+H6FhbWd7N+AIHN5FwNsm2dAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

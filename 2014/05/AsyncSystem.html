@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>使用消息队列异步化系统 | 一本正经的扯淡 | U Still Don&#39;t Know</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="基于Spring与ActiveMQ的配置实现方案
+前言前期为了快速开发，项目结构较为混乱，代码维护与功能扩展都比较困难，为了方便后续功能开发，最近对项目进行的重构，顺便在重构的过程中将之前的部分操作进行了异步处理，也第一次实际接触了JMS与消息队列。项目中采用的消息中间件为ActiveMQ。
+什么是JMSJava消息服务（Java Message Service，JMS）应用程序接口是一个Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用消息队列异步化系统">
+<meta property="og:url" content="http://builderqiu.com/2014/05/AsyncSystem.html">
+<meta property="og:site_name" content="一本正经的扯淡">
+<meta property="og:description" content="基于Spring与ActiveMQ的配置实现方案
+前言前期为了快速开发，项目结构较为混乱，代码维护与功能扩展都比较困难，为了方便后续功能开发，最近对项目进行的重构，顺便在重构的过程中将之前的部分操作进行了异步处理，也第一次实际接触了JMS与消息队列。项目中采用的消息中间件为ActiveMQ。
+什么是JMSJava消息服务（Java Message Service，JMS）应用程序接口是一个Java">
+<meta property="og:image" content="http://builderqiu.com/assets/blog/img/asyncwork.png">
+<meta property="og:updated_time" content="2016-12-25T08:22:17.812Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用消息队列异步化系统">
+<meta name="twitter:description" content="基于Spring与ActiveMQ的配置实现方案
+前言前期为了快速开发，项目结构较为混乱，代码维护与功能扩展都比较困难，为了方便后续功能开发，最近对项目进行的重构，顺便在重构的过程中将之前的部分操作进行了异步处理，也第一次实际接触了JMS与消息队列。项目中采用的消息中间件为ActiveMQ。
+什么是JMSJava消息服务（Java Message Service，JMS）应用程序接口是一个Java">
+<meta name="twitter:image" content="http://builderqiu.com/assets/blog/img/asyncwork.png">
+    
+        <link rel="alternative" href="/atom.xml" title="一本正经的扯淡" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.2">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">BuilderQiu</h5>
+          
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/BuilderQiu" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">使用消息队列异步化系统</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">使用消息队列异步化系统</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-05-22T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-05-23
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前言"><span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#什么是JMS"><span class="post-toc-text">什么是JMS</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#什么是消息队列"><span class="post-toc-text">什么是消息队列</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#正文"><span class="post-toc-text">正文</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#适用于"><span class="post-toc-text">适用于</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-AsyncSystem"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        
+          <h1 class="post-card-title" >使用消息队列异步化系统</h1>
+        
+        <div class="post-meta">
+            <time class="post-time" title="2014-5-23 0:00" datetime="2014-05-22T16:00:00.000Z"  itemprop="datePublished">2014-05-23</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p><a href="/2014/06/AsyncSystemBaseOnSpring.html">基于Spring与ActiveMQ的配置实现方案</a></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>前期为了快速开发，项目结构较为混乱，代码维护与功能扩展都比较困难，为了方便后续功能开发，最近对项目进行的重构，顺便在重构的过程中将之前的部分操作进行了异步处理，也第一次实际接触了JMS与消息队列。项目中采用的消息中间件为ActiveMQ。</p>
+<h2 id="什么是JMS"><a href="#什么是JMS" class="headerlink" title="什么是JMS"></a>什么是JMS</h2><p>Java消息服务（Java Message Service，JMS）应用程序接口是一个Java平台中关于面向消息中间件（MOM）的API，用于在两个应用程序之间，或分布式系统中发送消息，进行异步通信。Java消息服务是一个与具体平台无关的API，绝大多数MOM提供商都对JMS提供支持。</p>
+<p>Java消息服务的规范包括两种消息模式，点对点和发布者／订阅者。许多提供商支持这一通用框架因此，程序员可以在他们的分布式软件中实现面向消息的操作，这些操作将具有不同面向消息中间件产品的可移植性。</p>
+<p>Java消息服务支持同步和异步的消息处理，在某些场景下，异步消息是必要的；在其他场景下，异步消息比同步消息操作更加便利。</p>
+<p>Java消息服务支持面向事件的方法接收消息，事件驱动的程序设计现在被广泛认为是一种富有成效的程序设计范例，程序员们都相当熟悉。</p>
+<p>在应用系统开发时，Java消息服务可以推迟选择面对消息中间件产品，也可以在不同的面对消息中间件切换。——Wiki</p>
+<h2 id="什么是消息队列"><a href="#什么是消息队列" class="headerlink" title="什么是消息队列"></a>什么是消息队列</h2><p>在计算机科学中，消息队列（英语：Message queue）是一种进程间通信或同一进程的不同线程间的通信方式，软件的贮列用来处理一系列的输入，通常是来自使用者。消息队列提供了异步的通信协议，每一个贮列中的纪录包含详细说明的资料，包含发生的时间，输入装置的种类，以及特定的输入参数，也就是说：消息的发送者和接收者不需要同时与消息队列互交。消息会保存在队列中，直到接收者取回它。</p>
+<p>目前，有很多消息队列有很多开源的实现，包括JBoss Messaging、JORAM、Apache ActiveMQ、Sun Open Message Queue、Apache Qpid和HTTPSQS。</p>
+<p>消息队列本身是异步的，它允许接收者在消息发送很长时间后再取回消息，这和大多数通信协议是不同的。例如WWW中使用的HTTP协议是同步的，因为客户端在发出请求后必须等待服务器回应。然而，很多情况下我们需要异步的通信协议。比如，一个进程通知另一个进程发生了一个事件，但不需要等待回应。但消息队列的异步特点，也造成了一个缺点，就是接收者必须轮询消息队列，才能收到最近的消息。</p>
+<p>和信号相比，消息队列能够传递更多的信息。与管道相比，消息队列提供了有格式的数据，这可以减少开发人员的工作量。但消息队列仍然有大小限制。——Wiki</p>
+<p><a href="http://www.oschina.net/translate/top-10-uses-for-message-queue" target="_blank" rel="external">使用消息队列的优点</a></p>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><p>基本类图结构如下：<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/assets/blog/img/asyncwork.png" alt="类结构" title="">
+                </div>
+                <div class="image-caption">类结构</div>
+            </figure></p>
+<p>说明：</p>
+<p>AsyncWork：消息的处理类接口，定义各类型的消息的处理方式</p>
+<p>AsyncWorkProducer：消息的生产者（JMS生产者），负责向消息队列里面放入消息</p>
+<p>AsyncWorkConsumer：消息的消费者（JMS消费者），负责从消息队列中消费消息</p>
+<p>AsyncWorkFactory：对外提供的服务的工厂类</p>
+<p>EmailWork、PushNotificationWork、LoginLogWork…：实现AsyncWork接口，定义消息的具体处理方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AsyncWorkProducer</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">//ConnectionFactory ：连接工厂，JMS 用它创建连接</span></div><div class="line">    <span class="keyword">private</span> ConnectionFactory connectionFactory;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String queueName = <span class="string">"QueueName"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AsyncWorkProducer</span><span class="params">(String queueName)</span></span>&#123;</div><div class="line">        <span class="keyword">this</span>.queueName = queueName;</div><div class="line">        init();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</div><div class="line">            connectionFactory = <span class="keyword">new</span> ActiveMQConnectionFactory(</div><div class="line">                    ActiveMQConnection.DEFAULT_USER,</div><div class="line">                    ActiveMQConnection.DEFAULT_PASSWORD,</div><div class="line">                    SystemConfiguration.getString(<span class="string">"asyc.location"</span>));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendMessage</span><span class="params">(Message message)</span></span>&#123;</div><div class="line">        Connection connection = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">// Connection ：JMS 客户端到JMS Provider 的连接 | 构造ConnectionFactory实例对象，此处采用ActiveMq的实现jar</span></div><div class="line">            connection = connectionFactory.createConnection();</div><div class="line">            <span class="comment">//启动</span></div><div class="line">            connection.start();</div><div class="line">             <span class="comment">// Session： 一个发送或接收消息的线程  | 获取操作连接</span></div><div class="line">            Session session = connection.createSession(<span class="keyword">false</span>,Session.AUTO_ACKNOWLEDGE);</div><div class="line">             <span class="comment">// Destination ：消息的目的地;消息发送给谁.</span></div><div class="line">            Destination destination = session.createQueue(queueName);</div><div class="line">             <span class="comment">// MessageProducer：消息发送者 |得到消息生成者【发送者】</span></div><div class="line">            MessageProducer producer = session.createProducer(destination);</div><div class="line">            <span class="comment">//设置不持久化，实际根据项目决定</span></div><div class="line">            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);</div><div class="line">             <span class="comment">// 发送消息到目的地方</span></div><div class="line">            producer.send(message);</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;<span class="keyword">finally</span>&#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> != connection)&#123;</div><div class="line">                    connection.close();</div><div class="line">                &#125;</div><div class="line">            &#125; <span class="keyword">catch</span> (Throwable ignore) &#123;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>服务工厂类，貌似作用不大：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AsyncWorkFactory</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ConcurrentHashMap&lt;String, AsyncWorkProducer&gt; chm = <span class="keyword">new</span> ConcurrentHashMap&lt;String, AsyncWorkProducer&gt;();</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="title">AsyncWorkFactory</span><span class="params">()</span></span>&#123;&#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> AsyncWorkProducer <span class="title">getProducer</span><span class="params">(String queueName)</span></span>&#123;</div><div class="line">        AsyncWorkProducer awp = chm.get(queueName);</div><div class="line">        <span class="keyword">if</span>(awp==<span class="keyword">null</span>)&#123;</div><div class="line">            awp = <span class="keyword">new</span> AsyncWorkProducer(queueName);</div><div class="line">            chm.put(queueName, awp);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> awp;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sendMessage</span><span class="params">(Message message,String queueName)</span></span>&#123;</div><div class="line">        getProducer(queueName).sendMessage(message);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>线程监听：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AsyncWorkConsumer</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</div><div class="line">    <span class="comment">// ConnectionFactory ：连接工厂，JMS 用它创建连接</span></div><div class="line">    <span class="keyword">private</span> ConnectionFactory connectionFactory;</div><div class="line">    <span class="keyword">private</span> AsycWork work;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String queueName = <span class="string">"QueueName"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AsyncWorkConsumer</span><span class="params">(String queueName,AsycWork work)</span></span>&#123;</div><div class="line">        <span class="keyword">this</span>.queueName = queueName;</div><div class="line">        <span class="keyword">this</span>.work = work;</div><div class="line">        init();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</div><div class="line">            connectionFactory = <span class="keyword">new</span> ActiveMQConnectionFactory(</div><div class="line">                    ActiveMQConnection.DEFAULT_USER,</div><div class="line">                    ActiveMQConnection.DEFAULT_PASSWORD,</div><div class="line">                    SystemConfiguration.getString(<span class="string">"asyc.location"</span>));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line"></div><div class="line">        Connection connection = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">// Connection ：JMS 客户端到JMS Provider 的连接 | 构造ConnectionFactory实例对象，此处采用ActiveMq的实现jar</span></div><div class="line">            connection = connectionFactory.createConnection();</div><div class="line">            connection.start();</div><div class="line">             <span class="comment">// Session： 一个发送或接收消息的线程  | 获取操作连接</span></div><div class="line">            Session session = connection.createSession(<span class="keyword">false</span>,Session.AUTO_ACKNOWLEDGE);</div><div class="line">             <span class="comment">// Destination ：消息的目的地;消息发送给谁.</span></div><div class="line">            Destination destination = session.createQueue(queueName);</div><div class="line">             <span class="comment">// MessageProducer：消息发送者 |得到消息生成者【发送者】</span></div><div class="line">             MessageConsumer consumer = session.createConsumer(destination);</div><div class="line">             <span class="comment">//设置不持久化，实际根据项目决定</span></div><div class="line">             <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">                    <span class="comment">//可设置接收者接收消息的时间 consumer.recevie(xxx)</span></div><div class="line">                    Message message =  consumer.receive();</div><div class="line">                    work.execute(message);</div><div class="line">                &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;<span class="keyword">finally</span>&#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> != connection)&#123;</div><div class="line">                    connection.close();</div><div class="line">                &#125;</div><div class="line">            &#125; <span class="keyword">catch</span> (Throwable ignore) &#123;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>回调处理：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmailWorker</span> <span class="keyword">implements</span> <span class="title">AsycWork</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Logger log = LoggerFactory.getLogger(EmailWorker.class);</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(Message message)</span> </span>&#123;</div><div class="line"></div><div class="line">        ActiveMQMapMessage msg = (ActiveMQMapMessage) message;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            String address = msg.getString(<span class="string">"address"</span>);</div><div class="line">            String title = msg.getString(<span class="string">"title"</span>);</div><div class="line">            String content = msg.getString(<span class="string">"content"</span>);</div><div class="line"></div><div class="line">            Constants.sendMail(address, title, content);</div><div class="line">        &#125; <span class="keyword">catch</span> (JMSException e) &#123;</div><div class="line">            log.error(<span class="string">"异步邮件发送异常"</span>, e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>项目启动时执行如下代码启动线程：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">Thread emailThread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> AsyncWorkConsumer(AsycWork.EMAIL,emailWorker));</div><div class="line">emailThread.setDaemon(<span class="keyword">true</span>);</div><div class="line">emailThread.start();</div><div class="line"></div><div class="line"><span class="comment">//启动线程绑定各种回调</span></div><div class="line">Thread normalLogThread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> AsyncWorkConsumer(AsycWork.NORMAL_LOG,normalLogWork));</div><div class="line">normalLogThread.setDaemon(<span class="keyword">true</span>);</div><div class="line">normalLogThread.start();</div><div class="line"></div><div class="line">Thread loginLogThread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> AsyncWorkConsumer(AsycWork.LOGIN_LOG,loginLogWorker));</div><div class="line">loginLogThread.setDaemon(<span class="keyword">true</span>);</div><div class="line">loginLogThread.start();</div></pre></td></tr></table></figure>
+<p>调用异步的工具类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AsyncUtils</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Logger log = LoggerFactory.getLogger(AsyncUtils.class);</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">log</span><span class="params">(String type,String operate)</span></span>&#123;</div><div class="line"></div><div class="line">        <span class="keyword">if</span>(!SystemConfigFromDB.getBoolean(SystemConfigFromDB.NEED_NORMAL_LOG))&#123;</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">try</span>&#123;</div><div class="line">            User user = (User) SecurityUtils.getSubject().getSession().getAttribute(<span class="string">"loginUser"</span>);            </div><div class="line">            <span class="keyword">if</span>(user==<span class="keyword">null</span>)&#123;</div><div class="line">                <span class="keyword">return</span>;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            OperateLog log = <span class="keyword">new</span> OperateLog(user.getId(), user.getName(), operate,type, user.getLastLoginIp());</div><div class="line">            ActiveMQObjectMessage message = <span class="keyword">new</span> ActiveMQObjectMessage();</div><div class="line">            message.setObject(log);</div><div class="line">            AsyncWorkFactory.sendMessage(message, AsycWork.NORMAL_LOG);</div><div class="line"></div><div class="line">        &#125;<span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            log.error(<span class="string">"日志记录出错!"</span>, e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sendMail</span><span class="params">(String address,String title,String content)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(!SystemConfigFromDB.getBoolean(SystemConfigFromDB.NEED_SEND_MAIL))&#123;</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">try</span>&#123;            </div><div class="line">            ActiveMQMapMessage message = <span class="keyword">new</span> ActiveMQMapMessage();</div><div class="line">            message.setString(<span class="string">"address"</span>, address);</div><div class="line">            message.setString(<span class="string">"title"</span>, title);</div><div class="line">            message.setString(<span class="string">"content"</span>, content);</div><div class="line"></div><div class="line">            AsyncWorkFactory.sendMessage(message, AsycWork.EMAIL);</div><div class="line"></div><div class="line">        &#125;<span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            log.error(<span class="string">"邮件发送出错！"</span>,e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">loginLog</span><span class="params">(String uid,String ip,Date date)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(!SystemConfigFromDB.getBoolean(SystemConfigFromDB.NEED_LOG_CLIENTUSER_LOGINLOG))&#123;</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;    </div><div class="line">        <span class="keyword">try</span>&#123;</div><div class="line">            ActiveMQMapMessage message = <span class="keyword">new</span> ActiveMQMapMessage();</div><div class="line">            message.setString(<span class="string">"uid"</span>, uid);</div><div class="line">            message.setString(<span class="string">"ip"</span>, ip);</div><div class="line">            message.setString(<span class="string">"date"</span>, DateUtils.formatDateTime(date, <span class="string">"yyyy-MM-dd HH:mm:ss"</span>));</div><div class="line"></div><div class="line">            AsyncWorkFactory.sendMessage(message, AsycWork.LOGIN_LOG);</div><div class="line"></div><div class="line">        &#125;<span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            log.error(<span class="string">"邮件发送出错！"</span>,e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在需要异步处理的地方执行类似如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">AsyncUtils.sendMail(<span class="string">"xxx@xxx.com"</span>, <span class="string">"邮件标题"</span>, <span class="string">"邮件内容"</span>);<span class="comment">//异步发送邮件</span></div></pre></td></tr></table></figure>
+<p>这样就可以执行异步操作了。</p>
+<h2 id="适用于"><a href="#适用于" class="headerlink" title="适用于"></a>适用于</h2><p>异步系统适用于与主要业务逻辑无关的较耗时或不需要同步操作的，失败时不影响主业务逻辑的功能点：</p>
+<p>比如：1.在用户注册的时候记录数据做后期统计、发送注册成功邮件等</p>
+<p>　　　　2.系统操作的日志记录</p>
+<p>　　　　3.iOS消息推送</p>
+<p>　　　　4.发送短信</p>
+<p>　　　　   …</p>
+<p>在使用异步系统之前，用户注册与注册日志记录是在同一个事务完成的，用户注册失败则不会记录日志，但同时，日志记录发生异常也会引起用户注册失败，日志记录本身是与用户注册这个逻辑不相关的工作，在日志发生异常的时候不应该使用户注册失败。</p>
+<p>在使用异步系统之后，用户注册逻辑执行结束后，调用异步的注册日志记录与异步的注册邮件发送功能即可，不用等待日志记录与邮件发送的返回，即可直接返回用户注册成功。将日志与邮件异步处理，既提高了响应速度也使逻辑更加严谨。在发生异常的时候，消息队列会将消息继续保留，留待后续处理。</p>
+<blockquote>
+<p>PS：本文的实现方式大部分为自己摸索的，之前没有接触过类似的模块，所以有些地方都是按照自己的理解处理的，通用的异步系统是不是这种结构本人不是太了解，欢迎交流。后面会介绍一下最新的实现方式，修改为了基于Spring管理的异步系统，将ActiveMQ丢给了Spring，依靠Spring发送与监听消息，相比这个可能会更靠谱一点。</p>
+</blockquote>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-12-25T08:22:17.812Z" title="2016-12-25 16:22" itemprop="dateUpdated">2016年12月25日 16:22</time>
+</span><br>
+
+
+        
+    </div>
+    <footer>
+        <a href="http://builderqiu.com">
+            <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" alt="BuilderQiu">
+            BuilderQiu
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/05/AsyncSystem.html&title=《使用消息队列异步化系统》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/05/AsyncSystem.html&title=《使用消息队列异步化系统》 — 一本正经的扯淡&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/05/AsyncSystem.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用消息队列异步化系统》 — 一本正经的扯淡&url=http://builderqiu.com/2014/05/AsyncSystem.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/05/AsyncSystem.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/05/AsyncSystemByMQ.html" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">使用消息队列异步化系统</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/05/MemcacheAnnotationBaseOnSpringAop.html" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">基于Annotation与SpringAOP的缓存简单解决方案</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="AsyncSystem" data-title="使用消息队列异步化系统" data-url="http://builderqiu.com/2014/05/AsyncSystem.html"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'builderqiu', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.2');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/BuilderQiu/hexo-theme-indigo" target="_blank">indigo</a> Base On <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>一本正经的扯淡 &copy; 2016</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/05/AsyncSystem.html&title=《使用消息队列异步化系统》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/05/AsyncSystem.html&title=《使用消息队列异步化系统》 — 一本正经的扯淡&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/05/AsyncSystem.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用消息队列异步化系统》 — 一本正经的扯淡&url=http://builderqiu.com/2014/05/AsyncSystem.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/05/AsyncSystem.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACFElEQVR42u3aQY7DIAwF0N7/0hlpth0l3zYdqfBYVUlK/bJwDfj1isf1Oz5x5f3u/TOjgYGB8bWM63bcP5PcfQckM+SxYWBgnMO4T7LJzyTfqiblJDYMDAyMKmlSCCZzYmBgYOSJLy/1MDAwMFYxkmVqHkRe8PWKSwwMjNMY1YOB//z8wfMNDAyML2FcxVEtH3uHlOWoMDAwtmZUt896pV6vmaP8IjAwMDZl5JtoE+o8fT88j4GBsTUjL9qqrWN5vp8clGJgYGDkU4w261uLWAwMjHMYufU+Xd5fX3s8iYGBcRqj1yRRLRDztoxqcsfAwDiT0SvdJiXmqu05DAyMXRl5Ms238qtHCL0Nuz96RjAwMDZlTBack1aJ/JlC4sbAwDiMkbdT3IfYW7gm6T5KuBgYGNsxkh9bdaV6N2q2wMDA2JRRTW3VLf78pYy23jAwMLZmJFPMO86qjISHgYFxJiNPptWGsDysvIhs9uFiYGB8IaPXBlHNddUZ8hYNDAyMMxkPO3PxlbyZLI8harPAwMDYjjFJrNVw146H+TEwMDZiXMVRDbS3SVd9BgMDY29GNcE1C7V4865amGJgYJzDqCbZVUXk5EACAwPjTMbkcHFe3uX/AA/rbwwMjOMZk4PMXltY4YgCAwMDo9UctiC4PB4MDIwDGL1F7KTbYdKogYGBcRpj1cFAL+hkodt7QRgYGFswfgAp6zzigw4a6gAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

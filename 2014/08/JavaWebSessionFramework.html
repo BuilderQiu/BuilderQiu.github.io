@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>如何构建Java Web应用的session框架 | 一本正经的扯淡 | U Still Don&#39;t Know</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Session">
+    <meta name="description" content="session框架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何构建Java Web应用的session框架">
+<meta property="og:url" content="http://builderqiu.com/2014/08/JavaWebSessionFramework.html">
+<meta property="og:site_name" content="一本正经的扯淡">
+<meta property="og:description" content="session框架">
+<meta property="og:image" content="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/sessionFramework.jpg">
+<meta property="og:updated_time" content="2016-12-24T14:31:55.254Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何构建Java Web应用的session框架">
+<meta name="twitter:description" content="session框架">
+<meta name="twitter:image" content="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/sessionFramework.jpg">
+    
+        <link rel="alternative" href="/atom.xml" title="一本正经的扯淡" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.2">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">BuilderQiu</h5>
+          
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/BuilderQiu" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">如何构建Java Web应用的session框架</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">如何构建Java Web应用的session框架</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-08-29T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-08-30
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Session状态存储"><span class="post-toc-text">Session状态存储</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Session信息的管理"><span class="post-toc-text">Session信息的管理</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#信息安全性问题"><span class="post-toc-text">信息安全性问题</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#如何与Servlet-Container结合"><span class="post-toc-text">如何与Servlet Container结合</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#SessionFilter"><span class="post-toc-text">SessionFilter</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#CustomHttpServletRequest"><span class="post-toc-text">CustomHttpServletRequest</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#CustomHttpServletReponse"><span class="post-toc-text">CustomHttpServletReponse</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#CustomHttpSession"><span class="post-toc-text">CustomHttpSession</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#SessionHolder"><span class="post-toc-text">SessionHolder</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-JavaWebSessionFramework"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        
+          <h1 class="post-card-title" >如何构建Java Web应用的session框架</h1>
+        
+        <div class="post-meta">
+            <time class="post-time" title="2014-8-30 0:00" datetime="2014-08-29T16:00:00.000Z"  itemprop="datePublished">2014-08-30</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p><a href="http://imtiger.net/blog/2012/05/10/how-to-build-a-session-framework-for-java-web-application/" target="_blank" rel="external">原文地址</a>  </p>
+<p>做web开发的朋友都知道，一个网站在发展的过程中，随着流量的不断增加，必然会遇到伸缩性的问题，虽然目前硬件的价格已经在减低，有时候可以通过垂直伸缩的方式来达到应对访问量不断增加的麻烦，但是垂直伸缩总是会遇到瓶颈，那么此时就需要水平伸缩了。当水平伸缩的时候，最重要的一点就是状态管理，而web应用的状态通产采用httpsession的管理方式，不同的web server(比如tomcat,jboss,jetty等等)都提供了对httpsession的支持，但是webserver通常采用了集群节点之间互相复制session状态的方式来进行状态管理，这样随着集群节点的增加，集群之间的复制的开销会越来越大，这从某种程度上来说也限制了应用的伸缩性。本文就简单总结一下构建一个Java web 应用的session框架的思路是什么样子。<br><a id="more"></a><br>本文将会从session状态的存储，session信息的管理，安全性问题，以及如何与Servlet Container结合。</p>
+<blockquote>
+<p>在开始之前，我们首先需要明确一点这里所说的session的概念是广义的，不仅仅是指httpSession。</p>
+</blockquote>
+<h2 id="Session状态存储"><a href="#Session状态存储" class="headerlink" title="Session状态存储"></a>Session状态存储</h2><p>咋们首先来谈谈Session状态的存储。我们先来看看平常的日常工作当中，我们是怎么存储Session状态信息的。我们举个例子来说，比如用户的浏览历史，我们可能会将其保存在http cookie中，另外比如用户是否登陆的信息，我们可能选择保存在httpsession之中。上面说了存储到httpsession中会受限于web server的实现，伸缩性有限。那么我们在构建session框架的时候，可以考虑用一个分布式的缓存服务器来存储session状态，比如可以利用memecached服务器来进行存储。</p>
+<p>另外这里面也涉及到另外一个问题，状态的跟踪问题，我们如何区分不同的用户的session信息？这里其实就需要通过cookie来实现了，我们会给每个用户产生的session分配一个唯一的Id，把这个id存放在cookie中，当用户请求服务器的时候会带上sessionId,服务器从cookie中获取sessionId后可以根据Id从缓存中获取到session状态信息。</p>
+<p>说到这里，可能有同学会问？为什么我们不能把信息都放到cookie中，这样服务器端都不用存储任何的状态信息，这样对于服务器来说不也是无状态了吗？其实这里面主要涉及安全性以及浏览器的实现问题，因为存储到cookie中的信息是不安全的，黑客可以进行cookie劫持，这样你保存到cookie中的信息就会被非法用户获取了。另外我们知道不同的浏览器对cookie数量以及大小是有限制的，比如IE8限制cookie的大小为4095字节，每个域名cookie的数量为50个，这样以来就可能会遇到cookie丢失的问题。</p>
+<p>综上，Session状态的存储，我们需要结合客户端存储和服务器端存储，在客户端存储中，我们借用http cookie来存储sessionId,而session的具体信息我们可以存放到服务器端，而具体实现的过程中，我们可以将起放入分布式缓存服务器中。</p>
+<h2 id="Session信息的管理"><a href="#Session信息的管理" class="headerlink" title="Session信息的管理"></a>Session信息的管理</h2><p>接下来我们再来说说Session信息管理，一些公司可能对这块没有什么重视，session状态的管理完全依赖于开发人员自己，开发人员可以随意将信息写入到cookie或者httpsession中，这样造成的问题就是session状态混乱，最后随着开发人员的离职，新来的人只能通过查看源代码的方式来了解session中都放入了什么信息，到后来可能公司没人知道在cookie或者httpsession中到底存放了哪些信息了？这对与系统的维护以及扩展都是不利的，那么怎么解决这个问题？</p>
+<p>其实这个时候我们就可以通过session信息的统一配置话管理来解决了。具体来说就是Session框架通过一个配置文件对可放入的session信息进行统一的管理，要想往cookie或者服务器session中放入任何信息都要在配置文件中配置，这样才容许写入。这样要知道session中存放了哪些信息只需要查看配置文件即可知道了。</p>
+<p>不过采用配置文件管理session信息了以后，可能又会遇到一个问题，配置文件如何管理？这个不同的公司可以有不同的做法，比如配置文件可以存放在数据库中，session框架启动的时候去数据库查询到最新的配置信息，或者也可以将其放入classpath文件中，session框架通过启动的时候去classpath中获取，另外一些公司都有统一的配置管理服务器，这样可以将session配置也纳入到配置管理服务器中，这样就更加规范了。</p>
+<h2 id="信息安全性问题"><a href="#信息安全性问题" class="headerlink" title="信息安全性问题"></a>信息安全性问题</h2><p>上面说了session信息的存储，我们的Session框架要支持两种存储方式，一种是cookie的客户端存储，一种是存储到服务端，当存储到客户端cookie中的，信息容易被非法意图的人窃取，如果什么信息都明文保存在cookie中，那么就存在用户信息泄露的风险。那么此时就需要对放入cookie的信息进行加密处理。关于加密和解密算法本人也没有深入研究过，不过这方面已经有很多人给出了解决方案。我在写Session框架的时候，采用了Blowfish，有兴趣的同学可以去看看。</p>
+<h2 id="如何与Servlet-Container结合"><a href="#如何与Servlet-Container结合" class="headerlink" title="如何与Servlet Container结合"></a>如何与Servlet Container结合</h2><p>本文的最后，咋们来看看在Java web 开发中，自己开发的Session框架如何与Servlet 容器结合起来。 Servlet规范中有过滤器的概念，过滤器是每个请求过来的时候，可以在请求进入Servlet之前和之后可以做一些通用的事情，那么我们的Session框架可以提供一个SessionFilter纳入到Servlet容器的管理。下面通过一个简单图来形象的描述一下Session框架中主要的角色。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/sessionFramework.jpg" alt="sessionFramework" title="">
+                </div>
+                <div class="image-caption">sessionFramework</div>
+            </figure>
+<center>上图中绿色的部分为Session框架的核心部分，我们下面分别来描述一下。</center>
+
+<h3 id="SessionFilter"><a href="#SessionFilter" class="headerlink" title="SessionFilter"></a>SessionFilter</h3><p><code>SessionFilter</code>的主要职责就是对web server生成的<code>HttpServletRequest</code>和<code>HttpServletReponse</code>进行封装，将其封装为<code>CustomHttpServletRequest</code>和<code>CustomHttpServletReponse</code>. <code>SessionFilter</code>的核心代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*SessionFilter.java*/</span></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doFilter</span><span class="params">(ServletRequest request, ServletResponse response, FilterChain chain)</span> <span class="keyword">throws</span> IOException, ServletException </span>&#123;</div><div class="line">    <span class="comment">//对原生的HttpServletRequest和HttpServletReponse进行封装。</span></div><div class="line">    CustomSessionServletRequest customRequest = <span class="keyword">new</span> CustomSessionServletRequest((HttpServletRequest) request);</div><div class="line">    CustomSessionServletResponse customResponse = <span class="keyword">new</span> CustomSessionServletResponse((HttpServletResponse) response);</div><div class="line">    <span class="comment">//对于一些静态资源可以不经过session框架过滤</span></div><div class="line">    <span class="keyword">if</span> (letitgo(request, response, chain, customRequest)) <span class="keyword">return</span>;</div><div class="line">    <span class="comment">//reponseBuffer开关，控制服务器刷新响应流的方式，如果打开的话，会等整个请求处理完成后一次性刷到客户端</span></div><div class="line">    <span class="keyword">if</span> (needResponseBuffered) &#123;</div><div class="line">        <span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</div><div class="line">            logger.debug(<span class="string">"session framework responseBuffered is on"</span>);</div><div class="line">        &#125;</div><div class="line">        customResponse.setWriterBuffered(<span class="keyword">true</span>);</div><div class="line">    &#125;</div><div class="line">    CustomSession customSession = createCustomSession(customRequest, customResponse);</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        chain.doFilter(customRequest, customResponse);</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != customSession) &#123;</div><div class="line">            <span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</div><div class="line">                logger.debug(<span class="string">"session framework start to commit session--"</span> + <span class="string">"customSession.commit"</span>);</div><div class="line">            &#125;</div><div class="line">            <span class="comment">//将后续业务写入session的信息进行存储，这里就涉及到了将信息写入cookie或者缓存</span></div><div class="line">            customSession.commit();</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">catch</span> (Exception ex) &#123;</div><div class="line">        logger.error(<span class="string">"session framework occur exception"</span>, ex);</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(ex);</div><div class="line">    &#125; <span class="keyword">finally</span> &#123;</div><div class="line">        <span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</div><div class="line">            logger.debug(<span class="string">"session framework start to commit buffer--"</span> + <span class="string">"customResponse.commitBuffer"</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="comment">//将响应流刷到客户端</span></div><div class="line">        customResponse.commitBuffer();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="CustomHttpServletRequest"><a href="#CustomHttpServletRequest" class="headerlink" title="CustomHttpServletRequest"></a>CustomHttpServletRequest</h3><p><code>CustomHttpServletRequest</code>包转了原生的<code>HttpServletRequest</code>，它最核心的就是要覆盖<code>getSession</code>方法，主要的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*CustomHttpServletRequest.java*/</span></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> CustomSession <span class="title">getSession</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> session;</div><div class="line">&#125;</div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> CustomSession <span class="title">getSession</span><span class="params">(<span class="keyword">boolean</span> create)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> getSession();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样当应用通过getSession返回的则是经过封装以后的代码。</p>
+<h3 id="CustomHttpServletReponse"><a href="#CustomHttpServletReponse" class="headerlink" title="CustomHttpServletReponse"></a>CustomHttpServletReponse</h3><p><code>CustomHttpServletReponse</code>封装了原生的<code>HttpServletReponse</code>,此类的实现的时候需要注意在Servlet3.0之前，不支持httponly的cookie，要写入Httponly的cookie需要手动通过<code>addHeader</code>的方法去加入，而Servlet3.0以后，可以直接通过<code>addCookie</code>方法实现，具体的伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addCookie</span><span class="params">(CustomCookie cookie)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (cookie.isHttpOnly()) &#123;</div><div class="line">            addHeader(SET_COOKIE, buildHttpOnlyCookie(cookie));</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">super</span>.addCookie(cookie);</div><div class="line">        &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>另外我们知道标准的Servlet 输出流有一个缓存区，当应用向缓存区写入数据的时候，如果缓存区已经满了就会刷流到客户端了，这样的话就有可能造成一种情况：部分流已经刷到客户端了，但是后来服务器处理抛异常了，这样用户可能看到的状态可能和服务器不一致，为了解决这个问题，我们可以重写<code>getOutputStream</code>和<code>getWriter</code>方法，这两个方法在返回一个经过我们包装的输出流，这样Session框架就可以保留应用写入的数据到最后请求处理完了以后再由<code>SessionFilter</code>刷新流到客户端。具体的伪代码可以参考如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> ServletOutputStream <span class="title">getOutputStream</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.isWriterBuffered) &#123;</div><div class="line">        <span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</div><div class="line">            logger.debug(<span class="string">"Created new byte buffer"</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="comment">//这里返回一个ByteArrayOutputStream，方便Session框架控制输出流</span></div><div class="line">        ByteArrayOutputStream bytes = <span class="keyword">new</span> ByteArrayOutputStream();</div><div class="line">        stream = <span class="keyword">new</span> BufferedServletOutputStream(bytes);</div><div class="line">        <span class="keyword">return</span> stream;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">this</span>.getSession().commit();</div><div class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.getOutputStream();</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> PrintWriter <span class="title">getWriter</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.isWriterBuffered) &#123;</div><div class="line">        <span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</div><div class="line">            logger.debug(<span class="string">"response.getWriter(): Created new character buffer"</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="comment">//这里返回StringWriter 方便Session框架控制输出流</span></div><div class="line">        StringWriter chars = <span class="keyword">new</span> StringWriter();</div><div class="line">        writer = <span class="keyword">new</span> BufferedServletWriter(chars);</div><div class="line">        <span class="keyword">return</span> writer;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">this</span>.getSession().commit();</div><div class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.getWriter();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>另外需要重写的一些方法比如sendError,sendRedirect也需要重写。</p>
+<h3 id="CustomHttpSession"><a href="#CustomHttpSession" class="headerlink" title="CustomHttpSession"></a>CustomHttpSession</h3><p><code>CustomHttpSession</code>主要负责管理Session中的状态信息，它是<code>HttpSession</code>的子类，它会根据Session框架的配置，将不同的信息保存到对应的<code>SessionHolder</code>中，对于<code>CustomHttpSession</code>，我们主要需要重写<code>setAttribute</code>和<code>getAttribute</code>方法。它的伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAttribute</span><span class="params">(String name, Object value)</span> </span>&#123;</div><div class="line">    <span class="comment">//1. 根据Session框架的配置文件，找到name的属性对应的session配置项</span></div><div class="line">    <span class="keyword">final</span> SessionConfigItem sessionConfigItem = sessionConfig.getSessionConfigItem(name);</div><div class="line">    <span class="keyword">if</span> (sessionConfigItem == <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">return</span>;<span class="comment">//如果配置项为空，说明此name的属性没有经过session框架配置，不能写入</span></div><div class="line">    &#125;</div><div class="line">    <span class="comment">//2. 根据配置类型获取具体的SessionHolder</span></div><div class="line">    <span class="keyword">final</span> SessionHolder sessionHolder = sessionHolders.get(sessionConfigItem.getHolderType());</div><div class="line">    <span class="comment">//2. 找到对应的SessionHolder将其存储</span></div><div class="line">    sessionHolder.setAttribute(sessionConfigItem, value);</div><div class="line"></div><div class="line">&#125;</div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">getAttribute</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">    <span class="keyword">final</span> SessionConfigItem sessionConfigItem = sessionConfig.getSessionConfigItem(name);</div><div class="line">    <span class="keyword">if</span> (sessionConfigItem == <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">final</span> SessionHolder sessionHolder = sessionHolders.get(sessionConfigItem.getHolderType());</div><div class="line">    <span class="keyword">if</span> (sessionHolder == <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> sessionHolder.getAttribute(sessionConfigItem);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="SessionHolder"><a href="#SessionHolder" class="headerlink" title="SessionHolder"></a>SessionHolder</h3><p>SessionHolder抽象了Session保存的接口，具体实现可以有好多种，比如你可以选择把session信息保存到cookie中，也可以将其保存到缓存中，甚至你可以将其保存到文件系统中。我自己写的session框架，根据前面的讨论，提供了两种存储方式，<code>CookieHolder</code>和<code>CacheHolder</code>分别对应客户端存储和服务器端缓存存储。在<code>CookieHolder</code>中要涉及到对cookie的解析，保存以及加密等操作，而<code>CacheHolder</code>涉及到从分布式缓存中查询到Session的信息以及同步session信息到缓存等一系列操作，具体代码我就不贴了。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-12-24T14:31:55.254Z" title="2016-12-24 22:31" itemprop="dateUpdated">2016年12月24日 22:31</time>
+</span><br>
+
+
+        
+    </div>
+    <footer>
+        <a href="http://builderqiu.com">
+            <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" alt="BuilderQiu">
+            BuilderQiu
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Session/">Session</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/08/JavaWebSessionFramework.html&title=《如何构建Java Web应用的session框架》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/08/JavaWebSessionFramework.html&title=《如何构建Java Web应用的session框架》 — 一本正经的扯淡&source=原文地址  
+做web开发的朋友都知道，一个网站在发展的过程中，随着流量的不断增加，必然会遇到伸缩性的问题，虽然目前硬件的价格已经在减低，有时候可以通过垂..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/08/JavaWebSessionFramework.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《如何构建Java Web应用的session框架》 — 一本正经的扯淡&url=http://builderqiu.com/2014/08/JavaWebSessionFramework.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/08/JavaWebSessionFramework.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/09/JavaCacheSampleImpl.html" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">简单的Java缓存实现</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/08/JavaClassLoaderDetail.html" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Java类加载器</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="JavaWebSessionFramework" data-title="如何构建Java Web应用的session框架" data-url="http://builderqiu.com/2014/08/JavaWebSessionFramework.html"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'builderqiu', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.2');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/BuilderQiu/hexo-theme-indigo" target="_blank">indigo</a> Base On <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>一本正经的扯淡 &copy; 2016</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/08/JavaWebSessionFramework.html&title=《如何构建Java Web应用的session框架》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/08/JavaWebSessionFramework.html&title=《如何构建Java Web应用的session框架》 — 一本正经的扯淡&source=原文地址  
+做web开发的朋友都知道，一个网站在发展的过程中，随着流量的不断增加，必然会遇到伸缩性的问题，虽然目前硬件的价格已经在减低，有时候可以通过垂..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/08/JavaWebSessionFramework.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《如何构建Java Web应用的session框架》 — 一本正经的扯淡&url=http://builderqiu.com/2014/08/JavaWebSessionFramework.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/08/JavaWebSessionFramework.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACIElEQVR42u3aQW7FMAgFwH//S6fbSlWSB+RXij1ZVW1lM14gY/h84u/49V3//vjzna2W7/LYh4GB8VrGcflNNjhjn/2cHMppJBgYGBswroOoBnQdRHKIeWwYGBgY18Hl7ORCma+DgYGB0Vu6+p/XaRcDAwOjV8QmG/dew6qXSwwMjN0Y1Yez//z5K/0NDAyMVzGO4jdpcE6e526iwsDAWJqRJ7hqQNV1kqL65uAwMDAWZfQGLHoNy94ZJzFgYGCszbj+Q68NmTc+8yGMQoQYGBiLMqrlYq950Lt0PtbCxMDAeC2jnJUHjc/qGFlhBAQDA2NpxuRZv9o26I2RFQYsMDAwFmXkDcunhreSQMsHhIGBsRkjb0xWGwbV+a4cj4GBsTajeov89hhZ70KJgYGxNiNPrNVBinzYopfcm0tgYGC8llFNmtUeaQ9cGLbAwMDYgDHPWs3tW+UrBgbGboxJKZuTJo3PPB1jYGDswMhrw0kBXC10e4kYAwNjPcZ1ouyl2l6go+c5DAyMbRhJaZpvmef43iNdeQkMDIyXM/KyMIfl6bV3VcXAwNiBMRnzmgxn5BfKqGzGwMBYmjFJdr0Ctdp4KF8QMTAwFmVUQ8wvgr0zayZcDAyMDRiFJ/hg+2q6zKk3tTgGBgZGfNOctw2at1cMDAyMMXIyQHaTdjEwMDZgVFuS1eezpNDtrYmBgbEDo3rvStLfU+H2dsHAwFiI8QMHvnRyOmu4NwAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

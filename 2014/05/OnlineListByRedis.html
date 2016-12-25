@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>基于Redis的在线用户列表解决方案 | 一本正经的扯淡 | U Still Don&#39;t Know</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Redis,在线列表,SessionListener">
+    <meta name="description" content="采用Redis完成集群环境下的在线用户列表实现方案，单机环境可以直接依靠SessionListener完成">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于Redis的在线用户列表解决方案">
+<meta property="og:url" content="http://builderqiu.com/2014/05/OnlineListByRedis.html">
+<meta property="og:site_name" content="一本正经的扯淡">
+<meta property="og:description" content="采用Redis完成集群环境下的在线用户列表实现方案，单机环境可以直接依靠SessionListener完成">
+<meta property="og:updated_time" content="2016-12-25T08:23:20.876Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于Redis的在线用户列表解决方案">
+<meta name="twitter:description" content="采用Redis完成集群环境下的在线用户列表实现方案，单机环境可以直接依靠SessionListener完成">
+    
+        <link rel="alternative" href="/atom.xml" title="一本正经的扯淡" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.2">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">BuilderQiu</h5>
+          
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/BuilderQiu" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">基于Redis的在线用户列表解决方案</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">基于Redis的在线用户列表解决方案</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-05-25T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-05-26
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前言："><span class="post-toc-text">前言：</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#现有解决方案："><span class="post-toc-text">现有解决方案：</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#单机环境下的解决方案："><span class="post-toc-text">单机环境下的解决方案：</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#基于HttpSessionListener："><span class="post-toc-text">基于HttpSessionListener：</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#基于Redis的解决方案："><span class="post-toc-text">基于Redis的解决方案：</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis连接池工具类："><span class="post-toc-text">Redis连接池工具类：</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#附录："><span class="post-toc-text">附录：</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis连接池配置文件："><span class="post-toc-text">Redis连接池配置文件：</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-OnlineListByRedis"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        
+          <h1 class="post-card-title" >基于Redis的在线用户列表解决方案</h1>
+        
+        <div class="post-meta">
+            <time class="post-time" title="2014-5-26 0:00" datetime="2014-05-25T16:00:00.000Z"  itemprop="datePublished">2014-05-26</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>由于项目需求，需要在集群环境下实现在线用户列表的功能，并依靠在线列表实现用户单一登陆（同一账户只能一处登陆）功能：</p>
+<p>在单机环境下，在线列表的实现方案可以采用SessionListener来完成，当有Session创建和销毁的时候做相应的操作即可完成功能及将相应的Session的引用存放于内存中，由于持有了所有的Session的引用，故可以方便的实现用户单一登陆的功能（比如在第二次登陆的时候使之前登陆的账户所在的Session失效）。</p>
+<p>而在集群环境下，由于用户的请求可能分布在不同的Web服务器上，继续将在线用户列表储存在单机内存中已经不能满足需要，不同的Web服务器将会产生不同的在线列表，并且不能有效的实现单一用户登陆的功能，因为某一用户可能并不在接受到退出请求的Web服务器的在线用户列表中（在集群中的某台服务器上完成的登陆操作，而在其他服务器上完成退出操作）。</p>
+<a id="more"></a>
+<h2 id="现有解决方案："><a href="#现有解决方案：" class="headerlink" title="现有解决方案："></a>现有解决方案：</h2><p>1.将用户的在线情况记录进入数据库中，依靠数据库完成对登陆状况的检测</p>
+<p>2.将在线列表放在一个公共的缓存服务器上</p>
+<p>由于缓存服务器可以为缓存内容设置指定有效期，可以方便实现Session过期的效果，以及避免让数据库的读写性能成为系统瓶颈等原因，我们采用了Redis来作为缓存服务器用于实现该功能。</p>
+<h2 id="单机环境下的解决方案："><a href="#单机环境下的解决方案：" class="headerlink" title="单机环境下的解决方案："></a>单机环境下的解决方案：</h2><h3 id="基于HttpSessionListener："><a href="#基于HttpSessionListener：" class="headerlink" title="基于HttpSessionListener："></a>基于HttpSessionListener：</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Date;</div><div class="line"><span class="keyword">import</span> java.util.Hashtable;</div><div class="line"><span class="keyword">import</span> java.util.Iterator;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpSession;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpSessionEvent;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpSessionListener;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.xxx.common.util.StringUtil;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> *</div><div class="line"> * <span class="doctag">@ClassName</span>: SessionListener</div><div class="line"> * <span class="doctag">@Description</span>: 记录所有登陆的Session信息，为在线列表做基础</div><div class="line"> * <span class="doctag">@author</span> BuilderQiu</div><div class="line"> * <span class="doctag">@date</span> 2013-9-18 09:35:13</div><div class="line"> *</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SessionListener</span> <span class="keyword">implements</span> <span class="title">HttpSessionListener</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">//在线列表&lt;uid,session&gt;</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Hashtable&lt;String,HttpSession&gt; sessionList = <span class="keyword">new</span> Hashtable&lt;String, HttpSession&gt;();</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sessionCreated</span><span class="params">(HttpSessionEvent event)</span> </span>&#123;</div><div class="line">        <span class="comment">//不做处理，只处理登陆用户的列表</span></div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sessionDestroyed</span><span class="params">(HttpSessionEvent event)</span> </span>&#123;</div><div class="line">        removeSession(event.getSession());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">removeSession</span><span class="params">(HttpSession session)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(session == <span class="keyword">null</span>)&#123;</div><div class="line">            <span class="keyword">return</span> ;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        String uid=(String)session.getAttribute(<span class="string">"clientUserId"</span>);<span class="comment">//已登陆状态会将用户的UserId保存在session中</span></div><div class="line">        <span class="keyword">if</span>(!StringUtil.isBlank(uid))&#123;<span class="comment">//判断是否登陆状态</span></div><div class="line">            removeSession(uid);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">removeSession</span><span class="params">(String uid)</span></span>&#123;</div><div class="line">        HttpSession session = sessionList.get(uid);</div><div class="line">        <span class="keyword">try</span>&#123;</div><div class="line">            sessionList.remove(uid);<span class="comment">//先执行，防止session.invalidate()报错而不执行</span></div><div class="line">            <span class="keyword">if</span>(session != <span class="keyword">null</span>)&#123;</div><div class="line">                session.invalidate();</div><div class="line">            &#125;</div><div class="line">        &#125;<span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            System.out.println(<span class="string">"Session invalidate error!"</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">addSession</span><span class="params">(String uid,HttpSession session)</span></span>&#123;</div><div class="line">        sessionList.put(uid, session);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getSessionCount</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> sessionList.size();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Iterator&lt;HttpSession&gt; <span class="title">getSessionSet</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> sessionList.values().iterator();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> HttpSession <span class="title">getSession</span><span class="params">(String id)</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> sessionList.get(id);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(String uid)</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> sessionList.containsKey(uid);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     *</div><div class="line">     * <span class="doctag">@Title</span>: isLoginOnThisSession</div><div class="line">     * <span class="doctag">@Description</span>: 检测是否已经登陆</div><div class="line">     * <span class="doctag">@param</span> <span class="doctag">@param</span> uid 用户UserId</div><div class="line">     * <span class="doctag">@param</span> <span class="doctag">@param</span> sid 发起请求的用户的SessionId</div><div class="line">     * <span class="doctag">@return</span> boolean true 校验通过</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isLoginOnThisSession</span><span class="params">(String uid,String sid)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(uid==<span class="keyword">null</span>||sid==<span class="keyword">null</span>)&#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span>(contains(uid))&#123;</div><div class="line">            HttpSession session = sessionList.get(uid);</div><div class="line"></div><div class="line">            <span class="keyword">if</span>(session!=<span class="keyword">null</span>&amp;&amp;session.getId().equals(sid))&#123;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>用户的在线状态全部维护记录在sessionList中，并且可以通过sessionList获取到任意用户的session对象，可以用来完成使指定用户离线的功能(调用该用户的session.invalidate()方法)。</p>
+<p>用户登录的时候调用addSession(uid,session)方法将用户与其登录的Session信息记录至sessionList中，再退出的时候调用removeSession(session) or removeSession(uid)方法，在强制下线的时候调用removeSession(uid)方法，以及一些其他的操作即可实现相应的功能。</p>
+<h2 id="基于Redis的解决方案："><a href="#基于Redis的解决方案：" class="headerlink" title="基于Redis的解决方案："></a>基于Redis的解决方案：</h2><p>该解决方案的实质是将在线列表的所在的内存共享出来，让集群环境下所有的服务器都能够访问到这部分数据，并且将用户的在线状态在这块内存中进行维护。</p>
+<h3 id="Redis连接池工具类："><a href="#Redis连接池工具类：" class="headerlink" title="Redis连接池工具类："></a>Redis连接池工具类：</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div><div class="line">276</div><div class="line">277</div><div class="line">278</div><div class="line">279</div><div class="line">280</div><div class="line">281</div><div class="line">282</div><div class="line">283</div><div class="line">284</div><div class="line">285</div><div class="line">286</div><div class="line">287</div><div class="line">288</div><div class="line">289</div><div class="line">290</div><div class="line">291</div><div class="line">292</div><div class="line">293</div><div class="line">294</div><div class="line">295</div><div class="line">296</div><div class="line">297</div><div class="line">298</div><div class="line">299</div><div class="line">300</div><div class="line">301</div><div class="line">302</div><div class="line">303</div><div class="line">304</div><div class="line">305</div><div class="line">306</div><div class="line">307</div><div class="line">308</div><div class="line">309</div><div class="line">310</div><div class="line">311</div><div class="line">312</div><div class="line">313</div><div class="line">314</div><div class="line">315</div><div class="line">316</div><div class="line">317</div><div class="line">318</div><div class="line">319</div><div class="line">320</div><div class="line">321</div><div class="line">322</div><div class="line">323</div><div class="line">324</div><div class="line">325</div><div class="line">326</div><div class="line">327</div><div class="line">328</div><div class="line">329</div><div class="line">330</div><div class="line">331</div><div class="line">332</div><div class="line">333</div><div class="line">334</div><div class="line">335</div><div class="line">336</div><div class="line">337</div><div class="line">338</div><div class="line">339</div><div class="line">340</div><div class="line">341</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.ResourceBundle;</div><div class="line"></div><div class="line"><span class="keyword">import</span> redis.clients.jedis.Jedis;</div><div class="line"><span class="keyword">import</span> redis.clients.jedis.JedisPool;</div><div class="line"><span class="keyword">import</span> redis.clients.jedis.JedisPoolConfig;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisPoolUtils</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> JedisPool pool;</div><div class="line"></div><div class="line">    <span class="keyword">static</span>&#123;</div><div class="line">        ResourceBundle bundle = ResourceBundle.getBundle(<span class="string">"redis"</span>);</div><div class="line">        JedisPoolConfig config = <span class="keyword">new</span> JedisPoolConfig();</div><div class="line">        <span class="keyword">if</span> (bundle == <span class="keyword">null</span>) &#123;    </div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"[redis.properties] is not found!"</span>);    </div><div class="line">        &#125;</div><div class="line">        <span class="comment">//设置池配置项值  </span></div><div class="line">        config.setMaxActive(Integer.valueOf(bundle.getString(<span class="string">"jedis.pool.maxActive"</span>)));    </div><div class="line">        config.setMaxIdle(Integer.valueOf(bundle.getString(<span class="string">"jedis.pool.maxIdle"</span>)));    </div><div class="line">        config.setMaxWait(Long.valueOf(bundle.getString(<span class="string">"jedis.pool.maxWait"</span>)));    </div><div class="line">        config.setTestOnBorrow(Boolean.valueOf(bundle.getString(<span class="string">"jedis.pool.testOnBorrow"</span>)));    </div><div class="line">        config.setTestOnReturn(Boolean.valueOf(bundle.getString(<span class="string">"jedis.pool.testOnReturn"</span>)));</div><div class="line"></div><div class="line">        pool = <span class="keyword">new</span> JedisPool(config, bundle.getString(<span class="string">"redis.ip"</span>),Integer.valueOf(bundle.getString(<span class="string">"redis.port"</span>)) );</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     *</div><div class="line">     * <span class="doctag">@Title</span>: release</div><div class="line">     * <span class="doctag">@Description</span>: 释放连接</div><div class="line">     * <span class="doctag">@param</span> <span class="doctag">@param</span> jedis</div><div class="line">     * <span class="doctag">@return</span> void</div><div class="line">     * <span class="doctag">@throws</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">release</span><span class="params">(Jedis jedis)</span></span>&#123;</div><div class="line">        pool.returnResource(jedis);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Jedis <span class="title">getJedis</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> pool.getResource();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line">Redis在线列表工具类：</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.util.ArrayList;</div><div class="line"><span class="keyword">import</span> java.util.Collections;</div><div class="line"><span class="keyword">import</span> java.util.Comparator;</div><div class="line"><span class="keyword">import</span> java.util.Date;</div><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"><span class="keyword">import</span> java.util.Set;</div><div class="line"></div><div class="line"><span class="keyword">import</span> net.sf.json.JSONObject;</div><div class="line"><span class="keyword">import</span> net.sf.json.JsonConfig;</div><div class="line"><span class="keyword">import</span> net.sf.json.processors.JsonValueProcessor;</div><div class="line"></div><div class="line"><span class="keyword">import</span> cn.sccl.common.util.StringUtil;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.xxx.common.util.JsonDateValueProcessor;</div><div class="line"><span class="keyword">import</span> com.xxx.user.model.ClientUser;</div><div class="line"></div><div class="line"><span class="keyword">import</span> redis.clients.jedis.Jedis;</div><div class="line"><span class="keyword">import</span> redis.clients.jedis.Pipeline;</div><div class="line"><span class="keyword">import</span> tools.Constants;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> *</div><div class="line"> * Redis缓存中存放两组key：</div><div class="line"> * 1.SID_PREFIX开头，存放登陆用户的SessionId与ClientUser的Json数据</div><div class="line"> * 2.UID_PREFIX开头，存放登录用户的UID与SessionId对于的数据</div><div class="line"> *</div><div class="line"> * 3.VID_PREFIX开头，存放位于指定页面用户的数据（与Ajax一起使用，用于实现指定页面同时浏览人数的限制功能）</div><div class="line"> *</div><div class="line"> * <span class="doctag">@ClassName</span>: OnlineUtils</div><div class="line"> * <span class="doctag">@Description</span>: 在线列表操作工具类</div><div class="line"> * <span class="doctag">@author</span> BuilderQiu</div><div class="line"> * <span class="doctag">@date</span> 2014-1-9 上午09:25:43</div><div class="line"> *</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OnlineUtils</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">//KEY值根据SessionID生成    </span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SID_PREFIX = <span class="string">"online:sid:"</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String UID_PREFIX = <span class="string">"online:uid:"</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String VID_PREFIX = <span class="string">"online:vid:"</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> OVERDATETIME = <span class="number">30</span> * <span class="number">60</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> BROADCAST_OVERDATETIME = <span class="number">70</span>;<span class="comment">//ax每60秒发起一次，超过BROADCAST_OVERDATETIME时间长度未发起表示已经离开该页面</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">login</span><span class="params">(String sid,ClientUser user)</span></span>&#123;</div><div class="line"></div><div class="line">        Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">        jedis.setex(SID_PREFIX+sid, OVERDATETIME, userToString(user));</div><div class="line">        jedis.setex(UID_PREFIX+user.getId(), OVERDATETIME, sid);</div><div class="line"></div><div class="line">        RedisPoolUtils.release(jedis);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">broadcast</span><span class="params">(String uid,String identify)</span></span>&#123;</div><div class="line"></div><div class="line">        <span class="keyword">if</span>(uid==<span class="keyword">null</span>||<span class="string">""</span>.equals(uid)) <span class="comment">//异常数据，正常情况下登陆用户才会发起该请求</span></div><div class="line">            <span class="keyword">return</span> ;</div><div class="line"></div><div class="line">        Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">        jedis.setex(VID_PREFIX+identify+<span class="string">":"</span>+uid, BROADCAST_OVERDATETIME, uid);</div><div class="line"></div><div class="line">        RedisPoolUtils.release(jedis);</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">userToString</span><span class="params">(ClientUser user)</span></span>&#123;</div><div class="line">        JsonConfig  config = <span class="keyword">new</span> JsonConfig();</div><div class="line">        JsonValueProcessor processor = <span class="keyword">new</span> JsonDateValueProcessor(<span class="string">"yyyy-MM-dd HH:mm:ss"</span>);</div><div class="line">        config.registerJsonValueProcessor(Date.class, processor);</div><div class="line">        JSONObject obj = JSONObject.fromObject(user, config);</div><div class="line"></div><div class="line">        <span class="keyword">return</span> obj.toString();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     *</div><div class="line">     * <span class="doctag">@Title</span>: logout</div><div class="line">     * <span class="doctag">@Description</span>: 退出</div><div class="line">     * <span class="doctag">@param</span> <span class="doctag">@param</span> sessionId</div><div class="line">     * <span class="doctag">@return</span> void</div><div class="line">     * <span class="doctag">@throws</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">logout</span><span class="params">(String sid,String uid)</span></span>&#123;</div><div class="line"></div><div class="line">        Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">        jedis.del(SID_PREFIX+sid);</div><div class="line">        jedis.del(UID_PREFIX+uid);</div><div class="line"></div><div class="line">        RedisPoolUtils.release(jedis);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     *</div><div class="line">     * <span class="doctag">@Title</span>: logout</div><div class="line">     * <span class="doctag">@Description</span>: 退出</div><div class="line">     * <span class="doctag">@param</span> <span class="doctag">@param</span> UserId  使指定用户下线</div><div class="line">     * <span class="doctag">@return</span> void</div><div class="line">     * <span class="doctag">@throws</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">logout</span><span class="params">(String uid)</span></span>&#123;</div><div class="line">        Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">        <span class="comment">//删除sid</span></div><div class="line">        jedis.del(SID_PREFIX+jedis.get(UID_PREFIX+uid));</div><div class="line">        <span class="comment">//删除uid</span></div><div class="line">        jedis.del(UID_PREFIX+uid);</div><div class="line"></div><div class="line">        RedisPoolUtils.release(jedis);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getClientUserBySessionId</span><span class="params">(String sid)</span></span>&#123;</div><div class="line"></div><div class="line">        Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">        String user = jedis.get(SID_PREFIX+sid);</div><div class="line"></div><div class="line">        RedisPoolUtils.release(jedis);</div><div class="line"></div><div class="line">        <span class="keyword">return</span> user;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getClientUserByUid</span><span class="params">(String uid)</span></span>&#123;</div><div class="line">        Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">        String user = jedis.get(SID_PREFIX+jedis.get(UID_PREFIX+uid));</div><div class="line"></div><div class="line">        RedisPoolUtils.release(jedis);</div><div class="line"></div><div class="line">        <span class="keyword">return</span> user;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     *</div><div class="line">     * <span class="doctag">@Title</span>: online</div><div class="line">     * <span class="doctag">@Description</span>: 所有的key</div><div class="line">     * <span class="doctag">@return</span> List  </div><div class="line">     * <span class="doctag">@throws</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List <span class="title">online</span><span class="params">()</span></span>&#123;</div><div class="line"></div><div class="line">        Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">        Set online = jedis.keys(SID_PREFIX+<span class="string">"*"</span>);</div><div class="line"></div><div class="line">        RedisPoolUtils.release(jedis);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ArrayList(online);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     *</div><div class="line">     * <span class="doctag">@Title</span>: online</div><div class="line">     * <span class="doctag">@Description</span>: 分页显示在线列表</div><div class="line">     * <span class="doctag">@return</span> List  </div><div class="line">     * <span class="doctag">@throws</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List <span class="title">onlineByPage</span><span class="params">(<span class="keyword">int</span> page,<span class="keyword">int</span> pageSize)</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line"></div><div class="line">        Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">        Set onlineSet = jedis.keys(SID_PREFIX+<span class="string">"*"</span>);</div><div class="line"></div><div class="line"></div><div class="line">        List onlines =<span class="keyword">new</span> ArrayList(onlineSet);</div><div class="line"></div><div class="line">        <span class="keyword">if</span>(onlines.size() == <span class="number">0</span>)&#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        Pipeline pip = jedis.pipelined();</div><div class="line">        <span class="keyword">for</span>(Object key:onlines)&#123;</div><div class="line">            pip.get(getKey(key));</div><div class="line">        &#125;</div><div class="line">        List result = pip.syncAndReturnAll();</div><div class="line">        RedisPoolUtils.release(jedis);</div><div class="line"></div><div class="line">        List&lt;ClientUser&gt; listUser=<span class="keyword">new</span> ArrayList&lt;ClientUser&gt;();</div><div class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;result.size();i++)&#123;</div><div class="line">            listUser.add(Constants.json2ClientUser((String)result.get(i)));</div><div class="line">        &#125;</div><div class="line">        Collections.sort(listUser,<span class="keyword">new</span> Comparator&lt;ClientUser&gt;()&#123;</div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(ClientUser o1, ClientUser o2)</span> </span>&#123;</div><div class="line">                <span class="keyword">return</span> o2.getLastLoginTime().compareTo(o1.getLastLoginTime());</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">        onlines=listUser;</div><div class="line">        <span class="keyword">int</span> start = (page - <span class="number">1</span>) * pageSize;</div><div class="line">        <span class="keyword">int</span> toIndex=(start+pageSize)&gt;onlines.size()?onlines.size():start+pageSize;</div><div class="line">        List list = onlines.subList(start, toIndex);</div><div class="line"></div><div class="line">        <span class="keyword">return</span> list;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">getKey</span><span class="params">(Object obj)</span></span>&#123;</div><div class="line"></div><div class="line">        String temp = String.valueOf(obj);</div><div class="line">        String key[] = temp.split(<span class="string">":"</span>);</div><div class="line"></div><div class="line">        <span class="keyword">return</span> SID_PREFIX+key[key.length-<span class="number">1</span>];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     *</div><div class="line">     * <span class="doctag">@Title</span>: onlineCount</div><div class="line">     * <span class="doctag">@Description</span>: 总在线人数</div><div class="line">     * <span class="doctag">@param</span> <span class="doctag">@return</span></div><div class="line">     * <span class="doctag">@return</span> int</div><div class="line">     * <span class="doctag">@throws</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">onlineCount</span><span class="params">()</span></span>&#123;</div><div class="line"></div><div class="line">        Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">        Set online = jedis.keys(SID_PREFIX+<span class="string">"*"</span>);</div><div class="line"></div><div class="line">        RedisPoolUtils.release(jedis);</div><div class="line"></div><div class="line">        <span class="keyword">return</span> online.size();</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 获取指定页面在线人数总数</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">broadcastCount</span><span class="params">(String identify)</span> </span>&#123;</div><div class="line">        Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">        Set online = jedis.keys(VID_PREFIX+identify+<span class="string">":*"</span>);</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">        RedisPoolUtils.release(jedis);</div><div class="line"></div><div class="line">        <span class="keyword">return</span> online.size();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 自己是否在线</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">broadcastIsOnline</span><span class="params">(String identify,String uid)</span> </span>&#123;</div><div class="line"></div><div class="line">        Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">        String online = jedis.get(VID_PREFIX+identify+<span class="string">":"</span>+uid);</div><div class="line"></div><div class="line">        RedisPoolUtils.release(jedis);</div><div class="line"></div><div class="line">        <span class="keyword">return</span> !StringUtil.isBlank(online);<span class="comment">//不为空就代表已经找到数据了，也就是上线了</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 获取指定页面在线人数总数</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">broadcastCount</span><span class="params">()</span> </span>&#123;</div><div class="line">        Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">        Set online = jedis.keys(VID_PREFIX+<span class="string">"*"</span>);</div><div class="line"></div><div class="line">        RedisPoolUtils.release(jedis);</div><div class="line"></div><div class="line">        <span class="keyword">return</span> online.size();</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     *</div><div class="line">     * <span class="doctag">@Title</span>: isOnline</div><div class="line">     * <span class="doctag">@Description</span>: 指定账号是否登陆</div><div class="line">     * <span class="doctag">@param</span> <span class="doctag">@param</span> sessionId</div><div class="line">     * <span class="doctag">@param</span> <span class="doctag">@return</span></div><div class="line">     * <span class="doctag">@return</span> boolean</div><div class="line">     * <span class="doctag">@throws</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isOnline</span><span class="params">(String uid)</span></span>&#123;</div><div class="line"></div><div class="line">        Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">        <span class="keyword">boolean</span> isLogin = jedis.exists(UID_PREFIX+uid);</div><div class="line"></div><div class="line">        RedisPoolUtils.release(jedis);</div><div class="line"></div><div class="line">        <span class="keyword">return</span> isLogin;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isOnline</span><span class="params">(String uid,String sid)</span></span>&#123;</div><div class="line"></div><div class="line">        Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">        String loginSid = jedis.get(UID_PREFIX+uid);</div><div class="line"></div><div class="line">        RedisPoolUtils.release(jedis);</div><div class="line"></div><div class="line">        <span class="keyword">return</span> sid.equals(loginSid);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>由于在线状态是记录在Redis中的，并不单纯依靠Session的过期机制来实现，所以需要通过拦截器在每次发送请求的时候去更新Redis中相应的缓存过期时间来更新用户的在线状态。</p>
+<p>登陆、退出操作与单机版相似，强制下线需要配合拦截器实现，当用户下次访问的时候，自己来校验自己的状态是否为已经下线，不再由服务器控制。</p>
+<p>配合拦截器实现在线状态维持与强制登陆(使其他地方登陆了该账户的用户下线)功能：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line"><span class="keyword">if</span>(uid != <span class="keyword">null</span>)&#123;<span class="comment">//已登录</span></div><div class="line">    <span class="keyword">if</span>(!OnlineUtils.isOnline(uid, session.getId()))&#123;</div><div class="line">        session.invalidate();</div><div class="line"></div><div class="line">        <span class="keyword">return</span> ai.invoke();</div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">        OnlineUtils.login(session.getId(), (ClientUser)session.getAttribute(<span class="string">"clientUser"</span>));</div><div class="line">        <span class="comment">//刷新缓存</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">...</div></pre></td></tr></table></figure>
+<p>注：Redis在线列表工具类中的部分代码是后来需要实现限制同时访问指定页面浏览人数功能而添加的，同样基于Redis实现，前端由Ajax轮询来更新用户停留页面的状态。</p>
+<h2 id="附录："><a href="#附录：" class="headerlink" title="附录："></a>附录：</h2><h3 id="Redis连接池配置文件："><a href="#Redis连接池配置文件：" class="headerlink" title="Redis连接池配置文件："></a>Redis连接池配置文件：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">###redis##config########</div><div class="line">#redis服务器ip #</div><div class="line">#redis.ip=localhost</div><div class="line">#redis服务器端口号#</div><div class="line">redis.port=6379</div><div class="line"></div><div class="line">###jedis##pool##config###</div><div class="line">#jedis的最大分配对象#</div><div class="line">jedis.pool.maxActive=1024</div><div class="line">#jedis最大保存idel状态对象数 #</div><div class="line">jedis.pool.maxIdle=200</div><div class="line">#jedis池没有对象返回时，最大等待时间 #</div><div class="line">jedis.pool.maxWait=1000</div><div class="line">#jedis调用borrowObject方法时，是否进行有效检查#</div><div class="line">jedis.pool.testOnBorrow=true</div><div class="line">#jedis调用returnObject方法时，是否进行有效检查 #</div><div class="line">jedis.pool.testOnReturn=true</div></pre></td></tr></table></figure>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-12-25T08:23:20.876Z" title="2016-12-25 16:23" itemprop="dateUpdated">2016年12月25日 16:23</time>
+</span><br>
+
+
+        
+    </div>
+    <footer>
+        <a href="http://builderqiu.com">
+            <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" alt="BuilderQiu">
+            BuilderQiu
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/">Redis</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SessionListener/">SessionListener</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/在线列表/">在线列表</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/05/OnlineListByRedis.html&title=《基于Redis的在线用户列表解决方案》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/05/OnlineListByRedis.html&title=《基于Redis的在线用户列表解决方案》 — 一本正经的扯淡&source=前言：由于项目需求，需要在集群环境下实现在线用户列表的功能，并依靠在线列表实现用户单一登陆（同一账户只能一处登陆）功能：
+在单机环境下，在线列表的实现方案..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/05/OnlineListByRedis.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《基于Redis的在线用户列表解决方案》 — 一本正经的扯淡&url=http://builderqiu.com/2014/05/OnlineListByRedis.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/05/OnlineListByRedis.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/05/LinuxSoftwareInstallBackup.html" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Linux服务器软件安装备忘</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/05/GitComand.html" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Git常用命令</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="OnlineListByRedis" data-title="基于Redis的在线用户列表解决方案" data-url="http://builderqiu.com/2014/05/OnlineListByRedis.html"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'builderqiu', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.2');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/BuilderQiu/hexo-theme-indigo" target="_blank">indigo</a> Base On <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>一本正经的扯淡 &copy; 2016</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/05/OnlineListByRedis.html&title=《基于Redis的在线用户列表解决方案》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/05/OnlineListByRedis.html&title=《基于Redis的在线用户列表解决方案》 — 一本正经的扯淡&source=前言：由于项目需求，需要在集群环境下实现在线用户列表的功能，并依靠在线列表实现用户单一登陆（同一账户只能一处登陆）功能：
+在单机环境下，在线列表的实现方案..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/05/OnlineListByRedis.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《基于Redis的在线用户列表解决方案》 — 一本正经的扯淡&url=http://builderqiu.com/2014/05/OnlineListByRedis.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/05/OnlineListByRedis.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACIUlEQVR42u3aS27DMAwFwNz/0u4BEjuPpFPA0mgVFIms8YLlR69XvI63dfad/PPZzmf737AwMDAeyzguV36U5C/Xe559J6JiYGBswMgDaH646z2TgJucDQMDA6P6+EKIjAMxBgYGRs6oPmCSIGJgYGD0itjJY6pl6g9rcQwMjAcy8q77/3/+yXwDAwPjUYxJCZqkdJNgWjgVBgbG0ozeCLM6PJiME/LrHRgYGKsyqtcm8hDca/3nZeqH/xsYGBjbMHpXu5Lkb7Lnl1eMgYGxDWNSrCahs7pzIbnEwMBYmtErUPOksHqBI38dGBgYuzHyhyXJX++4eRlcGHBiYGAsxOgNAKql6V2F8Zf5BgYGxgaMe++a9Y5YLYAxMDB2YFSTxSR0FgaQP9gfAwNjJUbe4u819HvDy3KKiYGBsTRjHiiT6xF5k27SqsPAwFibMSkge1nnpMWGgYGxJyO/MJqEy8mFieqIAgMDY0/GpDWfv467WnUfKnIMDIylGdXysldwVgvdwgvCwMDYhlEIcHHonI8fovQUAwNjaUb+s3z0mOx8V6sOAwNjbcZRXIUJQ6s0rSaLGBgYOzDy1Wul5SXr9Q699BEDA2MlRj5cTK6F5aVsNWXEwMDA6KVrOSYPrEnoL9fKGBgYmzGSHt7kt1F3EAMDA2NwkWISQEeVNwYGxgaMXtlZTRnzYrgcjjEwMJZmzMNi7/pFdTh623wDAwPjSYw/7VO3PckoqH0AAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

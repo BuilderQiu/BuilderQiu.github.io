@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>在Servlet(或者Filter，或者Listener)中使用spring的IOC容器 | 一本正经的扯淡 | U Still Don&#39;t Know</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Spring">
+    <meta name="description" content="web.xml中的加载顺序为：listener &amp;gt; filter &amp;gt; servlet &amp;gt; spring。其中filter的执行顺序是filter-mapping在web.xml中出现的先后顺序。加载顺序会影响对Spring bean的调用。比如filter需要用到bean ，但是加载顺序是先加载filter后加载Spring，则filter中初始化操作中的bean为null。所以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在Servlet(或者Filter，或者Listener)中使用spring的IOC容器">
+<meta property="og:url" content="http://builderqiu.com/2014/05/UseSpringInServlet.html">
+<meta property="og:site_name" content="一本正经的扯淡">
+<meta property="og:description" content="web.xml中的加载顺序为：listener &amp;gt; filter &amp;gt; servlet &amp;gt; spring。其中filter的执行顺序是filter-mapping在web.xml中出现的先后顺序。加载顺序会影响对Spring bean的调用。比如filter需要用到bean ，但是加载顺序是先加载filter后加载Spring，则filter中初始化操作中的bean为null。所以">
+<meta property="og:updated_time" content="2016-12-25T08:23:35.072Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在Servlet(或者Filter，或者Listener)中使用spring的IOC容器">
+<meta name="twitter:description" content="web.xml中的加载顺序为：listener &amp;gt; filter &amp;gt; servlet &amp;gt; spring。其中filter的执行顺序是filter-mapping在web.xml中出现的先后顺序。加载顺序会影响对Spring bean的调用。比如filter需要用到bean ，但是加载顺序是先加载filter后加载Spring，则filter中初始化操作中的bean为null。所以">
+    
+        <link rel="alternative" href="/atom.xml" title="一本正经的扯淡" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.2">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">BuilderQiu</h5>
+          
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/BuilderQiu" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">在Servlet(或者Filter，或者Listener)中使用spring的IOC容器</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">在Servlet(或者Filter，或者Listener)中使用spring的IOC容器</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-05-20T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-05-21
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+<article id="post-UseSpringInServlet"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        
+          <h1 class="post-card-title" >在Servlet(或者Filter，或者Listener)中使用spring的IOC容器</h1>
+        
+        <div class="post-meta">
+            <time class="post-time" title="2014-5-21 0:00" datetime="2014-05-20T16:00:00.000Z"  itemprop="datePublished">2014-05-21</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>web.xml中的加载顺序为：listener &gt; filter &gt; servlet &gt; spring。<br>其中filter的执行顺序是filter-mapping在web.xml中出现的先后顺序。<br>加载顺序会影响对Spring bean的调用。比如filter需要用到bean ，但是加载顺序是先加载filter后加载Spring，则filter中初始化操作中的bean为null。所以，如果过滤器中要使用到 bean，可以将spring 的加载改成Listener的方式。</p>
+<a id="more"></a>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">context-param</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">param-value</span>&gt;</span>classpath:applicationContext.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">listener</span>&gt;</span>   </div><div class="line">	<span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span>   </div><div class="line"><span class="tag">&lt;/<span class="name">listener</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>  ContextLoaderListener的作用就是启动Web容器时，自动装配ApplicationContext的配置信息。<br>如果在web.xml中不写任何参数配置信息，默认的路径是”/WEB-INF/applicationContext.xml”，在WEB-INF目录下创建的xml文件的名称必须是applicationContext.xml。如果是要自定义文件名可以在web.xml里加入contextConfigLocation这个context参数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> ApplicationContext ctx = <span class="keyword">null</span>;</div><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">getBean</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (ctx == <span class="keyword">null</span>) &#123;</div><div class="line">        ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(<span class="keyword">this</span>.servletContext);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> ctx.getBean(name);</div><div class="line">&#125;</div><div class="line">``` 	</div><div class="line"></div><div class="line"> 在Servlet或者filter或者Listener中使用Spring的IOC容器的方法是：</div><div class="line"></div><div class="line">```java</div><div class="line">WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(request.getSession().getServletContext());</div></pre></td></tr></table></figure>
+<p>  由于spring是注入的对象放在ServletContext中的，所以可以直接在ServletContext取出WebApplicationContext 对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">WebApplicationContext webApplicationContext = (WebApplicationContext) servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);</div></pre></td></tr></table></figure>
+<p>  事实上WebApplicationContextUtils.getWebApplicationContext方法就是使用上面的代码实现的，建议使用上面上面的静态方法</p>
+<p>  注意：在使用webApplicationContext.getBean(“ServiceName”)的时候，前面强制转化要使用接口，如果使用实现类会报类型转换错误。如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">UserService userService ＝ (UserService) webApplicationContext.getBean(<span class="string">"userService"</span>);</div></pre></td></tr></table></figure>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-12-25T08:23:35.072Z" title="2016-12-25 16:23" itemprop="dateUpdated">2016年12月25日 16:23</time>
+</span><br>
+
+
+        
+    </div>
+    <footer>
+        <a href="http://builderqiu.com">
+            <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" alt="BuilderQiu">
+            BuilderQiu
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/05/UseSpringInServlet.html&title=《在Servlet(或者Filter，或者Listener)中使用spring的IOC容器》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/05/UseSpringInServlet.html&title=《在Servlet(或者Filter，或者Listener)中使用spring的IOC容器》 — 一本正经的扯淡&source=web.xml中的加载顺序为：listener &gt; filter &gt; servlet &gt; spring。其中filter的执行顺序是fi..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/05/UseSpringInServlet.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《在Servlet(或者Filter，或者Listener)中使用spring的IOC容器》 — 一本正经的扯淡&url=http://builderqiu.com/2014/05/UseSpringInServlet.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/05/UseSpringInServlet.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/05/MemcacheAnnotationBaseOnSpringAop.html" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">基于Annotation与SpringAOP的缓存简单解决方案</h4>
+      </a>
+    </div>
+  
+
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="UseSpringInServlet" data-title="在Servlet(或者Filter，或者Listener)中使用spring的IOC容器" data-url="http://builderqiu.com/2014/05/UseSpringInServlet.html"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'builderqiu', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.2');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/BuilderQiu/hexo-theme-indigo" target="_blank">indigo</a> Base On <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>一本正经的扯淡 &copy; 2016</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/05/UseSpringInServlet.html&title=《在Servlet(或者Filter，或者Listener)中使用spring的IOC容器》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/05/UseSpringInServlet.html&title=《在Servlet(或者Filter，或者Listener)中使用spring的IOC容器》 — 一本正经的扯淡&source=web.xml中的加载顺序为：listener &gt; filter &gt; servlet &gt; spring。其中filter的执行顺序是fi..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/05/UseSpringInServlet.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《在Servlet(或者Filter，或者Listener)中使用spring的IOC容器》 — 一本正经的扯淡&url=http://builderqiu.com/2014/05/UseSpringInServlet.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/05/UseSpringInServlet.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJElEQVR42u3awa7jIAwF0Pz/T7+RZjfqa3uvSUcqHFZVlRAfFhYYX1c8fv6Ox3+Skcz2OOf1iYGBgfG1jCSIJKD8+deBPs4TLRAGBsYBjHy6JKzkw8kSFCkbAwMDI9iuPUvTCX4l0WNgYGC0n0kw+TYUAwMDoz3EJoCVcl4OxsDAOI3RXgz8z98fvN/AwMD4EsZPOfIZ7vpiFBUGBsbWjHaTNwt6tvnLt6QYGBh7M9pQ2gNte+jNrxb+mQEDA2NrRnLR2BbU8gS6Mn90g4qBgbEF4952hyTEWbntTZwYGBhbM2aJNQlxpf2ibQHBwMA4jdFuEFfSa9tqhoGBcTLjrpSXJ9C2YFekeAwMjO0Y+aM5b2XDN/wWBgbGYYxZ88SszaJt+3j6dQwMjGMYnyiN1UfQ0aEaAwPjBEabTNeT78rB+Je3MDAwtmbkJfvX4xqN9t03iR4DA2NTRt5I2jaHta0YySI+fRcDA2NrRpubZ+B2sZJS3ZtkjYGBsRGjLdm3pbe2bNcW7DAwMM5htFO0KbVNo6+3hr/8j4GBsTUj336thFLX/2bJFwMDY1PG7AJgffOXI6NGMQwMjK0Zs+vGfEvXHonzZRpeoGJgYHwto02ybbGsbbloY8DAwDiHMSu03XsoXXoSAwMDIy7fr/R9zA7VGBgYGAljPXEnx9roEIuBgbE1I0+a60W3u+a/WisGBsbXMlaKYnkxLue1jWUYGBhbM/4AcTbRP+K549AAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

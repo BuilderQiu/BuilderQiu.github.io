@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>基于Annotation与SpringAOP的缓存简单解决方案 | 一本正经的扯淡 | U Still Don&#39;t Know</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Spring,Annotation">
+    <meta name="description" content="前言：  由于项目的原因，需要对项目中大量访问多修改少的数据进行缓存并管理，为达到开发过程中通过Annotation简单的配置既可以完成对缓存的设置与更新的需求，故而设计的该简易的解决方案。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于Annotation与SpringAOP的缓存简单解决方案">
+<meta property="og:url" content="http://builderqiu.com/2014/05/MemcacheAnnotationBaseOnSpringAop.html">
+<meta property="og:site_name" content="一本正经的扯淡">
+<meta property="og:description" content="前言：  由于项目的原因，需要对项目中大量访问多修改少的数据进行缓存并管理，为达到开发过程中通过Annotation简单的配置既可以完成对缓存的设置与更新的需求，故而设计的该简易的解决方案。">
+<meta property="og:updated_time" content="2016-12-25T08:23:12.098Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于Annotation与SpringAOP的缓存简单解决方案">
+<meta name="twitter:description" content="前言：  由于项目的原因，需要对项目中大量访问多修改少的数据进行缓存并管理，为达到开发过程中通过Annotation简单的配置既可以完成对缓存的设置与更新的需求，故而设计的该简易的解决方案。">
+    
+        <link rel="alternative" href="/atom.xml" title="一本正经的扯淡" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.2">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">BuilderQiu</h5>
+          
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/BuilderQiu" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">基于Annotation与SpringAOP的缓存简单解决方案</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">基于Annotation与SpringAOP的缓存简单解决方案</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-05-20T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-05-21
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前言："><span class="post-toc-text">前言：</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实现细节："><span class="post-toc-text">实现细节：</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#使用案例："><span class="post-toc-text">使用案例：</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-使用缓存："><span class="post-toc-text">1.使用缓存：</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-更新缓存："><span class="post-toc-text">2.更新缓存：</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#扩展："><span class="post-toc-text">扩展：</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-MemcacheAnnotationBaseOnSpringAop"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        
+          <h1 class="post-card-title" >[原]基于Annotation与SpringAOP的缓存简单解决方案</h1>
+        
+        <div class="post-meta">
+            <time class="post-time" title="2014-5-21 0:00" datetime="2014-05-20T16:00:00.000Z"  itemprop="datePublished">2014-05-21</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>  由于项目的原因，需要对项目中大量访问多修改少的数据进行缓存并管理，为达到开发过程中通过Annotation简单的配置既可以完成对缓存的设置与更新的需求，故而设计的该简易的解决方案。</p>
+<a id="more"></a>
+<p>涉及技术：</p>
+<p>1.Spring AOP</p>
+<p>2.Java Annotation</p>
+<p>3.Memcache （项目中使用的缓存组件）</p>
+<p>4.JVM基础 （Class文件结构，用于解析出方法中的形参名称，动态生成缓存key，目测效率不高0.0）</p>
+<p>5.Ognl （用于动态解析缓存的key）</p>
+<h2 id="实现细节："><a href="#实现细节：" class="headerlink" title="实现细节："></a>实现细节：</h2><p>  Annotation：LoadFromMemcached<br>  用于method之上的注解，作用是使带有该注解的method在调用的时候先经过缓存查询，缓存中查询不到再去数据库查询并将结果缓存至缓存服务器Memcache中，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.lang.annotation.ElementType;</div><div class="line"><span class="keyword">import</span> java.lang.annotation.Retention;</div><div class="line"><span class="keyword">import</span> java.lang.annotation.RetentionPolicy;</div><div class="line"><span class="keyword">import</span> java.lang.annotation.Target;</div><div class="line"></div><div class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</div><div class="line"><span class="meta">@Target</span>(ElementType.METHOD)</div><div class="line"><span class="keyword">public</span> <span class="meta">@interface</span> LoadFromMemcached &#123;</div><div class="line"></div><div class="line">   <span class="function">String <span class="title">value</span><span class="params">()</span></span>;<span class="comment">//缓存的key     </span></div><div class="line"></div><div class="line">   <span class="function"><span class="keyword">int</span> <span class="title">timeScope</span><span class="params">()</span> <span class="keyword">default</span> 600</span>;<span class="comment">//默认过期时间，单位秒</span></div><div class="line"></div><div class="line">   <span class="function">String <span class="title">condition</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;<span class="comment">//执行缓存查询的条件</span></div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Annotation：UpdateForMemcached 类似于LoadFromMemcached，作用是使带有该注解的method在调用的时候更新缓存服务器中的缓存，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.lang.annotation.ElementType;</div><div class="line"><span class="keyword">import</span> java.lang.annotation.Retention;</div><div class="line"><span class="keyword">import</span> java.lang.annotation.RetentionPolicy;</div><div class="line"><span class="keyword">import</span> java.lang.annotation.Target;</div><div class="line"></div><div class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</div><div class="line"><span class="meta">@Target</span>(ElementType.METHOD)</div><div class="line"><span class="keyword">public</span> <span class="meta">@interface</span> UpdateForMemcached &#123;</div><div class="line"></div><div class="line">  String[] value();<span class="comment">//可能有多个key需要更新</span></div><div class="line"></div><div class="line">  <span class="function">String <span class="title">condition</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;<span class="comment">//执行缓存的条件</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> AOP：MemcachedCacheInterceptor 缓存AOP实现的核心类，用于对Annotation注解了的method进行拦截并进行相应的操作，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div><div class="line">276</div><div class="line">277</div><div class="line">278</div><div class="line">279</div><div class="line">280</div><div class="line">281</div><div class="line">282</div><div class="line">283</div><div class="line">284</div><div class="line">285</div><div class="line">286</div><div class="line">287</div><div class="line">288</div><div class="line">289</div><div class="line">290</div><div class="line">291</div><div class="line">292</div><div class="line">293</div><div class="line">294</div><div class="line">295</div><div class="line">296</div><div class="line">297</div><div class="line">298</div><div class="line">299</div><div class="line">300</div><div class="line">301</div><div class="line">302</div><div class="line">303</div><div class="line">304</div><div class="line">305</div><div class="line">306</div><div class="line">307</div><div class="line">308</div><div class="line">309</div><div class="line">310</div><div class="line">311</div><div class="line">312</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.lang.annotation.Annotation;</div><div class="line"><span class="keyword">import</span> java.lang.reflect.Method;</div><div class="line"><span class="keyword">import</span> java.util.ArrayList;</div><div class="line"><span class="keyword">import</span> java.util.HashMap;</div><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"><span class="keyword">import</span> java.util.Map;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.TimeoutException;</div><div class="line"><span class="keyword">import</span> java.util.regex.Matcher;</div><div class="line"><span class="keyword">import</span> java.util.regex.Pattern;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.annotation.Resource;</div><div class="line"></div><div class="line"><span class="keyword">import</span> net.rubyeye.xmemcached.MemcachedClient;</div><div class="line"><span class="keyword">import</span> net.rubyeye.xmemcached.exception.MemcachedException;</div><div class="line"></div><div class="line"><span class="keyword">import</span> ognl.Ognl;</div><div class="line"><span class="keyword">import</span> ognl.OgnlException;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.aspectj.lang.ProceedingJoinPoint;</div><div class="line"><span class="keyword">import</span> org.aspectj.lang.annotation.Around;</div><div class="line"><span class="keyword">import</span> org.aspectj.lang.annotation.Aspect;</div><div class="line"><span class="keyword">import</span> org.aspectj.lang.reflect.MethodSignature;</div><div class="line"><span class="keyword">import</span> org.slf4j.Logger;</div><div class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</div><div class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</div><div class="line"></div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="meta">@Aspect</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MemcachedCacheInterceptor</span> </span>&#123;</div><div class="line"></div><div class="line">  <span class="keyword">private</span> <span class="keyword">final</span> String GET = <span class="string">"@annotation(LoadFromMemcached)"</span>;</div><div class="line">  <span class="keyword">private</span> <span class="keyword">final</span> String UPDATE = <span class="string">"@annotation(UpdateForMemcached)"</span>;</div><div class="line">  <span class="comment">// 替换为其他缓存组件即可切换为其他缓存系统，这里是使用的Memcached。如果再抽象一层缓存系统管理，则可以动态的更换缓存系统。</span></div><div class="line">  <span class="meta">@Resource</span></div><div class="line">  <span class="keyword">private</span> MemcachedClient cache;</div><div class="line"></div><div class="line">  <span class="keyword">private</span> Logger log = LoggerFactory</div><div class="line">      .getLogger(MemcachedCacheInterceptor.class);</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   *</div><div class="line">   * <span class="doctag">@Title</span>: get</div><div class="line">   * <span class="doctag">@Description</span>: 首先从缓存中加载数据，缓存命中则返回数据，未命中则从数据库查找，并加入缓存</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@param</span> call</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@return</span></div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@throws</span> Throwable</div><div class="line">   * <span class="doctag">@return</span> Object</div><div class="line">   * <span class="doctag">@throws</span></div><div class="line">   */</div><div class="line">  <span class="meta">@Around</span>(GET)</div><div class="line">  <span class="function"><span class="keyword">public</span> Object <span class="title">get</span><span class="params">(ProceedingJoinPoint call)</span> <span class="keyword">throws</span> Throwable </span>&#123;</div><div class="line"></div><div class="line">    LoadFromMemcached anno = getAnnotation(call, LoadFromMemcached.class);</div><div class="line">    String key = anno.value();</div><div class="line">    <span class="keyword">int</span> timeSocpe = anno.timeScope();</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (!executeCondition(anno.condition(), call)) &#123;<span class="comment">// 不满足条件,直接调用方法，不进行缓存AOP操作</span></div><div class="line">      <span class="keyword">return</span> call.proceed();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    key = getKeyNameFromParam(key, call);</div><div class="line"></div><div class="line">    Object value = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      value = cache.get(key);</div><div class="line">    &#125; <span class="keyword">catch</span> (TimeoutException e) &#123;</div><div class="line">      log.error(<span class="string">"Get Data From Memcached TimeOut!About Key:"</span> + key, e);</div><div class="line">      e.printStackTrace();</div><div class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">      log.error(</div><div class="line">          <span class="string">"Get Data From Memcached TimeOut And Interrupted!About Key:"</span></div><div class="line">              + key, e);</div><div class="line">      e.printStackTrace();</div><div class="line">    &#125; <span class="keyword">catch</span> (MemcachedException e) &#123;</div><div class="line">      log.error(</div><div class="line">          <span class="string">"Get Data From Memcached And Happend A Unexpected Error!About Key:"</span></div><div class="line">              + key, e);</div><div class="line">      e.printStackTrace();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (value == <span class="keyword">null</span>) &#123;</div><div class="line">      value = call.proceed();</div><div class="line">      <span class="keyword">if</span> (value != <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">          cache.add(key, timeSocpe, value);</div><div class="line">          log.info(<span class="string">"Add Data For Memcached Success!About Key:"</span> + key);</div><div class="line">        &#125; <span class="keyword">catch</span> (TimeoutException e) &#123;</div><div class="line">          log.error(</div><div class="line">              <span class="string">"Add Data For Memcached TimeOut!About Key:"</span> + key,</div><div class="line">              e);</div><div class="line">          e.printStackTrace();</div><div class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">          log.error(</div><div class="line">              <span class="string">"Add Data For Memcached TimeOut And Interrupted!About Key:"</span></div><div class="line">                  + key, e);</div><div class="line">          e.printStackTrace();</div><div class="line">        &#125; <span class="keyword">catch</span> (MemcachedException e) &#123;</div><div class="line">          log.error(</div><div class="line">              <span class="string">"Add Data For Memcached And Happend A Unexpected Error!About Key:"</span></div><div class="line">                  + key, e);</div><div class="line">          e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> value;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   *</div><div class="line">   * <span class="doctag">@Title</span>: update</div><div class="line">   * <span class="doctag">@Description</span>: 执行方法的同时更新缓存中的数据</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@param</span> call</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@return</span></div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@throws</span> Throwable</div><div class="line">   * <span class="doctag">@return</span> Object</div><div class="line">   * <span class="doctag">@throws</span></div><div class="line">   */</div><div class="line">  <span class="meta">@Around</span>(UPDATE)</div><div class="line">  <span class="function"><span class="keyword">public</span> Object <span class="title">update</span><span class="params">(ProceedingJoinPoint call)</span> <span class="keyword">throws</span> Throwable </span>&#123;</div><div class="line"></div><div class="line">    UpdateForMemcached anno = getAnnotation(call, UpdateForMemcached.class);</div><div class="line">    String[] key = anno.value();<span class="comment">// 可能需要更新多个key</span></div><div class="line"></div><div class="line">    Object value = call.proceed();</div><div class="line">    <span class="keyword">if</span> (!executeCondition(anno.condition(), call)) &#123;<span class="comment">// 不满足条件,直接调用方法，不进行缓存AOP操作</span></div><div class="line">      <span class="keyword">return</span> value;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (value != <span class="keyword">null</span>) &#123;</div><div class="line">      <span class="keyword">try</span> &#123;</div><div class="line">        <span class="keyword">for</span> (String singleKey : key) &#123;<span class="comment">// 循环处理所有需要更新的key</span></div><div class="line">          String tempKey = getKeyNameFromParam(singleKey, call);</div><div class="line">          cache.delete(tempKey);</div><div class="line">        &#125;</div><div class="line">        log.info(<span class="string">"Update Data For Memcached Success!About Key:"</span> + key);</div><div class="line">      &#125; <span class="keyword">catch</span> (TimeoutException e) &#123;</div><div class="line">        log.error(<span class="string">"Update Data For Memcached TimeOut!About Key:"</span> + key,</div><div class="line">            e);</div><div class="line">        e.printStackTrace();</div><div class="line">      &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">        log.error(</div><div class="line">            <span class="string">"Update Data For Memcached TimeOut And Interrupted!About Key:"</span></div><div class="line">                + key, e);</div><div class="line">        e.printStackTrace();</div><div class="line">      &#125; <span class="keyword">catch</span> (MemcachedException e) &#123;</div><div class="line">        log.error(</div><div class="line">            <span class="string">"Update Data For Memcached And Happend A Unexpected Error!About Key:"</span></div><div class="line">                + key, e);</div><div class="line">        e.printStackTrace();</div><div class="line">      &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> value;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   *</div><div class="line">   * <span class="doctag">@Title</span>: getAnnotation</div><div class="line">   * <span class="doctag">@Description</span>: 获得Annotation对象</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@param</span> &lt;T&gt;</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@param</span> jp</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@param</span> clazz</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@return</span></div><div class="line">   * <span class="doctag">@return</span> T</div><div class="line">   * <span class="doctag">@throws</span></div><div class="line">   */</div><div class="line">  <span class="keyword">private</span> &lt;T extends Annotation&gt; <span class="function">T <span class="title">getAnnotation</span><span class="params">(ProceedingJoinPoint jp,</span></span></div><div class="line">      Class&lt;T&gt; clazz) &#123;</div><div class="line">    MethodSignature joinPointObject = (MethodSignature) jp.getSignature();</div><div class="line">    Method method = joinPointObject.getMethod();</div><div class="line">    <span class="keyword">return</span> method.getAnnotation(clazz);</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   *</div><div class="line">   * <span class="doctag">@Title</span>: getKeyNameFromParam</div><div class="line">   * <span class="doctag">@Description</span>: 获得组合后的KEY值</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@param</span> key</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@param</span> jp</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@return</span></div><div class="line">   * <span class="doctag">@return</span> String</div><div class="line">   * <span class="doctag">@throws</span></div><div class="line">   */</div><div class="line">  <span class="function"><span class="keyword">private</span> String <span class="title">getKeyNameFromParam</span><span class="params">(String key, ProceedingJoinPoint jp)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (!key.contains(<span class="string">"$"</span>)) &#123;</div><div class="line">      <span class="keyword">return</span> key;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    String regexp = <span class="string">"\\$\\&#123;[^\\&#125;]+\\&#125;"</span>;</div><div class="line">    Pattern pattern = Pattern.compile(regexp);</div><div class="line">    Matcher matcher = pattern.matcher(key);</div><div class="line">    List&lt;String&gt; names = <span class="keyword">new</span> ArrayList&lt;String&gt;();</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      <span class="keyword">while</span> (matcher.find()) &#123;</div><div class="line">        names.add(matcher.group());</div><div class="line">      &#125;</div><div class="line">      key = executeNames(key, names, jp);</div><div class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">      log.error(<span class="string">"Regex Parse Error!"</span>, e);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> key;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   *</div><div class="line">   * <span class="doctag">@Title</span>: executeNames</div><div class="line">   * <span class="doctag">@Description</span>: 对KEY中的参数进行替换</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@param</span> key</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@param</span> names</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@param</span> jp</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@return</span></div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@throws</span> OgnlException</div><div class="line">   * <span class="doctag">@return</span> String</div><div class="line">   * <span class="doctag">@throws</span></div><div class="line">   */</div><div class="line">  <span class="function"><span class="keyword">private</span> String <span class="title">executeNames</span><span class="params">(String key, List&lt;String&gt; names,</span></span></div><div class="line">      ProceedingJoinPoint jp) <span class="keyword">throws</span> OgnlException &#123;</div><div class="line"></div><div class="line">    Method method = ((MethodSignature) jp.getSignature()).getMethod();</div><div class="line"></div><div class="line">    <span class="comment">// 形参列表</span></div><div class="line">    List&lt;String&gt; param = MethodParamNamesScaner.getParamNames(method);</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (names == <span class="keyword">null</span> || names.size() == <span class="number">0</span>) &#123;</div><div class="line">      <span class="keyword">return</span> key;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Object[] params = jp.getArgs();</div><div class="line"></div><div class="line">    Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap&lt;String, Object&gt;();</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; param.size(); i++) &#123;</div><div class="line">      map.put(param.get(i), params[i]);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">for</span> (String name : names) &#123;</div><div class="line">      String temp = name.substring(<span class="number">2</span>);</div><div class="line">      temp = temp.substring(<span class="number">0</span>, temp.length() - <span class="number">1</span>);</div><div class="line">      key = myReplace(key, name, (String) Ognl.getValue(temp, map));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> key;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   *</div><div class="line">   * <span class="doctag">@Title</span>: myReplace</div><div class="line">   * <span class="doctag">@Description</span>: 不依赖Regex的替换，避免$符号、&#123;&#125;等在String.replaceAll方法中当做Regex处理时候的问题。</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@param</span> src</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@param</span> from</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@param</span> to</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@return</span></div><div class="line">   * <span class="doctag">@return</span> String</div><div class="line">   * <span class="doctag">@throws</span></div><div class="line">   */</div><div class="line">  <span class="function"><span class="keyword">private</span> String <span class="title">myReplace</span><span class="params">(String src, String from, String to)</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> index = src.indexOf(from);</div><div class="line">    <span class="keyword">if</span> (index == -<span class="number">1</span>) &#123;</div><div class="line">      <span class="keyword">return</span> src;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> src.substring(<span class="number">0</span>, index) + to</div><div class="line">        + src.substring(index + from.length());</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   *</div><div class="line">   * <span class="doctag">@Title</span>: executeCondition</div><div class="line">   * <span class="doctag">@Description</span>: 判断是否需要进行缓存操作</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@param</span> condition parm</div><div class="line">   * <span class="doctag">@param</span> <span class="doctag">@return</span></div><div class="line">   * <span class="doctag">@return</span> boolean true:需要 false：不需要</div><div class="line">   * <span class="doctag">@throws</span></div><div class="line">   */</div><div class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">executeCondition</span><span class="params">(String condition, ProceedingJoinPoint jp)</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (<span class="string">""</span>.equals(condition)) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Method method = ((MethodSignature) jp.getSignature()).getMethod();</div><div class="line"></div><div class="line">    <span class="comment">// 形参列表</span></div><div class="line">    List&lt;String&gt; param = MethodParamNamesScaner.getParamNames(method);</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (param == <span class="keyword">null</span> || param.size() == <span class="number">0</span>) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Object[] params = jp.getArgs();</div><div class="line"></div><div class="line">    Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap&lt;String, Object&gt;();</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; param.size(); i++) &#123;</div><div class="line">      map.put(param.get(i), params[i]);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">boolean</span> returnVal = <span class="keyword">false</span>;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      returnVal = (Boolean) Ognl.getValue(condition, map);</div><div class="line">    &#125; <span class="keyword">catch</span> (OgnlException e) &#123;</div><div class="line">      e.printStackTrace();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> returnVal;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCache</span><span class="params">(MemcachedClient cache)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.cache = cache;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>辅助类：借用MethodParamNamesScaner类与Ognl结合完成对缓存key的动态解析功能，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div><div class="line">276</div><div class="line">277</div><div class="line">278</div><div class="line">279</div><div class="line">280</div><div class="line">281</div><div class="line">282</div><div class="line">283</div><div class="line">284</div><div class="line">285</div><div class="line">286</div><div class="line">287</div><div class="line">288</div><div class="line">289</div><div class="line">290</div><div class="line">291</div><div class="line">292</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//引用至：https://gist.github.com/wendal/2011728，用于解析方法的形参名称</span></div><div class="line"><span class="keyword">import</span> java.io.BufferedInputStream;</div><div class="line"><span class="keyword">import</span> java.io.DataInputStream;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.InputStream;</div><div class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</div><div class="line"><span class="keyword">import</span> java.lang.reflect.Method;</div><div class="line"><span class="keyword">import</span> java.util.ArrayList;</div><div class="line"><span class="keyword">import</span> java.util.HashMap;</div><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"><span class="keyword">import</span> java.util.Map;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 通过读取Class文件,获得方法形参名称列表</div><div class="line"> *</div><div class="line"> * <span class="doctag">@author</span> wendal(wendal1985@gmail.com)</div><div class="line"> *</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodParamNamesScaner</span> </span>&#123;</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   * 获取Method的形参名称列表</div><div class="line">   *</div><div class="line">   * <span class="doctag">@param</span> method</div><div class="line">   *            需要解析的方法</div><div class="line">   * <span class="doctag">@return</span> 形参名称列表,如果没有调试信息,将返回null</div><div class="line">   */</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">getParamNames</span><span class="params">(Method method)</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      <span class="keyword">int</span> size = method.getParameterTypes().length;</div><div class="line">      <span class="keyword">if</span> (size == <span class="number">0</span>)</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ArrayList&lt;String&gt;(<span class="number">0</span>);</div><div class="line">      List&lt;String&gt; list = getParamNames(method.getDeclaringClass()).get(</div><div class="line">          getKey(method));</div><div class="line">      <span class="keyword">if</span> (list != <span class="keyword">null</span> &amp;&amp; list.size() != size)</div><div class="line">        <span class="keyword">return</span> list.subList(<span class="number">0</span>, size);</div><div class="line">      <span class="keyword">return</span> list;</div><div class="line">    &#125; <span class="keyword">catch</span> (Throwable e) &#123;</div><div class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   * 获取Constructor的形参名称列表</div><div class="line">   *</div><div class="line">   * <span class="doctag">@param</span> constructor</div><div class="line">   *            需要解析的构造函数</div><div class="line">   * <span class="doctag">@return</span> 形参名称列表,如果没有调试信息,将返回null</div><div class="line">   */</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">getParamNames</span><span class="params">(Constructor&lt;?&gt; constructor)</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      <span class="keyword">int</span> size = constructor.getParameterTypes().length;</div><div class="line">      <span class="keyword">if</span> (size == <span class="number">0</span>)</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ArrayList&lt;String&gt;(<span class="number">0</span>);</div><div class="line">      List&lt;String&gt; list = getParamNames(constructor.getDeclaringClass())</div><div class="line">          .get(getKey(constructor));</div><div class="line">      <span class="keyword">if</span> (list != <span class="keyword">null</span> &amp;&amp; list.size() != size)</div><div class="line">        <span class="keyword">return</span> list.subList(<span class="number">0</span>, size);</div><div class="line">      <span class="keyword">return</span> list;</div><div class="line">    &#125; <span class="keyword">catch</span> (Throwable e) &#123;</div><div class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">// ---------------------------------------------------------------------------------------------------</span></div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   * 获取一个类的所有方法/构造方法的形参名称Map</div><div class="line">   *</div><div class="line">   * <span class="doctag">@param</span> klass</div><div class="line">   *            需要解析的类</div><div class="line">   * <span class="doctag">@return</span> 所有方法/构造方法的形参名称Map</div><div class="line">   * <span class="doctag">@throws</span> IOException</div><div class="line">   *             如果有任何IO异常,不应该有,如果是本地文件,那100%遇到bug了</div><div class="line">   */</div><div class="line">  <span class="keyword">public</span> <span class="keyword">static</span> Map&lt;String, List&lt;String&gt;&gt; getParamNames(Class&lt;?&gt; klass)</div><div class="line">      <span class="keyword">throws</span> IOException &#123;</div><div class="line">    InputStream in = klass.getResourceAsStream(<span class="string">"/"</span></div><div class="line">        + klass.getName().replace(<span class="string">'.'</span>, <span class="string">'/'</span>) + <span class="string">".class"</span>);</div><div class="line">    <span class="keyword">return</span> getParamNames(in);</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">public</span> <span class="keyword">static</span> Map&lt;String, List&lt;String&gt;&gt; getParamNames(InputStream in)</div><div class="line">      <span class="keyword">throws</span> IOException &#123;</div><div class="line">    DataInputStream dis = <span class="keyword">new</span> DataInputStream(<span class="keyword">new</span> BufferedInputStream(in));</div><div class="line">    Map&lt;String, List&lt;String&gt;&gt; names = <span class="keyword">new</span> HashMap&lt;String, List&lt;String&gt;&gt;();</div><div class="line">    Map&lt;Integer, String&gt; strs = <span class="keyword">new</span> HashMap&lt;Integer, String&gt;();</div><div class="line">    dis.skipBytes(<span class="number">4</span>);<span class="comment">// Magic</span></div><div class="line">    dis.skipBytes(<span class="number">2</span>);<span class="comment">// 副版本号</span></div><div class="line">    dis.skipBytes(<span class="number">2</span>);<span class="comment">// 主版本号</span></div><div class="line"></div><div class="line">    <span class="comment">// 读取常量池</span></div><div class="line">    <span class="keyword">int</span> constant_pool_count = dis.readUnsignedShort();</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; (constant_pool_count - <span class="number">1</span>); i++) &#123;</div><div class="line">      <span class="keyword">byte</span> flag = dis.readByte();</div><div class="line">      <span class="keyword">switch</span> (flag) &#123;</div><div class="line">      <span class="keyword">case</span> <span class="number">7</span>:<span class="comment">// CONSTANT_Class:</span></div><div class="line">        dis.skipBytes(<span class="number">2</span>);</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      <span class="keyword">case</span> <span class="number">9</span>:<span class="comment">// CONSTANT_Fieldref:</span></div><div class="line">      <span class="keyword">case</span> <span class="number">10</span>:<span class="comment">// CONSTANT_Methodref:</span></div><div class="line">      <span class="keyword">case</span> <span class="number">11</span>:<span class="comment">// CONSTANT_InterfaceMethodref:</span></div><div class="line">        dis.skipBytes(<span class="number">2</span>);</div><div class="line">        dis.skipBytes(<span class="number">2</span>);</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      <span class="keyword">case</span> <span class="number">8</span>:<span class="comment">// CONSTANT_String:</span></div><div class="line">        dis.skipBytes(<span class="number">2</span>);</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      <span class="keyword">case</span> <span class="number">3</span>:<span class="comment">// CONSTANT_Integer:</span></div><div class="line">      <span class="keyword">case</span> <span class="number">4</span>:<span class="comment">// CONSTANT_Float:</span></div><div class="line">        dis.skipBytes(<span class="number">4</span>);</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      <span class="keyword">case</span> <span class="number">5</span>:<span class="comment">// CONSTANT_Long:</span></div><div class="line">      <span class="keyword">case</span> <span class="number">6</span>:<span class="comment">// CONSTANT_Double:</span></div><div class="line">        dis.skipBytes(<span class="number">8</span>);</div><div class="line">        i++;<span class="comment">// 必须跳过一个,这是class文件设计的一个缺陷,历史遗留问题</span></div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      <span class="keyword">case</span> <span class="number">12</span>:<span class="comment">// CONSTANT_NameAndType:</span></div><div class="line">        dis.skipBytes(<span class="number">2</span>);</div><div class="line">        dis.skipBytes(<span class="number">2</span>);</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      <span class="keyword">case</span> <span class="number">1</span>:<span class="comment">// CONSTANT_Utf8:</span></div><div class="line">        <span class="keyword">int</span> len = dis.readUnsignedShort();</div><div class="line">        <span class="keyword">byte</span>[] data = <span class="keyword">new</span> <span class="keyword">byte</span>[len];</div><div class="line">        dis.read(data);</div><div class="line">        strs.put(i + <span class="number">1</span>, <span class="keyword">new</span> String(data, <span class="string">"UTF-8"</span>));<span class="comment">// 必然是UTF8的</span></div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      <span class="keyword">case</span> <span class="number">15</span>:<span class="comment">// CONSTANT_MethodHandle:</span></div><div class="line">        dis.skipBytes(<span class="number">1</span>);</div><div class="line">        dis.skipBytes(<span class="number">2</span>);</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      <span class="keyword">case</span> <span class="number">16</span>:<span class="comment">// CONSTANT_MethodType:</span></div><div class="line">        dis.skipBytes(<span class="number">2</span>);</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      <span class="keyword">case</span> <span class="number">18</span>:<span class="comment">// CONSTANT_InvokeDynamic:</span></div><div class="line">        dis.skipBytes(<span class="number">2</span>);</div><div class="line">        dis.skipBytes(<span class="number">2</span>);</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      <span class="keyword">default</span>:</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Impossible!! flag="</span> + flag);</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    dis.skipBytes(<span class="number">2</span>);<span class="comment">// 版本控制符</span></div><div class="line">    dis.skipBytes(<span class="number">2</span>);<span class="comment">// 类名</span></div><div class="line">    dis.skipBytes(<span class="number">2</span>);<span class="comment">// 超类</span></div><div class="line"></div><div class="line">    <span class="comment">// 跳过接口定义</span></div><div class="line">    <span class="keyword">int</span> interfaces_count = dis.readUnsignedShort();</div><div class="line">    dis.skipBytes(<span class="number">2</span> * interfaces_count);<span class="comment">// 每个接口数据,是2个字节</span></div><div class="line"></div><div class="line">    <span class="comment">// 跳过字段定义</span></div><div class="line">    <span class="keyword">int</span> fields_count = dis.readUnsignedShort();</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; fields_count; i++) &#123;</div><div class="line">      dis.skipBytes(<span class="number">2</span>);</div><div class="line">      dis.skipBytes(<span class="number">2</span>);</div><div class="line">      dis.skipBytes(<span class="number">2</span>);</div><div class="line">      <span class="keyword">int</span> attributes_count = dis.readUnsignedShort();</div><div class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; attributes_count; j++) &#123;</div><div class="line">        dis.skipBytes(<span class="number">2</span>);<span class="comment">// 跳过访问控制符</span></div><div class="line">        <span class="keyword">int</span> attribute_length = dis.readInt();</div><div class="line">        dis.skipBytes(attribute_length);</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 开始读取方法</span></div><div class="line">    <span class="keyword">int</span> methods_count = dis.readUnsignedShort();</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; methods_count; i++) &#123;</div><div class="line">      dis.skipBytes(<span class="number">2</span>); <span class="comment">// 跳过访问控制符</span></div><div class="line">      String methodName = strs.get(dis.readUnsignedShort());</div><div class="line">      String descriptor = strs.get(dis.readUnsignedShort());</div><div class="line">      <span class="keyword">short</span> attributes_count = dis.readShort();</div><div class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; attributes_count; j++) &#123;</div><div class="line">        String attrName = strs.get(dis.readUnsignedShort());</div><div class="line">        <span class="keyword">int</span> attribute_length = dis.readInt();</div><div class="line">        <span class="keyword">if</span> (<span class="string">"Code"</span>.equals(attrName)) &#123; <span class="comment">// 形参只在Code属性中</span></div><div class="line">          dis.skipBytes(<span class="number">2</span>);</div><div class="line">          dis.skipBytes(<span class="number">2</span>);</div><div class="line">          <span class="keyword">int</span> code_len = dis.readInt();</div><div class="line">          dis.skipBytes(code_len); <span class="comment">// 跳过具体代码</span></div><div class="line">          <span class="keyword">int</span> exception_table_length = dis.readUnsignedShort();</div><div class="line">          dis.skipBytes(<span class="number">8</span> * exception_table_length); <span class="comment">// 跳过异常表</span></div><div class="line"></div><div class="line">          <span class="keyword">int</span> code_attributes_count = dis.readUnsignedShort();</div><div class="line">          <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; code_attributes_count; k++) &#123;</div><div class="line">            <span class="keyword">int</span> str_index = dis.readUnsignedShort();</div><div class="line">            String codeAttrName = strs.get(str_index);</div><div class="line">            <span class="keyword">int</span> code_attribute_length = dis.readInt();</div><div class="line">            <span class="keyword">if</span> (<span class="string">"LocalVariableTable"</span>.equals(codeAttrName)) &#123;<span class="comment">// 形参在LocalVariableTable属性中</span></div><div class="line">              <span class="keyword">int</span> local_variable_table_length = dis</div><div class="line">                  .readUnsignedShort();</div><div class="line">              List&lt;String&gt; varNames = <span class="keyword">new</span> ArrayList&lt;String&gt;(</div><div class="line">                  local_variable_table_length);</div><div class="line">              <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>; l &lt; local_variable_table_length; l++) &#123;</div><div class="line">                dis.skipBytes(<span class="number">2</span>);</div><div class="line">                dis.skipBytes(<span class="number">2</span>);</div><div class="line">                String varName = strs.get(dis</div><div class="line">                    .readUnsignedShort());</div><div class="line">                dis.skipBytes(<span class="number">2</span>);</div><div class="line">                dis.skipBytes(<span class="number">2</span>);</div><div class="line">                <span class="keyword">if</span> (!<span class="string">"this"</span>.equals(varName)) <span class="comment">// 非静态方法,第一个参数是this</span></div><div class="line">                  varNames.add(varName);</div><div class="line">              &#125;</div><div class="line">              names.put(methodName + <span class="string">","</span> + descriptor, varNames);</div><div class="line">            &#125; <span class="keyword">else</span></div><div class="line">              dis.skipBytes(code_attribute_length);</div><div class="line">          &#125;</div><div class="line">        &#125; <span class="keyword">else</span></div><div class="line">          dis.skipBytes(attribute_length);</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    dis.close();</div><div class="line">    <span class="keyword">return</span> names;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   * 传入Method或Constructor,获取getParamNames方法返回的Map所对应的key</div><div class="line">   */</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getKey</span><span class="params">(Object obj)</span> </span>&#123;</div><div class="line">    StringBuilder sb = <span class="keyword">new</span> StringBuilder();</div><div class="line">    <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> Method) &#123;</div><div class="line">      sb.append(((Method) obj).getName()).append(<span class="string">','</span>);</div><div class="line">      getDescriptor(sb, (Method) obj);</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> Constructor) &#123;</div><div class="line">      sb.append(<span class="string">"&lt;init&gt;,"</span>); <span class="comment">// 只有非静态构造方法才能用有方法参数的,而且通过反射API拿不到静态构造方法</span></div><div class="line">      getDescriptor(sb, (Constructor&lt;?&gt;) obj);</div><div class="line">    &#125; <span class="keyword">else</span></div><div class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Not Method or Constructor!"</span>);</div><div class="line">    <span class="keyword">return</span> sb.toString();</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getDescriptor</span><span class="params">(StringBuilder sb, Method method)</span> </span>&#123;</div><div class="line">    sb.append(<span class="string">'('</span>);</div><div class="line">    <span class="keyword">for</span> (Class&lt;?&gt; klass : method.getParameterTypes())</div><div class="line">      getDescriptor(sb, klass);</div><div class="line">    sb.append(<span class="string">')'</span>);</div><div class="line">    getDescriptor(sb, method.getReturnType());</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getDescriptor</span><span class="params">(StringBuilder sb,</span></span></div><div class="line">      Constructor&lt;?&gt; constructor) &#123;</div><div class="line">    sb.append(<span class="string">'('</span>);</div><div class="line">    <span class="keyword">for</span> (Class&lt;?&gt; klass : constructor.getParameterTypes())</div><div class="line">      getDescriptor(sb, klass);</div><div class="line">    sb.append(<span class="string">')'</span>);</div><div class="line">    sb.append(<span class="string">'V'</span>);</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">/** 本方法来源于ow2的asm库的Type类 */</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getDescriptor</span><span class="params">(<span class="keyword">final</span> StringBuilder buf, <span class="keyword">final</span> Class&lt;?&gt; c)</span> </span>&#123;</div><div class="line">    Class&lt;?&gt; d = c;</div><div class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">      <span class="keyword">if</span> (d.isPrimitive()) &#123;</div><div class="line">        <span class="keyword">char</span> car;</div><div class="line">        <span class="keyword">if</span> (d == Integer.TYPE) &#123;</div><div class="line">          car = <span class="string">'I'</span>;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (d == Void.TYPE) &#123;</div><div class="line">          car = <span class="string">'V'</span>;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (d == Boolean.TYPE) &#123;</div><div class="line">          car = <span class="string">'Z'</span>;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (d == Byte.TYPE) &#123;</div><div class="line">          car = <span class="string">'B'</span>;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (d == Character.TYPE) &#123;</div><div class="line">          car = <span class="string">'C'</span>;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (d == Short.TYPE) &#123;</div><div class="line">          car = <span class="string">'S'</span>;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (d == Double.TYPE) &#123;</div><div class="line">          car = <span class="string">'D'</span>;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (d == Float.TYPE) &#123;</div><div class="line">          car = <span class="string">'F'</span>;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="comment">/* if (d == Long.TYPE) */</span>&#123;</div><div class="line">          car = <span class="string">'J'</span>;</div><div class="line">        &#125;</div><div class="line">        buf.append(car);</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (d.isArray()) &#123;</div><div class="line">        buf.append(<span class="string">'['</span>);</div><div class="line">        d = d.getComponentType();</div><div class="line">      &#125; <span class="keyword">else</span> &#123;</div><div class="line">        buf.append(<span class="string">'L'</span>);</div><div class="line">        String name = d.getName();</div><div class="line">        <span class="keyword">int</span> len = name.length();</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; ++i) &#123;</div><div class="line">          <span class="keyword">char</span> car = name.charAt(i);</div><div class="line">          buf.append(car == <span class="string">'.'</span> ? <span class="string">'/'</span> : car);</div><div class="line">        &#125;</div><div class="line">        buf.append(<span class="string">';'</span>);</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="使用案例："><a href="#使用案例：" class="headerlink" title="使用案例："></a>使用案例：</h2><h3 id="1-使用缓存："><a href="#1-使用缓存：" class="headerlink" title="1.使用缓存："></a>1.使用缓存：</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"> * value:缓存中的键，$&#123;map.name&#125;会动态替换为传入参数map里面的key为name的值。</div><div class="line"> * comdition：缓存执行条件：!map.containsKey('execute')表示map中不包含execute这个key的时候才进行缓存操作。</div><div class="line"> * 这里面的map是传入的参数名称。</div><div class="line"> * 执行到该方法会自动去缓存里面查找该key，有就直接返回，没有就执行该方法，如果返回值不为空则同时存入缓存并返回结果。</div><div class="line"> */</div><div class="line"><span class="meta">@LoadFromMemcached</span>(value=<span class="string">"Resource_selectByMap_$&#123;map.name&#125;"</span>,condition=<span class="string">"!map.containsKey('execute')"</span> )</div><div class="line"><span class="function"><span class="keyword">public</span> List&lt;Resource&gt; <span class="title">selectByMap</span><span class="params">(Object map)</span> </span>&#123;</div><div class="line">     <span class="keyword">return</span> <span class="keyword">super</span>.selectByMap(map);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>表示执行该method(selectByMap)的时候会首先去缓存组件中查找数据，如果查找到数据就直接返回，如果找不到数据就执行方法体，并将返回值记录入缓存中。</p>
+<h3 id="2-更新缓存："><a href="#2-更新缓存：" class="headerlink" title="2.更新缓存："></a>2.更新缓存：</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"> * 同样value为缓存中的key，$&#123;t.name&#125;会动态替换为update方法传入参数Resource的name字段</div><div class="line"> * comdition：字段作用同上，不演示了</div><div class="line"> */</div><div class="line"><span class="meta">@UpdateForMemcached</span>(value=<span class="string">"Resource_selectByMap_$&#123;t.name&#125;"</span>)</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">update</span><span class="params">(Resource t)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.update(t);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>表示执行该method(update)的时候会同步将缓存中的key置为过期(并不是把该方法的返回值放入缓存，只是将对应的缓存设为过期，下次再执行selectByMap的时候获取的就是最新的数据了)。</p>
+<h2 id="扩展："><a href="#扩展：" class="headerlink" title="扩展："></a>扩展：</h2><p>本文只是简单的解决方案，可能有很多不足的地方，欢迎交流，以此简单的结构为基础进行扩展，将MemcachedClient以及相关的缓存操作方法提取出来并完善细节即可完成基本通用的缓存组件。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-12-25T08:23:12.098Z" title="2016-12-25 16:23" itemprop="dateUpdated">2016年12月25日 16:23</time>
+</span><br>
+
+
+        
+        转载请注明来源：<a href="/2014/05/MemcacheAnnotationBaseOnSpringAop.html" target="_blank" rel="external">http://builderqiu.com/2014/05/MemcacheAnnotationBaseOnSpringAop.html</a>
+        
+    </div>
+    <footer>
+        <a href="http://builderqiu.com">
+            <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" alt="BuilderQiu">
+            BuilderQiu
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Annotation/">Annotation</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/05/MemcacheAnnotationBaseOnSpringAop.html&title=《基于Annotation与SpringAOP的缓存简单解决方案》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/05/MemcacheAnnotationBaseOnSpringAop.html&title=《基于Annotation与SpringAOP的缓存简单解决方案》 — 一本正经的扯淡&source=前言：  由于项目的原因，需要对项目中大量访问多修改少的数据进行缓存并管理，为达到开发过程中通过Annotation简单的配置既可以完成对缓存的设置与更新..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/05/MemcacheAnnotationBaseOnSpringAop.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《基于Annotation与SpringAOP的缓存简单解决方案》 — 一本正经的扯淡&url=http://builderqiu.com/2014/05/MemcacheAnnotationBaseOnSpringAop.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/05/MemcacheAnnotationBaseOnSpringAop.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/05/AsyncSystem.html" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">使用消息队列异步化系统</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/05/UseSpringInServlet.html" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">在Servlet(或者Filter，或者Listener)中使用spring的IOC容器</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="MemcacheAnnotationBaseOnSpringAop" data-title="基于Annotation与SpringAOP的缓存简单解决方案" data-url="http://builderqiu.com/2014/05/MemcacheAnnotationBaseOnSpringAop.html"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'builderqiu', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.2');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/BuilderQiu/hexo-theme-indigo" target="_blank">indigo</a> Base On <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>一本正经的扯淡 &copy; 2016</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/05/MemcacheAnnotationBaseOnSpringAop.html&title=《基于Annotation与SpringAOP的缓存简单解决方案》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/05/MemcacheAnnotationBaseOnSpringAop.html&title=《基于Annotation与SpringAOP的缓存简单解决方案》 — 一本正经的扯淡&source=前言：  由于项目的原因，需要对项目中大量访问多修改少的数据进行缓存并管理，为达到开发过程中通过Annotation简单的配置既可以完成对缓存的设置与更新..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/05/MemcacheAnnotationBaseOnSpringAop.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《基于Annotation与SpringAOP的缓存简单解决方案》 — 一本正经的扯淡&url=http://builderqiu.com/2014/05/MemcacheAnnotationBaseOnSpringAop.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/05/MemcacheAnnotationBaseOnSpringAop.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACvElEQVR42u3awWojMRAE0Pz/T2dhT1kW21XdknHgzcmM7YmeApJc3V9f8fX993p05/93f97/eT1699Gd52M4duHh4eGNhv7oSgb6fNCzv/h8EvMn4OHh4d3jPV+I2ynI8c9Js60IDw8P73N4s4EmG0w7Bjw8PLzfyGupm80DDw8P7zN5yXE5JyWDy4OGN2UteHh4eDGvLYB9wuuL9T08PDy8RVV9tuAmy3c+ntVo8fDw8C7wNtFqG9Fu7ieTW/xiwMPDw1vwzi7EeZNWO6H5M/95jYeHh3eBlxelklJTHuwm4eyx4hkeHh7eG3ltYexUirwveuHh4eHd40X6UcPT80N2MomzQKTu3sLDw8MreW1wMMuJE/asE6AOI/Dw8PCu8dpHJMt0slVsYtyiDIaHh4e34G2KXnmj1WaC2jACDw8P7zavjVNnrQB5qWxfDCuiZDw8PLw1r12ON5HuqU8moTMeHh7eDV5bBpu1W+3DiFnAgYeHh3eW1waj+fZwdiIONF3h4eHhXeDlzVX5OX1z+E4C2WJjwMPDwzvES5b1e4fgU999MSl4eHh4R3lnt4G8kHYgQUm+i4eHh3eBl/zIb0OKWXAwizaifwYeHh7eUV57dM5JswN6e+x+AcbDw8O7wMsP0/uifl4e2wQZUdaCh4eHt+C1P/uT1oH2dRJbtA0HeHh4eO/kJY/ef7KF5SHIwzACDw8P7xCvLXG1C3cePWzaC4aRBB4eHt6I911e+QF303aQH51fPB8PDw/vAq+NZfMoYbZ5nD1q4+Hh4d3jtZvBrEkrPwq3G0MUQ+Dh4eFd4M02g7bM35b/Z2FE1BmBh4eH9xZe22zafjIvcRUxBB4eHt4H8E61Gswi4GQSVxsDHh4eXsxrw4hkCvJtY1ZaK47UeHh4eEd5s8i1bbSaLfFtiPw1u/Dw8PBS3h+FErtgtlIhlgAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

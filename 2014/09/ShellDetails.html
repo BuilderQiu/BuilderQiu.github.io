@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>LinuxShell基础 | 一本正经的扯淡 | U Still Don&#39;t Know</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Shell,Linux">
+    <meta name="description" content="Shell基础知识">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LinuxShell基础">
+<meta property="og:url" content="http://builderqiu.com/2014/09/ShellDetails.html">
+<meta property="og:site_name" content="一本正经的扯淡">
+<meta property="og:description" content="Shell基础知识">
+<meta property="og:updated_time" content="2016-12-24T14:32:12.119Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LinuxShell基础">
+<meta name="twitter:description" content="Shell基础知识">
+    
+        <link rel="alternative" href="/atom.xml" title="一本正经的扯淡" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.2">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">BuilderQiu</h5>
+          
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/BuilderQiu" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">LinuxShell基础</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">LinuxShell基础</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-09-09T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-09-10
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#什么是Shell"><span class="post-toc-text">什么是Shell</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#几种常见的Shell"><span class="post-toc-text">几种常见的Shell</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#bash"><span class="post-toc-text">bash</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#sh"><span class="post-toc-text">sh</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ash"><span class="post-toc-text">ash</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#csh"><span class="post-toc-text">csh</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ksh"><span class="post-toc-text">ksh</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#特性"><span class="post-toc-text">特性</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#和-的区别"><span class="post-toc-text">$* 和 $@ 的区别</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#退出状态"><span class="post-toc-text">退出状态</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#命令替换"><span class="post-toc-text">命令替换</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#变量替换"><span class="post-toc-text">变量替换</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#运算"><span class="post-toc-text">运算</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#数组"><span class="post-toc-text">数组</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#case-…-esac"><span class="post-toc-text">case … esac</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#循环"><span class="post-toc-text">循环</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#for循环"><span class="post-toc-text">for循环</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#while"><span class="post-toc-text">while</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#until"><span class="post-toc-text">until</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#函数"><span class="post-toc-text">函数</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#重定向"><span class="post-toc-text">重定向</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#包含"><span class="post-toc-text">包含</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-ShellDetails"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        
+          <h1 class="post-card-title" >LinuxShell基础</h1>
+        
+        <div class="post-meta">
+            <time class="post-time" title="2014-9-10 0:00" datetime="2014-09-09T16:00:00.000Z"  itemprop="datePublished">2014-09-10</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="什么是Shell"><a href="#什么是Shell" class="headerlink" title="什么是Shell"></a>什么是Shell</h2><p>Shell本身是一个用C语言编写的程序，它是用户使用Unix/Linux的桥梁，用户的大部分工作都是通过Shell完成的。Shell既是一种命令语言，又是一种程序设计语言。作为命令语言，它交互式地解释和执行用户输入的命令；作为程序设计语言，它定义了各种变量和参数，并提供了许多在高级语言中才具有的控制结构，包括循环和分支。</p>
+<p>它虽然不是Unix/Linux系统内核的一部分，但它调用了系统核心的大部分功能来执行程序、建立文件并以并行的方式协调各个程序的运行。因此，对于用户来说，shell是最重要的实用程序，深入了解和熟练掌握shell的特性极其使用方法，是用好Unix/Linux系统的关键。</p>
+<p>可以说，shell使用的熟练程度反映了用户对Unix/Linux使用的熟练程度。</p>
+<p>注意：单独地学习 Shell 是没有意义的，请先了解 Unix/Linux 基础。</p>
+<p>Shell有两种执行命令的方式：<br>交互式（Interactive）：解释执行用户的命令，用户输入一条命令，Shell就解释执行一条。<br>批处理（Batch）：用户事先写一个Shell脚本(Script)，其中有很多条命令，让Shell一次把这些命令执行完，而不必一条一条地敲命令。</p>
+<p>Shell脚本和编程语言很相似，也有变量和流程控制语句，但Shell脚本是解释执行的，不需要编译，Shell程序从脚本中一行一行读取并执行这些命令，相当于一个用户把脚本中的命令一行一行敲到Shell提示符下执行。</p>
+<p>Shell初学者请注意，在平常应用中，建议不要用 root 帐号运行 Shell 。作为普通用户，不管您有意还是无意，都无法破坏系统；但如果是 root，那就不同了，只要敲几个字母，就可能导致灾难性后果。<br><a id="more"></a></p>
+<h2 id="几种常见的Shell"><a href="#几种常见的Shell" class="headerlink" title="几种常见的Shell"></a>几种常见的Shell</h2><p>Unix/Linux上常见的Shell脚本解释器有bash、sh、csh、ksh等，习惯上把它们称作一种Shell。我们常说有多少种Shell，其实说的是Shell脚本解释器。</p>
+<h3 id="bash"><a href="#bash" class="headerlink" title="bash"></a>bash</h3><p>bash是Linux标准默认的shell，本教程也基于bash讲解。bash由Brian Fox和Chet Ramey共同完成，是BourneAgain Shell的缩写，内部命令一共有40个。</p>
+<p>Linux使用它作为默认的shell是因为它有诸如以下的特色：<br>可以使用类似DOS下面的doskey的功能，用方向键查阅和快速输入并修改命令。<br>自动通过查找匹配的方式给出以某字符串开头的命令。<br>包含了自身的帮助功能，你只要在提示符下面键入help就可以得到相关的帮助。</p>
+<h3 id="sh"><a href="#sh" class="headerlink" title="sh"></a>sh</h3><p>sh 由Steve Bourne开发，是Bourne Shell的缩写，sh 是Unix 标准默认的shell。</p>
+<h3 id="ash"><a href="#ash" class="headerlink" title="ash"></a>ash</h3><p>ash shell 是由Kenneth Almquist编写的，Linux中占用系统资源最少的一个小shell，它只包含24个内部命令，因而使用起来很不方便。</p>
+<h3 id="csh"><a href="#csh" class="headerlink" title="csh"></a>csh</h3><p>csh 是Linux比较大的内核，它由以William Joy为代表的共计47位作者编成，共有52个内部命令。该shell其实是指向/bin/tcsh这样的一个shell，也就是说，csh其实就是tcsh。</p>
+<h3 id="ksh"><a href="#ksh" class="headerlink" title="ksh"></a>ksh</h3><p>ksh 是Korn shell的缩写，由Eric Gisin编写，共有42条内部命令。该shell最大的优点是几乎和商业发行版的ksh完全兼容，这样就可以在不用花钱购买商业版本的情况下尝试商业版本的性能了。</p>
+<p>注意：bash是 Bourne Again Shell 的缩写，是linux标准的默认shell ，它基于Bourne shell，吸收了C shell和Korn shell的一些特性。bash完全兼容sh，也就是说，用sh写的脚本可以不加修改的在bash中执行。</p>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><table>
+<thead>
+<tr>
+<th>变量</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$0</td>
+<td>当前脚本的文件名</td>
+</tr>
+<tr>
+<td>$n</td>
+<td>传递给脚本或函数的参数。n 是一个数字，表示第几个参数。例如，第一个参数是$1，第二个参数是$2。</td>
+</tr>
+<tr>
+<td>$#</td>
+<td>传递给脚本或函数的参数个数。</td>
+</tr>
+<tr>
+<td>$*</td>
+<td>传递给脚本或函数的所有参数。</td>
+</tr>
+<tr>
+<td>$@</td>
+<td>传递给脚本或函数的所有参数。被双引号(“ “)包含时，与 $* 稍有不同，下面将会讲到。</td>
+</tr>
+<tr>
+<td>$?</td>
+<td>上个命令的退出状态，或函数的返回值。</td>
+</tr>
+<tr>
+<td>$$</td>
+<td>当前Shell进程ID。对于 Shell 脚本，就是这些脚本所在的进程ID。</td>
+</tr>
+</tbody>
+</table>
+<center>特殊变量列表</center>
+
+<h3 id="和-的区别"><a href="#和-的区别" class="headerlink" title="$* 和 $@ 的区别"></a>$* 和 $@ 的区别</h3><p>$* 和 $@ 都表示传递给函数或脚本的所有参数，不被双引号(“ “)包含时，都以”$1” “$2” … “$n” 的形式输出所有参数。</p>
+<p>但是当它们被双引号(“ “)包含时，”$*” 会将所有的参数作为一个整体，以”$1 $2 … $n”的形式输出所有参数；”$@” 会将各个参数分开，以”$1” “$2” … “$n” 的形式输出所有参数。</p>
+<h3 id="退出状态"><a href="#退出状态" class="headerlink" title="退出状态"></a>退出状态</h3><p>$? 可以获取上一个命令的退出状态。所谓退出状态，就是上一个命令执行后的返回结果。</p>
+<p>退出状态是一个数字，一般情况下，大部分命令执行成功会返回 0，失败返回 1。</p>
+<p>不过，也有一些命令返回其他值，表示不同类型的错误。</p>
+<p>下面的转义字符都可以用在 echo 中：</p>
+<table>
+<thead>
+<tr>
+<th>转义字符</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>\\</td>
+<td>反斜杠</td>
+</tr>
+<tr>
+<td>\a</td>
+<td>警报，响铃</td>
+</tr>
+<tr>
+<td>\b</td>
+<td>退格（删除键）</td>
+</tr>
+<tr>
+<td>\f</td>
+<td>换页(FF)，将当前位置移到下页开头</td>
+</tr>
+<tr>
+<td>\n</td>
+<td>换行</td>
+</tr>
+<tr>
+<td>\r</td>
+<td>回车</td>
+</tr>
+<tr>
+<td>\t</td>
+<td>水平制表符（tab键）</td>
+</tr>
+<tr>
+<td>\v</td>
+<td>垂直制表符</td>
+</tr>
+</tbody>
+</table>
+<p>可以使用 echo 命令的 -E 选项禁止转义，默认也是不转义的；使用 -n 选项可以禁止插入换行符。</p>
+<h3 id="命令替换"><a href="#命令替换" class="headerlink" title="命令替换"></a>命令替换</h3><p>命令替换是指Shell可以先执行命令，将输出结果暂时保存，在适当的地方输出。</p>
+<p>命令替换的语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">`command`</div></pre></td></tr></table></figure>
+<p>注意是反引号，不是单引号，这个键位于 Esc 键下方。</p>
+<h3 id="变量替换"><a href="#变量替换" class="headerlink" title="变量替换"></a>变量替换</h3><p>变量替换可以根据变量的状态（是否为空、是否定义等）来改变它的值</p>
+<p>可以使用的变量替换形式：</p>
+<table>
+<thead>
+<tr>
+<th>形式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>${var}</td>
+<td>变量本来的值</td>
+</tr>
+<tr>
+<td>${var:-word}</td>
+<td>如果变量 var 为空或已被删除(unset)，那么返回 word，但不改变 var 的值。</td>
+</tr>
+<tr>
+<td>${var:=word}</td>
+<td>如果变量 var 为空或已被删除(unset)，那么返回 word，并将 var 的值设置为 word。</td>
+</tr>
+<tr>
+<td>${var:?message}</td>
+<td>如果变量 var 为空或已被删除(unset)，那么将消息 message 送到标准错误输出，可以用来检测变量 var 是否可以被正常赋值。若此替换出现在Shell脚本中，那么脚本将停止运行。</td>
+</tr>
+<tr>
+<td>${var:+word}</td>
+<td>如果变量 var 被定义，那么返回 word，但不改变 var 的值。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="运算"><a href="#运算" class="headerlink" title="运算"></a>运算</h2><p>原生bash不支持简单的数学运算，但是可以通过其他命令来实现，例如 <code>awk</code> 和 <code>expr</code>，<code>expr</code> 最常用。</p>
+<p><code>expr</code>是一款表达式计算工具，使用它能完成表达式的求值操作。</p>
+<p>例如，两个数相加：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line">val=`expr 6 \* 3`</div><div class="line">echo &quot;Total value : $val&quot;</div></pre></td></tr></table></figure>
+<p>运行脚本输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Total value : 18</div></pre></td></tr></table></figure>
+<p>两点注意：</p>
+<ol>
+<li>表达式和运算符之间要有空格，例如 6*3 是不对的，必须写成 6 * 3，这与我们熟悉的大多数编程语言不一样。</li>
+<li>完整的表达式要被 <code> </code> 包含，注意这个字符不是常用的单引号，在 Esc 键下边。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>+</td>
+<td>加法</td>
+<td><code>expr $a + $b</code> 结果为 30。</td>
+</tr>
+<tr>
+<td>-</td>
+<td>减法</td>
+<td><code>expr $a - $b</code> 结果为 10。</td>
+</tr>
+<tr>
+<td>*</td>
+<td>乘法</td>
+<td><code>expr $a \* $b</code> 结果为  200。</td>
+</tr>
+<tr>
+<td>/</td>
+<td>除法</td>
+<td><code>expr $b / $a</code> 结果为 2。</td>
+</tr>
+<tr>
+<td>%</td>
+<td>取余</td>
+<td><code>expr $b % $a</code> 结果为 0。</td>
+</tr>
+<tr>
+<td>=</td>
+<td>赋值</td>
+<td>a=$b 将把变量 b 的值赋给 a。</td>
+</tr>
+<tr>
+<td>==</td>
+<td>相等。用于比较两个数字，相同则返回 true。</td>
+<td>[ $a == $b ] 返回 false。</td>
+</tr>
+<tr>
+<td>!=</td>
+<td>不相等。用于比较两个数字，不相同则返回 true。</td>
+<td>[ $a != $b ] 返回 true。</td>
+</tr>
+</tbody>
+</table>
+<center>算术运算符列表</center>
+
+
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-eq</td>
+<td>检测两个数是否相等，相等返回 true。</td>
+<td>[ $a -eq $b ] 返回 true。</td>
+</tr>
+<tr>
+<td>-ne</td>
+<td>检测两个数是否相等，不相等返回 true。</td>
+<td>[ $a -ne $b ] 返回 true。</td>
+</tr>
+<tr>
+<td>-gt</td>
+<td>检测左边的数是否大于右边的，如果是，则返回 true。</td>
+<td>[ $a -gt $b ] 返回 false。</td>
+</tr>
+<tr>
+<td>-lt</td>
+<td>检测左边的数是否小于右边的，如果是，则返回 true。</td>
+<td>[ $a -lt $b ] 返回 true。</td>
+</tr>
+<tr>
+<td>-ge</td>
+<td>检测左边的数是否大等于右边的，如果是，则返回 true。</td>
+<td>[ $a -ge $b ] 返回 false。</td>
+</tr>
+<tr>
+<td>-le</td>
+<td>检测左边的数是否小于等于右边的，如果是，则返回 true。</td>
+<td>[ $a -le $b ] 返回 true。</td>
+</tr>
+</tbody>
+</table>
+<center>关系运算符列表</center>
+
+
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>!</td>
+<td>非运算，表达式为 true 则返回 false，否则返回 true。</td>
+<td>[ ! false ] 返回 true。</td>
+</tr>
+<tr>
+<td>-o</td>
+<td>或运算，有一个表达式为 true 则返回 true。</td>
+<td>[ $a -lt 20 -o $b -gt 100 ] 返回 true。</td>
+</tr>
+<tr>
+<td>-a</td>
+<td>与运算，两个表达式都为 true 才返回 true。</td>
+<td>[ $a -lt 20 -a $b -gt 100 ] 返回 false。</td>
+</tr>
+</tbody>
+</table>
+<center>布尔运算符列表</center>
+
+
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>=</td>
+<td>检测两个字符串是否相等，相等返回 true。</td>
+<td>[ $a = $b ] 返回 false。</td>
+</tr>
+<tr>
+<td>!=</td>
+<td>检测两个字符串是否相等，不相等返回 true。</td>
+<td>[ $a != $b ] 返回 true。</td>
+</tr>
+<tr>
+<td>-z</td>
+<td>检测字符串长度是否为0，为0返回 true。</td>
+<td>[ -z $a ] 返回 false。</td>
+</tr>
+<tr>
+<td>-n</td>
+<td>检测字符串长度是否为0，不为0返回 true。</td>
+<td>[ -z $a ] 返回 true。</td>
+</tr>
+<tr>
+<td>str</td>
+<td>检测字符串是否为空，不为空返回 true。</td>
+<td>[ $a ] 返回 true。</td>
+</tr>
+</tbody>
+</table>
+<center>字符串运算符列表</center>
+
+
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>说明</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-b file</td>
+<td>检测文件是否是块设备文件，如果是，则返回 true。</td>
+<td>[ -b $file ] 返回 false。</td>
+</tr>
+<tr>
+<td>-c file</td>
+<td>检测文件是否是字符设备文件，如果是，则返回 true。</td>
+<td>[ -b $file ] 返回 false。</td>
+</tr>
+<tr>
+<td>-d file</td>
+<td>检测文件是否是目录，如果是，则返回 true。</td>
+<td>[ -d $file ] 返回 false。</td>
+</tr>
+<tr>
+<td>-f file</td>
+<td>检测文件是否是普通文件（既不是目录，也不是设备文件），如果是，则返回 true。</td>
+<td>[ -f $file ] 返回 true。</td>
+</tr>
+<tr>
+<td>-g file</td>
+<td>检测文件是否设置了 SGID 位，如果是，则返回 true。</td>
+<td>[ -g $file ] 返回 false。</td>
+</tr>
+<tr>
+<td>-k file</td>
+<td>检测文件是否设置了粘着位(Sticky Bit)，如果是，则返回 true。</td>
+<td>[ -k $file ] 返回 false。</td>
+</tr>
+<tr>
+<td>-p file</td>
+<td>检测文件是否是具名管道，如果是，则返回 true。</td>
+<td>[ -p $file ] 返回 false。</td>
+</tr>
+<tr>
+<td>-u file</td>
+<td>检测文件是否设置了 SUID 位，如果是，则返回 true。</td>
+<td>[ -u $file ] 返回 false。</td>
+</tr>
+<tr>
+<td>-r file</td>
+<td>检测文件是否可读，如果是，则返回 true。</td>
+<td>[ -r $file ] 返回 true。</td>
+</tr>
+<tr>
+<td>-w file</td>
+<td>检测文件是否可写，如果是，则返回 true。</td>
+<td>[ -w $file ] 返回 true。</td>
+</tr>
+<tr>
+<td>-x file</td>
+<td>检测文件是否可执行，如果是，则返回 true。</td>
+<td>[ -x $file ] 返回 true。</td>
+</tr>
+<tr>
+<td>-s file</td>
+<td>检测文件是否为空（文件大小是否大于0），不为空返回 true。</td>
+<td>[ -s $file ] 返回 true。</td>
+</tr>
+<tr>
+<td>-e file</td>
+<td>检测文件（包括目录）是否存在，如果是，则返回 true。</td>
+<td>[ -e $file ] 返回 true。</td>
+</tr>
+</tbody>
+</table>
+<center>文件测试运算符列表</center>
+
+<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><p>bash支持一维数组（不支持多维数组），并且没有限定数组的大小。类似与C语言，数组元素的下标由0开始编号。获取数组中的元素要利用下标，下标可以是整数或算术表达式，其值应大于或等于0。</p>
+<p>在Shell中，用括号来表示数组，数组元素用“空格”符号分割开。定义数组的一般形式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">array_name=(value1 ... valuen)</div></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">array_name=(value0 value1 value2 value3)</div></pre></td></tr></table></figure>
+<p>获取数组长度的方法与获取字符串长度的方法相同，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># 取得数组元素的个数</div><div class="line">length=$&#123;#array_name[@]&#125;</div><div class="line"># 或者</div><div class="line">length=$&#123;#array_name[*]&#125;</div><div class="line"># 取得数组单个元素的长度</div><div class="line">lengthn=$&#123;#array_name[n]&#125;</div></pre></td></tr></table></figure>
+<p>##判断语句</p>
+<p>###if</p>
+<p>语句通过关系运算符判断表达式的真假来决定执行哪个分支。Shell 有三种 if … else 语句：</p>
+<ol>
+<li>if … fi 语句；</li>
+<li>if … else … fi 语句；</li>
+<li>if … elif … else … fi 语句。</li>
+</ol>
+<p>1) if … else 语句</p>
+<p>if … else 语句的语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">if [ expression ]</div><div class="line">then</div><div class="line">   Statement(s) to be executed if expression is true</div><div class="line">fi</div></pre></td></tr></table></figure>
+<p>2) if … else … fi 语句</p>
+<p>if … else … fi 语句的语法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">if [ expression ]</div><div class="line">then</div><div class="line">   Statement(s) to be executed if expression is true</div><div class="line">else</div><div class="line">   Statement(s) to be executed if expression is not true</div><div class="line">fi</div></pre></td></tr></table></figure>
+<p>3) if … elif … fi 语句</p>
+<p>if … elif … fi 语句可以对多个条件进行判断，语法为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">if [ expression 1 ]</div><div class="line">then</div><div class="line">   Statement(s) to be executed if expression 1 is true</div><div class="line">elif [ expression 2 ]</div><div class="line">then</div><div class="line">   Statement(s) to be executed if expression 2 is true</div><div class="line">elif [ expression 3 ]</div><div class="line">then</div><div class="line">   Statement(s) to be executed if expression 3 is true</div><div class="line">else</div><div class="line">   Statement(s) to be executed if no expression is true</div><div class="line">fi</div></pre></td></tr></table></figure>
+<h3 id="case-…-esac"><a href="#case-…-esac" class="headerlink" title="case … esac"></a>case … esac</h3><p>与其他语言中的 switch … case 语句类似，是一种多分枝选择结构。</p>
+<p>case 语句匹配一个值或一个模式，如果匹配成功，执行相匹配的命令。case语句格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">case 值 in</div><div class="line">模式1)</div><div class="line">    command1</div><div class="line">    command2</div><div class="line">    command3</div><div class="line">    ;;</div><div class="line">模式2）</div><div class="line">    command1</div><div class="line">    command2</div><div class="line">    command3</div><div class="line">    ;;</div><div class="line">*)</div><div class="line">    command1</div><div class="line">    command2</div><div class="line">    command3</div><div class="line">    ;;</div><div class="line">esac</div></pre></td></tr></table></figure>
+<p>case工作方式如上所示。取值后面必须为关键字 in，每一模式必须以右括号结束。取值可以为变量或常数。匹配发现取值符合某一模式后，其间所有命令开始执行直至 ;;。;; 与其他语言中的 break 类似，意思是跳到整个 case 语句的最后。</p>
+<p>取值将检测匹配的每一个模式。一旦模式匹配，则执行完匹配模式相应命令后不再继续其他模式。如果无一匹配模式，使用星号 * 捕获该值，再执行后面的命令。</p>
+<h2 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h2><h3 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h3><p>for循环一般格式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">for 变量 in 列表</div><div class="line">do</div><div class="line">    command1</div><div class="line">    command2</div><div class="line">    ...</div><div class="line">    commandN</div><div class="line">done</div></pre></td></tr></table></figure>
+<p>列表是一组值（数字、字符串等）组成的序列，每个值通过空格分隔。每循环一次，就将列表中的下一个值赋给变量。<br>in 列表是可选的，如果不用它，for 循环使用命令行的位置参数。</p>
+<h3 id="while"><a href="#while" class="headerlink" title="while"></a>while</h3><p>while循环用于不断执行一系列命令，也用于从输入文件中读取数据；命令通常为测试条件。其格式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">while command</div><div class="line">do</div><div class="line">   Statement(s) to be executed if command is true</div><div class="line">done</div></pre></td></tr></table></figure>
+<p>命令执行完毕，控制返回循环顶部，从头开始直至测试条件为假。</p>
+<h3 id="until"><a href="#until" class="headerlink" title="until"></a>until</h3><p>until 循环执行一系列命令直至条件为 true 时停止。until 循环与 while 循环在处理方式上刚好相反。一般while循环优于until循环，但在某些时候，也只是极少数情况下，until 循环更加有用。</p>
+<p>until 循环格式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">until command</div><div class="line">do</div><div class="line">   Statement(s) to be executed until command is true</div><div class="line">done</div></pre></td></tr></table></figure>
+<p>command 一般为条件表达式，如果返回值为 false，则继续执行循环体内的语句，否则跳出循环。</p>
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p>函数可以让我们将一个复杂功能划分成若干模块，让程序结构更加清晰，代码重复利用率更高。像其他编程语言一样，Shell 也支持函数。Shell 函数必须先定义后使用。</p>
+<p>Shell 函数的定义格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">function_name () &#123;</div><div class="line">    list of commands</div><div class="line">    [ return value ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果你愿意，也可以在函数名前加上关键字 function：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">function function_name () &#123;</div><div class="line">    list of commands</div><div class="line">    [ return value ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>函数返回值，可以显式增加return语句；如果不加，会将最后一条命令运行结果作为返回值。</p>
+<p>Shell 函数返回值只能是整数，一般用来表示函数执行成功与否，0表示成功，其他值表示失败。如果 return 其他数据，比如一个字符串，往往会得到错误提示：“numeric argument required”。</p>
+<p>如果一定要让函数返回字符串，那么可以先定义一个变量，用来接收函数的计算结果，脚本在需要的时候访问这个变量来获得函数返回值。</p>
+<blockquote>
+<p>调用函数只需要给出函数名，不需要加括号。</p>
+</blockquote>
+<p>在Shell中，调用函数时可以向其传递参数。在函数体内部，通过 $n 的形式来获取参数的值，例如，$1表示第一个参数，$2表示第二个参数…</p>
+<p>注意，$10 不能获取第十个参数，获取第十个参数需要${10}。当n&gt;=10时，需要使用${n}来获取参数。</p>
+<p>另外，还有几个特殊变量用来处理参数，前面已经提到：</p>
+<table>
+<thead>
+<tr>
+<th>特殊变量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$#</td>
+<td>传递给函数的参数个数。</td>
+</tr>
+<tr>
+<td>$*</td>
+<td>显示所有传递给函数的参数。</td>
+</tr>
+<tr>
+<td>$@</td>
+<td>与$*相同，但是略有区别。</td>
+</tr>
+<tr>
+<td>$?</td>
+<td>函数的返回值。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="重定向"><a href="#重定向" class="headerlink" title="重定向"></a>重定向</h2><p>一般情况下，每个 Unix/Linux 命令运行时都会打开三个文件：</p>
+<ol>
+<li>标准输入文件(stdin)：stdin的文件描述符为0，Unix程序默认从stdin读取数据。</li>
+<li>标准输出文件(stdout)：stdout 的文件描述符为1，Unix程序默认向stdout输出数据。</li>
+<li>标准错误文件(stderr)：stderr的文件描述符为2，Unix程序会向stderr流中写入错误信息。</li>
+</ol>
+<p>默认情况下，<code>command &gt; file</code> 将 stdout 重定向到 file，<code>command &lt; file</code> 将stdin 重定向到 file。</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>command &gt; file</td>
+<td>将输出重定向到 file。</td>
+</tr>
+<tr>
+<td>command &lt; file</td>
+<td>将输入重定向到 file。</td>
+</tr>
+<tr>
+<td>command &gt;&gt; file</td>
+<td>将输出以追加的方式重定向到 file。</td>
+</tr>
+<tr>
+<td>n &gt; file</td>
+<td>将文件描述符为 n 的文件重定向到 file。</td>
+</tr>
+<tr>
+<td>n &gt;&gt; file</td>
+<td>将文件描述符为 n 的文件以追加的方式重定向到 file。</td>
+</tr>
+<tr>
+<td>n &gt;&amp; m</td>
+<td>将输出文件 m 和 n 合并。</td>
+</tr>
+<tr>
+<td>n &lt;&amp; m</td>
+<td>将输入文件 m 和 n 合并。</td>
+</tr>
+<tr>
+<td>&lt;&lt; tag</td>
+<td>将开始标记 tag 和结束标记 tag 之间的内容作为输入。</td>
+</tr>
+</tbody>
+</table>
+<center>全部可用的重定向命令列表</center>
+
+<p>###/dev/null 文件</p>
+<p>如果希望执行某个命令，但又不希望在屏幕上显示输出结果，那么可以将输出重定向到 <code>/dev/null</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ command &gt; /dev/null</div></pre></td></tr></table></figure>
+<p><code>/dev/null</code> 是一个特殊的文件，写入到它的内容都会被丢弃；如果尝试从该文件读取内容，那么什么也读不到。但是 <code>/dev/null</code> 文件非常有用，将命令的输出重定向到它，会起到”禁止输出“的效果。</p>
+<p>如果希望屏蔽 stdout 和 stderr，可以这样写：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ command &gt; /dev/null 2&gt;&amp;1</div></pre></td></tr></table></figure>
+<h2 id="包含"><a href="#包含" class="headerlink" title="包含"></a>包含</h2><p>像其他语言一样，Shell 也可以包含外部脚本，将外部脚本的内容合并到当前脚本。</p>
+<p>Shell 中包含脚本可以使用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">. filename</div></pre></td></tr></table></figure>
+<p>或</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">source filename</div></pre></td></tr></table></figure>
+<p>两种方式的效果相同，简单起见，一般使用点号(.)，但是注意点号(.)和文件名中间有一空格。</p>
+<hr>
+<blockquote>
+<p>参考至：<a href="http://see.xidian.edu.cn/cpp/view/6994.html" target="_blank" rel="external">shell</a></p>
+</blockquote>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-12-24T14:32:12.119Z" title="2016-12-24 22:32" itemprop="dateUpdated">2016年12月24日 22:32</time>
+</span><br>
+
+
+        
+    </div>
+    <footer>
+        <a href="http://builderqiu.com">
+            <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" alt="BuilderQiu">
+            BuilderQiu
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/">Shell</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/09/ShellDetails.html&title=《LinuxShell基础》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/09/ShellDetails.html&title=《LinuxShell基础》 — 一本正经的扯淡&source=什么是ShellShell本身是一个用C语言编写的程序，它是用户使用Unix/Linux的桥梁，用户的大部分工作都是通过Shell完成的。Shell既是一..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/09/ShellDetails.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《LinuxShell基础》 — 一本正经的扯淡&url=http://builderqiu.com/2014/09/ShellDetails.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/09/ShellDetails.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/09/ChatRoomBaseOnRedis.html" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">基于Redis与ActiveMQ、Spring的简单聊天室系统设计</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/09/SpringAntWildcards.html" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Ant模式通配符</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="ShellDetails" data-title="LinuxShell基础" data-url="http://builderqiu.com/2014/09/ShellDetails.html"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'builderqiu', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.2');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/BuilderQiu/hexo-theme-indigo" target="_blank">indigo</a> Base On <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>一本正经的扯淡 &copy; 2016</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/09/ShellDetails.html&title=《LinuxShell基础》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/09/ShellDetails.html&title=《LinuxShell基础》 — 一本正经的扯淡&source=什么是ShellShell本身是一个用C语言编写的程序，它是用户使用Unix/Linux的桥梁，用户的大部分工作都是通过Shell完成的。Shell既是一..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/09/ShellDetails.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《LinuxShell基础》 — 一本正经的扯淡&url=http://builderqiu.com/2014/09/ShellDetails.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/09/ShellDetails.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJUlEQVR42u3aUW6DQAwFwNz/0ukBGsizDVXZHb6qipAdKrm7fn694uv960ruObo/ecLrjgsDA+OxjOTrj36TII8+lbym/NVgYGDswDh6dLKUc0CCPGecrw0DAwPj/J7J1jAp2RgYGBjXMnLk+bdgYGBgTA6xvdZb8oTqnRgYGLsx8nL59z/fkm9gYGA8ivEuXtWSmgST1TDgw6owMDCWZvRaadWiXH1acz0YGBhLM/Jj6iTUTIbDkiGPL1QMDIylGckXzEtwHkL0XgQGBsaqjGRUa96Yq271qq8JAwNjVcZVS6w21PLNZbQGDAyMpRmTRZw38fMyOrm/uVAMDIxHMfJ4sho6Vo/HVcyH/xsYGBiLMqpVK6nfvQX1ABgYGPsw8iGweax4VWn+8nfAwMBYiFEdpKiGi5MR2EKkioGBsTRjMmzR+2y13X/7zAgGBsa/Z0wOnPN4ICni0XEXAwNjaUZv0KEaZ/aS1Wa/EAMDY1FG0lartsbyaKHa2sPAwNiTMWm0VQtub2sYRREYGBgbMHoDW5MW21VhJwYGxp6M3lFzPv5VjRwwMDB2YLyL17WDFJORjsNNIQYGxnKMqzZqvWPwZPCiicHAwHgsIy+yecxZfTX5drM88YGBgbEQIy98vbI4CUGj0o+BgYERb/KqoxK9wh1Nt2FgYGDEoxiTgKEQpmJgYGzAqIYBk9J8ywEYAwNjaUb+sckxdRJ/TkY0MDAwHs74Adys5PPQJz5BAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

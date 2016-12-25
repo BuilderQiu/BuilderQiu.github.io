@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>简单的Java缓存实现 | 一本正经的扯淡 | U Still Don&#39;t Know</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Java,Cache">
+    <meta name="description" content="Java缓存实现方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="简单的Java缓存实现">
+<meta property="og:url" content="http://builderqiu.com/2014/09/JavaCacheSampleImpl.html">
+<meta property="og:site_name" content="一本正经的扯淡">
+<meta property="og:description" content="Java缓存实现方式">
+<meta property="og:updated_time" content="2016-12-25T08:22:49.866Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="简单的Java缓存实现">
+<meta name="twitter:description" content="Java缓存实现方式">
+    
+        <link rel="alternative" href="/atom.xml" title="一本正经的扯淡" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.2">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">BuilderQiu</h5>
+          
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/BuilderQiu" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">简单的Java缓存实现</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">简单的Java缓存实现</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-09-02T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-09-03
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1、LRU-Least-Recently-Used-，最近最少使用"><span class="post-toc-text">1、LRU(Least Recently Used ，最近最少使用)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2、LFU-Least-Frequently-Used，最不经常使用"><span class="post-toc-text">2、LFU(Least Frequently Used，最不经常使用)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3、FIFO-First-In-First-Out-，先进先出"><span class="post-toc-text">3、FIFO(First In First Out ，先进先出)</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-JavaCacheSampleImpl"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        
+          <h1 class="post-card-title" >简单的Java缓存实现</h1>
+        
+        <div class="post-meta">
+            <time class="post-time" title="2014-9-3 0:00" datetime="2014-09-02T16:00:00.000Z"  itemprop="datePublished">2014-09-03</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>提到缓存，不得不提就是缓存算法(淘汰算法)，常见算法有LRU、LFU和FIFO等算法，每种算法各有各的优势和缺点及适应环境。</p>
+<h3 id="1、LRU-Least-Recently-Used-，最近最少使用"><a href="#1、LRU-Least-Recently-Used-，最近最少使用" class="headerlink" title="1、LRU(Least Recently Used ，最近最少使用)"></a>1、LRU(Least Recently Used ，最近最少使用)</h3><p>算法根据数据的最近访问记录来淘汰数据，其原理是如果数据最近被访问过，将来被访问的几概率相对比较高，最常见的实现是使用一个链表保存缓存数据，详细具体算法如下：</p>
+<ol>
+<li>新数据插入到链表头部；</li>
+<li>每当缓存数据命中，则将数据移到链表头部；</li>
+<li>当链表满的时候，将链表尾部的数据丢弃；</li>
+</ol>
+<h3 id="2、LFU-Least-Frequently-Used，最不经常使用"><a href="#2、LFU-Least-Frequently-Used，最不经常使用" class="headerlink" title="2、LFU(Least Frequently Used，最不经常使用)"></a>2、LFU(Least Frequently Used，最不经常使用)</h3><p>算法根据数据的历史访问频率来淘汰数据，其原理是如果数据过去被访问次数越多，将来被访问的几概率相对比较高。LFU的每个数据块都有一个引用计数，所有数据块按照引用计数排序，具有相同引用计数的数据块则按照时间排序。<br>具体算法如下：</p>
+<ol>
+<li>新加入数据插入到队列尾部（因为引用计数为1）；</li>
+<li>队列中的数据被访问后，引用计数增加，队列重新排序；</li>
+<li>当需要淘汰数据时，将已经排序的列表最后的数据块删除；</li>
+</ol>
+<h3 id="3、FIFO-First-In-First-Out-，先进先出"><a href="#3、FIFO-First-In-First-Out-，先进先出" class="headerlink" title="3、FIFO(First In First Out ，先进先出)"></a>3、FIFO(First In First Out ，先进先出)</h3><p>算法是根据先进先出原理来淘汰数据的，实现上是最简单的一种,具体算法如下：</p>
+<ol>
+<li>新访问的数据插入FIFO队列尾部，数据在FIFO队列中顺序移动；</li>
+<li>淘汰FIFO队列头部的数据；</li>
+</ol>
+<a id="more"></a>
+<p>评价一个缓存算法好坏的标准主要有两个，一是命中率要高，二是算法要容易实现。当存在热点数据时，LRU的效率很好，但偶发性的、周期性的批量操作会导致LRU命中率急剧下降，缓存污染情况比较严重。LFU效率要优于LRU，且能够避免周期性或者偶发性的操作导致缓存命中率下降的问题。但LFU需要记录数据的历史访问记录，一旦数据访问模式改变，LFU需要更长时间来适用新的访问模式，即：LFU存在历史数据影响将来数据的“缓存污染”效用。FIFO虽然实现很简单，但是命中率很低，实际上也很少使用这种算法。</p>
+<p>基于现有jdk类库，我们可以很容易实现上面的缓存算法</p>
+<p>首先定义缓存接口类:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 缓存接口</div><div class="line"> * <span class="doctag">@author</span> Wen</div><div class="line"> *</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Cache</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 返回当前缓存的大小</div><div class="line">     *</div><div class="line">     * <span class="doctag">@return</span>  </div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">int</span> <span class="title">size</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 返回默认存活时间</div><div class="line">     *</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">long</span> <span class="title">getDefaultExpire</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 向缓存添加value对象,其在缓存中生存时间为默认值</div><div class="line">     *</div><div class="line">     * <span class="doctag">@param</span> key</div><div class="line">     * <span class="doctag">@param</span> value</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">put</span><span class="params">(K key ,V value)</span> </span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 向缓存添加value对象,并指定存活时间</div><div class="line">     * <span class="doctag">@param</span> key</div><div class="line">     * <span class="doctag">@param</span> value</div><div class="line">     * <span class="doctag">@param</span> expire  过期时间</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">put</span><span class="params">(K key ,V value , <span class="keyword">long</span> expire )</span> </span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 查找缓存对象</div><div class="line">     * <span class="doctag">@param</span> key</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">V <span class="title">get</span><span class="params">(K key)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 淘汰对象</div><div class="line">     *</div><div class="line">     * <span class="doctag">@return</span>  被删除对象大小</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">int</span> <span class="title">eliminate</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 缓存是否已经满</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isFull</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 删除缓存对象</div><div class="line">     *</div><div class="line">     * <span class="doctag">@param</span> key</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">remove</span><span class="params">(K key)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 清除所有缓存对象</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 返回缓存大小</div><div class="line">     *</div><div class="line">     * <span class="doctag">@return</span>  </div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getCacheSize</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 缓存中是否为空</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>基本实现抽象类:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Map;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.locks.Lock;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.locks.ReentrantReadWriteLock;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 默认实现</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractCacheMap</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; <span class="keyword">implements</span> <span class="title">Cache</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">CacheObject</span>&lt;<span class="title">K2</span>,<span class="title">V2</span>&gt; </span>&#123;</div><div class="line">        CacheObject(K2 key, V2 value, <span class="keyword">long</span> ttl) &#123;</div><div class="line">            <span class="keyword">this</span>.key = key;</div><div class="line">            <span class="keyword">this</span>.cachedObject = value;</div><div class="line">            <span class="keyword">this</span>.ttl = ttl;</div><div class="line">            <span class="keyword">this</span>.lastAccess = System.currentTimeMillis();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">final</span> K2 key;</div><div class="line">        <span class="keyword">final</span> V2 cachedObject;</div><div class="line">        <span class="keyword">long</span> lastAccess;        <span class="comment">// 最后访问时间</span></div><div class="line">        <span class="keyword">long</span> accessCount;       <span class="comment">// 访问次数</span></div><div class="line">        <span class="keyword">long</span> ttl;               <span class="comment">// 对象存活时间(time-to-live)</span></div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">boolean</span> <span class="title">isExpired</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">if</span> (ttl == <span class="number">0</span>) &#123;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">return</span> lastAccess + ttl &lt; System.currentTimeMillis();</div><div class="line">        &#125;</div><div class="line">        <span class="function">V2 <span class="title">getObject</span><span class="params">()</span> </span>&#123;</div><div class="line">            lastAccess = System.currentTimeMillis();</div><div class="line">            accessCount++;</div><div class="line">            <span class="keyword">return</span> cachedObject;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">protected</span> Map&lt;K,CacheObject&lt;K,V&gt;&gt; cacheMap;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReentrantReadWriteLock cacheLock = <span class="keyword">new</span> ReentrantReadWriteLock();</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Lock readLock = cacheLock.readLock();</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Lock writeLock = cacheLock.writeLock();</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    <span class="keyword">protected</span> <span class="keyword">int</span> cacheSize;      <span class="comment">// 缓存大小 , 0 -&gt; 无限制</span></div><div class="line"></div><div class="line">    <span class="keyword">protected</span>  <span class="keyword">boolean</span> existCustomExpire ; <span class="comment">//是否设置默认过期时间</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCacheSize</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> cacheSize;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">protected</span> <span class="keyword">long</span> defaultExpire;     <span class="comment">// 默认过期时间, 0 -&gt; 永不过期</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AbstractCacheMap</span><span class="params">(<span class="keyword">int</span> cacheSize ,<span class="keyword">long</span> defaultExpire)</span></span>&#123;</div><div class="line">        <span class="keyword">this</span>.cacheSize  = cacheSize ;</div><div class="line">        <span class="keyword">this</span>.defaultExpire  = defaultExpire ;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getDefaultExpire</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> defaultExpire;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">isNeedClearExpiredObject</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> defaultExpire &gt; <span class="number">0</span> || existCustomExpire ;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</div><div class="line">        put(key, value, defaultExpire );</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(K key, V value, <span class="keyword">long</span> expire)</span> </span>&#123;</div><div class="line">        writeLock.lock();</div><div class="line"></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            CacheObject&lt;K,V&gt; co = <span class="keyword">new</span> CacheObject&lt;K,V&gt;(key, value, expire);</div><div class="line">            <span class="keyword">if</span> (expire != <span class="number">0</span>) &#123;</div><div class="line">                existCustomExpire = <span class="keyword">true</span>;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span> (isFull()) &#123;</div><div class="line">                eliminate() ;</div><div class="line">            &#125;</div><div class="line">            cacheMap.put(key, co);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">finally</span> &#123;</div><div class="line">            writeLock.unlock();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * &#123;<span class="doctag">@inheritDoc</span>&#125;</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> V <span class="title">get</span><span class="params">(K key)</span> </span>&#123;</div><div class="line">        readLock.lock();</div><div class="line"></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            CacheObject&lt;K,V&gt; co = cacheMap.get(key);</div><div class="line">            <span class="keyword">if</span> (co == <span class="keyword">null</span>) &#123;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span> (co.isExpired() == <span class="keyword">true</span>) &#123;</div><div class="line">                cacheMap.remove(key);</div><div class="line">                <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="keyword">return</span> co.getObject();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">finally</span> &#123;</div><div class="line">            readLock.unlock();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">eliminate</span><span class="params">()</span> </span>&#123;</div><div class="line">        writeLock.lock();</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="keyword">return</span> eliminateCache();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">finally</span> &#123;</div><div class="line">            writeLock.unlock();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 淘汰对象具体实现</div><div class="line">     *</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">eliminateCache</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isFull</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (cacheSize == <span class="number">0</span>) &#123;<span class="comment">//o -&gt; 无限制</span></div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> cacheMap.size() &gt;= cacheSize;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">(K key)</span> </span>&#123;</div><div class="line">        writeLock.lock();</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            cacheMap.remove(key);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">finally</span> &#123;</div><div class="line">            writeLock.unlock();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</div><div class="line">        writeLock.lock();</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            cacheMap.clear();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">finally</span> &#123;</div><div class="line">            writeLock.unlock();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">size</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> cacheMap.size();</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> size() == <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>LRU缓存实现类:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Iterator;</div><div class="line"><span class="keyword">import</span> java.util.LinkedHashMap;</div><div class="line"><span class="keyword">import</span> java.util.Map;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * LRU  实现</div><div class="line"> * <span class="doctag">@author</span> Wen</div><div class="line"> *</div><div class="line"> * <span class="doctag">@param</span> &lt;K&gt;</div><div class="line"> * <span class="doctag">@param</span> &lt;V&gt;</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LRUCache</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractCacheMap</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LRUCache</span><span class="params">(<span class="keyword">int</span> cacheSize, <span class="keyword">long</span> defaultExpire)</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="keyword">super</span>(cacheSize , defaultExpire) ;</div><div class="line"></div><div class="line">        <span class="comment">//linkedHash已经实现LRU算法 是通过双向链表来实现，当某个位置被命中，通过调整链表的指向将该位置调整到头位置，新加入的内容直接放在链表头，如此一来，最近被命中的内容就向链表头移动，需要替换时，链表最后的位置就是最近最少使用的位置</span></div><div class="line">        <span class="keyword">this</span>.cacheMap = <span class="keyword">new</span> LinkedHashMap&lt;K, CacheObject&lt;K, V&gt;&gt;( cacheSize +<span class="number">1</span> , <span class="number">1f</span>,<span class="keyword">true</span> ) &#123;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">removeEldestEntry</span><span class="params">(</span></span></div><div class="line">                    Map.Entry&lt;K, CacheObject&lt;K, V&gt;&gt; eldest) &#123;</div><div class="line"></div><div class="line">                <span class="keyword">return</span> LRUCache.<span class="keyword">this</span>.removeEldestEntry(eldest);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">removeEldestEntry</span><span class="params">(Map.Entry&lt;K, CacheObject&lt;K, V&gt;&gt; eldest)</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (cacheSize == <span class="number">0</span>)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> size() &gt; cacheSize;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 只需要实现清除过期对象就可以了,linkedHashMap已经实现LRU</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">eliminateCache</span><span class="params">()</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="keyword">if</span>(!isNeedClearExpiredObject())&#123; <span class="keyword">return</span> <span class="number">0</span> ;&#125;</div><div class="line"></div><div class="line">        Iterator&lt;CacheObject&lt;K, V&gt;&gt; iterator = cacheMap.values().iterator();</div><div class="line">        <span class="keyword">int</span> count  = <span class="number">0</span> ;</div><div class="line">        <span class="keyword">while</span>(iterator.hasNext())&#123;</div><div class="line">            CacheObject&lt;K, V&gt; cacheObject = iterator.next();</div><div class="line"></div><div class="line">            <span class="keyword">if</span>(cacheObject.isExpired() )&#123;</div><div class="line">                iterator.remove();</div><div class="line">                count++ ;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> count;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>LFU实现类:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.HashMap;</div><div class="line"><span class="keyword">import</span> java.util.Iterator;</div><div class="line"></div><div class="line"><span class="comment">//LFU实现</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LFUCache</span>&lt;<span class="title">K</span>,<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractCacheMap</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>&#123;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LFUCache</span><span class="params">(<span class="keyword">int</span> cacheSize, <span class="keyword">long</span> defaultExpire)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(cacheSize, defaultExpire);</div><div class="line">        cacheMap = <span class="keyword">new</span> HashMap&lt;K, CacheObject&lt;K,V&gt;&gt;(cacheSize+<span class="number">1</span>) ;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 实现删除过期对象 和 删除访问次数最少的对象</div><div class="line">     *</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">eliminateCache</span><span class="params">()</span> </span>&#123;</div><div class="line">        Iterator&lt;CacheObject&lt;K, V&gt;&gt; iterator = cacheMap.values().iterator();</div><div class="line">        <span class="keyword">int</span> count  = <span class="number">0</span> ;</div><div class="line">        <span class="keyword">long</span> minAccessCount = Long.MAX_VALUE  ;</div><div class="line">        <span class="keyword">while</span>(iterator.hasNext())&#123;</div><div class="line">            CacheObject&lt;K, V&gt; cacheObject = iterator.next();</div><div class="line"></div><div class="line">            <span class="keyword">if</span>(cacheObject.isExpired() )&#123;</div><div class="line">                iterator.remove();</div><div class="line">                count++ ;</div><div class="line">                <span class="keyword">continue</span> ;</div><div class="line">            &#125;<span class="keyword">else</span>&#123;</div><div class="line">                minAccessCount  = Math.min(cacheObject.accessCount , minAccessCount)  ;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">if</span>(count &gt; <span class="number">0</span> ) <span class="keyword">return</span> count ;</div><div class="line"></div><div class="line">        <span class="keyword">if</span>(minAccessCount != Long.MAX_VALUE )&#123;</div><div class="line"></div><div class="line">            iterator = cacheMap.values().iterator();</div><div class="line"></div><div class="line">            <span class="keyword">while</span>(iterator.hasNext())&#123;</div><div class="line">                CacheObject&lt;K, V&gt; cacheObject = iterator.next();</div><div class="line"></div><div class="line">                cacheObject.accessCount  -=  minAccessCount ;</div><div class="line"></div><div class="line">                <span class="keyword">if</span>(cacheObject.accessCount &lt;= <span class="number">0</span> )&#123;</div><div class="line">                    iterator.remove();</div><div class="line">                    count++ ;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> count;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>FIFO实现类:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Iterator;</div><div class="line"><span class="keyword">import</span> java.util.LinkedHashMap;</div><div class="line"><span class="comment">/**</span></div><div class="line"> * FIFO实现</div><div class="line"> * <span class="doctag">@author</span> Wen</div><div class="line"> *</div><div class="line"> * <span class="doctag">@param</span> &lt;K&gt;</div><div class="line"> * <span class="doctag">@param</span> &lt;V&gt;</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FIFOCache</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractCacheMap</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FIFOCache</span><span class="params">(<span class="keyword">int</span> cacheSize, <span class="keyword">long</span> defaultExpire)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(cacheSize, defaultExpire);</div><div class="line">        cacheMap = <span class="keyword">new</span> LinkedHashMap&lt;K, CacheObject&lt;K, V&gt;&gt;(cacheSize + <span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">eliminateCache</span><span class="params">()</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</div><div class="line">        K firstKey = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">        Iterator&lt;CacheObject&lt;K, V&gt;&gt; iterator = cacheMap.values().iterator();</div><div class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</div><div class="line">            CacheObject&lt;K, V&gt; cacheObject = iterator.next();</div><div class="line"></div><div class="line">            <span class="keyword">if</span> (cacheObject.isExpired()) &#123;</div><div class="line">                iterator.remove();</div><div class="line">                count++;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                <span class="keyword">if</span> (firstKey == <span class="keyword">null</span>)</div><div class="line">                    firstKey = cacheObject.key;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (firstKey != <span class="keyword">null</span> &amp;&amp; isFull()) &#123;<span class="comment">//删除过期对象还是满,继续删除链表第一个</span></div><div class="line">            cacheMap.remove(firstKey);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> count;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>原文：<a href="http://my.oschina.net/u/866190/blog/188712" target="_blank" rel="external">简单的java缓存实现</a></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-12-25T08:22:49.866Z" title="2016-12-25 16:22" itemprop="dateUpdated">2016年12月25日 16:22</time>
+</span><br>
+
+
+        
+    </div>
+    <footer>
+        <a href="http://builderqiu.com">
+            <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" alt="BuilderQiu">
+            BuilderQiu
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Cache/">Cache</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/09/JavaCacheSampleImpl.html&title=《简单的Java缓存实现》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/09/JavaCacheSampleImpl.html&title=《简单的Java缓存实现》 — 一本正经的扯淡&source=提到缓存，不得不提就是缓存算法(淘汰算法)，常见算法有LRU、LFU和FIFO等算法，每种算法各有各的优势和缺点及适应环境。
+1、LRU(Least Re..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/09/JavaCacheSampleImpl.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《简单的Java缓存实现》 — 一本正经的扯淡&url=http://builderqiu.com/2014/09/JavaCacheSampleImpl.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/09/JavaCacheSampleImpl.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/09/SpringAntWildcards.html" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Ant模式通配符</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/08/JavaWebSessionFramework.html" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">如何构建Java Web应用的session框架</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="JavaCacheSampleImpl" data-title="简单的Java缓存实现" data-url="http://builderqiu.com/2014/09/JavaCacheSampleImpl.html"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'builderqiu', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.2');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/BuilderQiu/hexo-theme-indigo" target="_blank">indigo</a> Base On <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>一本正经的扯淡 &copy; 2016</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/09/JavaCacheSampleImpl.html&title=《简单的Java缓存实现》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/09/JavaCacheSampleImpl.html&title=《简单的Java缓存实现》 — 一本正经的扯淡&source=提到缓存，不得不提就是缓存算法(淘汰算法)，常见算法有LRU、LFU和FIFO等算法，每种算法各有各的优势和缺点及适应环境。
+1、LRU(Least Re..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/09/JavaCacheSampleImpl.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《简单的Java缓存实现》 — 一本正经的扯淡&url=http://builderqiu.com/2014/09/JavaCacheSampleImpl.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/09/JavaCacheSampleImpl.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACMElEQVR42u3aQXLCMAwFUO5/abrtTEvyvwzMxHlZdcBgPxaqZOnxiJ/nrydf+Wr98evJLsMHAwPjsozn4ZNscLxxDjve9+R7MDAwbsA4PtzfNccbHx+iZUQ/HAYGBsYLxmx9/i4GBgbGdwJuUnu+SkAxMDAw2iI2L0rb27A2ucTAwLgbIz/E9//+SH8DAwPjUoxn+bRBcGVNcSoMDIytGW2pmad0nxjFOBnLwMDA2JqRXH6tBMq2tZAMeZxQMTAwNmW0aVzeJFj/zvyHwMDA2JWRXMq3l/tRAjcKtVEnFgMDY1NGPjYxC7jrY2cnn8LAwNiUkTcA3hwcy3AfXa5hYGBsyvjEEEabLOavzFoIGBgYezPaxsCsMJ6NhRUhGAMDYwtG/rGVlud67+KEioGBsSkjWTorJvODviEFxMDAuAFjdsQ8TZw1CYqgjIGBcRtGHmTby7L2h6ibChgYGFsz1lPGlWbk7NKt+PeAgYGxHSMJvm3l2A5h5GeI5kcwMDA2YuTp4HrR2x60bg9gYGDchjG7SsuTyLaREBW3GBgYt2HkBWRCnTUJhm1RDAyMTRnP8pmlem2rIN83ym0xMDAuzpgFu7zRmJSmbYOhaGFiYGBsxJgF2VkZvDJk9rbGAAYGxmUZ7SXarOxsy+aiAMbAwMAYjXDNLv2H+SwGBgZGcN3WDm2sFMn/rMTAwLgBY2UsLG8eJBdzeSMBAwPjPoy8dMzTxPwQs2u4pf4GBgbGlRg//jhqmM8R/5oAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

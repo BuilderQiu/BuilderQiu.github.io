@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Ant模式通配符 | 一本正经的扯淡 | U Still Don&#39;t Know</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Spring,通配符">
+    <meta name="description" content="Spring提供了强大的Ant模式通配符匹配，从同一个路径能匹配一批资源。
+Ant路径通配符支持&amp;quot;?&amp;quot;、&amp;quot;*&amp;quot;、&amp;quot;**&amp;quot;，注意通配符匹配不包括目录分隔符“/”。
+
+“?”:匹配一个字符，如&amp;quot;config?.xml&amp;quot;可匹配&amp;quot;config1.xml&amp;quot;.
+
+“*”：匹配零个或多个字符串，如“com/*/c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ant模式通配符">
+<meta property="og:url" content="http://builderqiu.com/2014/09/SpringAntWildcards.html">
+<meta property="og:site_name" content="一本正经的扯淡">
+<meta property="og:description" content="Spring提供了强大的Ant模式通配符匹配，从同一个路径能匹配一批资源。
+Ant路径通配符支持&amp;quot;?&amp;quot;、&amp;quot;*&amp;quot;、&amp;quot;**&amp;quot;，注意通配符匹配不包括目录分隔符“/”。
+
+“?”:匹配一个字符，如&amp;quot;config?.xml&amp;quot;可匹配&amp;quot;config1.xml&amp;quot;.
+
+“*”：匹配零个或多个字符串，如“com/*/c">
+<meta property="og:updated_time" content="2016-12-25T08:23:32.704Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ant模式通配符">
+<meta name="twitter:description" content="Spring提供了强大的Ant模式通配符匹配，从同一个路径能匹配一批资源。
+Ant路径通配符支持&amp;quot;?&amp;quot;、&amp;quot;*&amp;quot;、&amp;quot;**&amp;quot;，注意通配符匹配不包括目录分隔符“/”。
+
+“?”:匹配一个字符，如&amp;quot;config?.xml&amp;quot;可匹配&amp;quot;config1.xml&amp;quot;.
+
+“*”：匹配零个或多个字符串，如“com/*/c">
+    
+        <link rel="alternative" href="/atom.xml" title="一本正经的扯淡" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.2">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">BuilderQiu</h5>
+          
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/BuilderQiu" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Ant模式通配符</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Ant模式通配符</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-09-03T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-09-04
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+<article id="post-SpringAntWildcards"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        
+          <h1 class="post-card-title" >Ant模式通配符</h1>
+        
+        <div class="post-meta">
+            <time class="post-time" title="2014-9-4 0:00" datetime="2014-09-03T16:00:00.000Z"  itemprop="datePublished">2014-09-04</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>Spring提供了强大的Ant模式通配符匹配，从同一个路径能匹配一批资源。</p>
+<p>Ant路径通配符支持<code>&quot;?&quot;</code>、<code>&quot;*&quot;</code>、<code>&quot;**&quot;</code>，注意通配符匹配不包括目录分隔符<code>“/”</code>。</p>
+<ol>
+<li><p><code>“?”</code>:匹配一个字符，如<code>&quot;config?.xml&quot;</code>可匹配<code>&quot;config1.xml&quot;</code>.</p>
+</li>
+<li><p><code>“*”</code>：匹配零个或多个字符串，如<code>“com/*/config.xml”</code>将匹配<code>“cn/feng/config.xml”</code>,但不匹配匹配<code>“com/config.xml”</code>(因为这里匹配的是字符串，如果是目录的话则可以)；而<code>“com/config-*.xml”</code>将匹配<code>“com/config-dao.xml”</code>；</p>
+</li>
+<li><p><code>&quot;**&quot;</code>：匹配路径中的零个或多个目录。如<code>“com/**/config.xml”</code>将匹配<code>“com/config.xml”</code>,也匹配<code>“com/feng/spring/config.xml”</code>；而<code>“com/feng/config-**.xml”</code>将匹配  <code>“com/feng/config-dao.xml”</code>，即把<code>“**”</code>当做两个<code>“*”</code>处理。</p>
+</li>
+</ol>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-12-25T08:23:32.704Z" title="2016-12-25 16:23" itemprop="dateUpdated">2016年12月25日 16:23</time>
+</span><br>
+
+
+        
+    </div>
+    <footer>
+        <a href="http://builderqiu.com">
+            <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" alt="BuilderQiu">
+            BuilderQiu
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/通配符/">通配符</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/09/SpringAntWildcards.html&title=《Ant模式通配符》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/09/SpringAntWildcards.html&title=《Ant模式通配符》 — 一本正经的扯淡&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/09/SpringAntWildcards.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Ant模式通配符》 — 一本正经的扯淡&url=http://builderqiu.com/2014/09/SpringAntWildcards.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/09/SpringAntWildcards.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/09/ShellDetails.html" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">LinuxShell基础</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/09/JavaCacheSampleImpl.html" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">简单的Java缓存实现</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="SpringAntWildcards" data-title="Ant模式通配符" data-url="http://builderqiu.com/2014/09/SpringAntWildcards.html"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'builderqiu', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.2');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/BuilderQiu/hexo-theme-indigo" target="_blank">indigo</a> Base On <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>一本正经的扯淡 &copy; 2016</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/09/SpringAntWildcards.html&title=《Ant模式通配符》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/09/SpringAntWildcards.html&title=《Ant模式通配符》 — 一本正经的扯淡&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/09/SpringAntWildcards.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Ant模式通配符》 — 一本正经的扯淡&url=http://builderqiu.com/2014/09/SpringAntWildcards.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/09/SpringAntWildcards.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACNElEQVR42u3aS46DQAxF0ex/07SUcaDus6ElXLdGUZIOHAZu/z4ffI7vuX7/ODnpr519esORIUPGaxnH5Tm7Xf6aXCt9ND9+X4YMGRsw0mB6HSL5d/gjW9yzDBkyZIQkElL7gVuGDBkyroMmL0T5OzJkyJBxzSBFLC8+O+28x2txGTJkvJDRv8xzrx+cb8iQIeMljCM8aQrYvyK6KxkyZIxmnAU4XjqSm6416dLiWYYMGVMZtdWKfuufhGM+IpUhQ8YODNR2/5cAyqmf2v8HGTJkvJCR9rLIO/0Fi0d6ijJkyHg5I0340lBYK03J41jkuTJkyBjBSNcseNONhFe+PLFIVWXIkLEB44likjN4urkIuDJkyBjKIEsSPMfszFHJiGKROMqQIWMoo/bHfOVrESLbax8yZMjYjVH76bRJlz4s1IaTIUPGxow07UuHkZ2G3WnXUIYMGUMZfGTYuVFUT5eKZxkyZMxm8LSMpINBhy9MNOOiWoYMGeMYfNBYO2kSWUtJZciQMZVBFsLSRlinDK4NJGTIkLEDIy1Z+8NL8vhIUf2j3SZDhoxxjHTFgS9AdMpanmLKkCFjB8YRHhJGefmaLrOepqcyZMgYzUiDHY/itZBdG0jIkCFjBwYPsjxBvGuQEIRXGTJkbMDgaxCdb3bYC5IMGTJkhKPHftFLSmgZMmTISBmdcJy22NAIU4YMGeMYnWFADZYOBhb9QhkyZIxmdArIu5a9yAO9eb4hQ4aMdzD+ALHU+gjwzD7/AAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

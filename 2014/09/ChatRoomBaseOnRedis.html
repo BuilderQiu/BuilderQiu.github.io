@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>基于Redis与ActiveMQ、Spring的简单聊天室系统设计 | 一本正经的扯淡 | U Still Don&#39;t Know</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Spring,ActiveMQ,Redis">
+    <meta name="description" content="实时聊天系统">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于Redis与ActiveMQ、Spring的简单聊天室系统设计">
+<meta property="og:url" content="http://builderqiu.com/2014/09/ChatRoomBaseOnRedis.html">
+<meta property="og:site_name" content="一本正经的扯淡">
+<meta property="og:description" content="实时聊天系统">
+<meta property="og:updated_time" content="2016-12-25T08:22:36.291Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于Redis与ActiveMQ、Spring的简单聊天室系统设计">
+<meta name="twitter:description" content="实时聊天系统">
+    
+        <link rel="alternative" href="/atom.xml" title="一本正经的扯淡" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.2">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">BuilderQiu</h5>
+          
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/BuilderQiu" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">基于Redis与ActiveMQ、Spring的简单聊天室系统设计</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">基于Redis与ActiveMQ、Spring的简单聊天室系统设计</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-09-14T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-09-15
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#其他相关"><span class="post-toc-text">其他相关</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#系统概述"><span class="post-toc-text">系统概述</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-系统功能"><span class="post-toc-text">1.系统功能</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-组件技术"><span class="post-toc-text">2.组件技术</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-大体流程"><span class="post-toc-text">3.大体流程</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#系统大体结构图"><span class="post-toc-text">系统大体结构图</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#代码实现"><span class="post-toc-text">代码实现</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ChatRoom"><span class="post-toc-text">ChatRoom</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ChatRoomManager"><span class="post-toc-text">ChatRoomManager</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#MessageListener"><span class="post-toc-text">MessageListener</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ChatListener"><span class="post-toc-text">ChatListener</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#消息监听"><span class="post-toc-text">消息监听</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前端访问接口-SpringMVC"><span class="post-toc-text">前端访问接口(SpringMVC)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#基于JQuery的JS模块实现"><span class="post-toc-text">基于JQuery的JS模块实现</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-ChatRoomBaseOnRedis"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        
+          <h1 class="post-card-title" >[原]基于Redis与ActiveMQ、Spring的简单聊天室系统设计</h1>
+        
+        <div class="post-meta">
+            <time class="post-time" title="2014-9-15 0:00" datetime="2014-09-14T16:00:00.000Z"  itemprop="datePublished">2014-09-15</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="其他相关"><a href="#其他相关" class="headerlink" title="其他相关"></a>其他相关</h2><ul>
+<li><a href="/2014-05/OnlineListByRedis">基于Redis的在线用户列表解决方案</a></li>
+<li><a href="/2014-06/AsyncSystemBaseOnSpring">基于Spring的异步系统实现方案</a></li>
+</ul>
+<h2 id="系统概述"><a href="#系统概述" class="headerlink" title="系统概述"></a>系统概述</h2><h3 id="1-系统功能"><a href="#1-系统功能" class="headerlink" title="1.系统功能"></a>1.系统功能</h3><p>用于实现以页面为房间基数的聊天室系统，以达到访问同一页面的用户可以进行伪实时通讯交流的功能，之所以是伪实时通讯是因为实现技术基于WebAjax轮询完成，而非Socket之类真真双向通讯。<br><a id="more"></a></p>
+<h3 id="2-组件技术"><a href="#2-组件技术" class="headerlink" title="2.组件技术"></a>2.组件技术</h3><ul>
+<li>Redis （Published &amp; Subscribe）</li>
+<li>ActiveMQ （MessageQueue）</li>
+<li>Spring</li>
+<li>Ajax</li>
+</ul>
+<h3 id="3-大体流程"><a href="#3-大体流程" class="headerlink" title="3.大体流程"></a>3.大体流程</h3><p>1.用户发送消息： 用户在Web前端发送消息（一般的表单）之后，后台收到消息，记录并向MessageQueue里添加一条待Published的消息，返回Web前端发送成功的状态。</p>
+<p>2.系统发送消息：Spring Listener 后台监听MessageQueue，读取并处理消息，若为实时通讯的消息，则将MessagePublished到Redis中。</p>
+<p>3.系统读取消息：系统中ChatListener Subscribe From Redis，从Redis中取出订阅的消息并加入本地缓存。</p>
+<p>4.用户读取消息：Web前端定时发起Ajax请求新的数据，系统判断缓存中是否有新的消息，若有则返回所有新消息，若没有则Hold住连接，线程休眠，每隔一定时间去访问缓存查看是否有新消息，有则返回，达到一定次数还没有新消息则返回无新消息的状态。</p>
+<h2 id="系统大体结构图"><a href="#系统大体结构图" class="headerlink" title="系统大体结构图"></a>系统大体结构图</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">                                                        Server                                            </div><div class="line"></div><div class="line">                         +-----------------------------------------------------------------------+        </div><div class="line">                         |                                                                       |        </div><div class="line">                         |  +----------------------+          +-------------------------------+  |        </div><div class="line">                         |  |          Room        |          |         RoomManager           |  |        </div><div class="line">                         |  +----------------------+          +-------------------------------+  |        </div><div class="line">+------------+           |  |                      |          |                               |  |        </div><div class="line">|            | getMessage|  |   reads:HashMap      +----------+ rooms:HashMap                 |  |        </div><div class="line">|  Customer  | &lt;---------+  |                      |          |                               |  |        </div><div class="line">|            |           |  |   getAllMessage(sid) |          | refresh(channelId)            |  |        </div><div class="line">+------------+           |  |                      |          |                               |  |        </div><div class="line">                         |  |   addMessage(V)      |          | pushMessage(channelId,message)|  |        </div><div class="line">                         |  |                      |          |                               |  |        </div><div class="line">                         |  +----------------------+          +-------------------------------+  |        </div><div class="line">                         |                                                                       |        </div><div class="line">                         |            ^                                                          |        </div><div class="line">                         |            | Push                                                     |        </div><div class="line">                         |            |                                                          |        </div><div class="line">                         |                                                                       |        </div><div class="line">                         |  +----------------------+          +-------------------------------+  |        </div><div class="line">                         |  |    MessageListener   |          |          ChatListener         |  |        </div><div class="line">                         |  +----------------------+          +-------------------------------+  |        </div><div class="line">                         |  |                      |    +-----+                               |  |        </div><div class="line">                         |  |    onPMessage()      |    |     |                               |  |        </div><div class="line">                         |  |                      |    |     |                               |  |        </div><div class="line">                         |  +----------------------+    |     +-------------------------------+  |        </div><div class="line">                         |                              |                                        |        </div><div class="line">                         |            ^                 |                     ^                  |        </div><div class="line">                         |            |                 |                     |                  |        </div><div class="line">                         +-----------------------------------------------------------------------+        </div><div class="line">                                      |                 |                     |                           </div><div class="line">                                      | Sub             |                     | Listener (ConsumerMessage)</div><div class="line">                                      |                 |Publish              |                           </div><div class="line">                                      |                 |                     |                           </div><div class="line">                                                        |                                                 </div><div class="line">                           +----------------------+     |      +-------------------------------+             </div><div class="line">                           |                      |     |      |                               |          </div><div class="line">                           |         Redis        |  &lt;--+      |           ActiveMQ            |          </div><div class="line">                           |                      |            |                               |              </div><div class="line">                           +----------------------+            +-------------------------------+</div></pre></td></tr></table></figure>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><h3 id="ChatRoom"><a href="#ChatRoom" class="headerlink" title="ChatRoom"></a>ChatRoom</h3><p>房间类，每个房间内持有该房间内所有的用户的已读消息位，同时提供所有用户获取新消息的方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.ArrayList;</div><div class="line"><span class="keyword">import</span> java.util.Collections;</div><div class="line"><span class="keyword">import</span> java.util.HashMap;</div><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"><span class="keyword">import</span> java.util.Map;</div><div class="line"></div><div class="line"><span class="keyword">import</span> jodd.cache.Cache;</div><div class="line"><span class="keyword">import</span> jodd.cache.FIFOCache;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChatRoom</span>&lt;<span class="title">V</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> Long nowMessageId = <span class="number">0L</span>;<span class="comment">//当前缓存最新消息的ID</span></div><div class="line"></div><div class="line">	<span class="keyword">private</span> String channelId;<span class="comment">//房间号</span></div><div class="line"></div><div class="line">	<span class="keyword">private</span> Map&lt;String,Long&gt; reads = <span class="keyword">new</span> HashMap&lt;String,Long&gt;();</div><div class="line"></div><div class="line">	<span class="keyword">private</span> Cache&lt;String,V&gt; cache = <span class="keyword">new</span> FIFOCache&lt;String,V&gt;(<span class="number">50</span>);<span class="comment">//最多保存50条未读信息</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">ChatRoom</span><span class="params">(String channelId)</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>();</div><div class="line">		<span class="keyword">this</span>.channelId = channelId;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addMessage</span><span class="params">(V message)</span></span>&#123;</div><div class="line">		cache.put(channelId+<span class="string">":"</span>+nowMessageId, message);</div><div class="line">		nowMessageId += <span class="number">1</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">//根据用户id取出当前未读消息</span></div><div class="line">	<span class="function"><span class="keyword">public</span> List&lt;V&gt; <span class="title">getAllMessage</span><span class="params">(String sid)</span></span>&#123;<span class="comment">//Web项目，该处用的是SessionId</span></div><div class="line"></div><div class="line">		Long messageId = reads.get(sid);</div><div class="line">		<span class="keyword">if</span>(messageId == <span class="keyword">null</span>)&#123;</div><div class="line">			messageId = nowMessageId;</div><div class="line">			reads.put(sid, messageId);</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">if</span>(messageId &gt;= nowMessageId)&#123;</div><div class="line">			<span class="keyword">return</span> Collections.emptyList();</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		List&lt;V&gt; message = <span class="keyword">new</span> ArrayList&lt;V&gt;();</div><div class="line"></div><div class="line">		<span class="keyword">while</span>(messageId &lt; nowMessageId)&#123;</div><div class="line">			V msg = cache.get(channelId+<span class="string">":"</span>+messageId);</div><div class="line">			<span class="keyword">if</span>(msg != <span class="keyword">null</span>)&#123;</div><div class="line">				message.add(msg);</div><div class="line">			&#125;</div><div class="line">			messageId ++;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		reads.put(sid, messageId);<span class="comment">//更新已读</span></div><div class="line">		<span class="keyword">return</span> message;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getChannelId</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.channelId;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getNowMessageId</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.nowMessageId;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="ChatRoomManager"><a href="#ChatRoomManager" class="headerlink" title="ChatRoomManager"></a>ChatRoomManager</h3><p>房间管理器，负责管理所有ChatRoom，消息发送等，清除无用ChatRoom暂未实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.HashMap;</div><div class="line"><span class="keyword">import</span> java.util.Map;</div><div class="line"></div><div class="line"><span class="keyword">import</span> redis.clients.jedis.Jedis;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.xxx.core.redis.RedisPoolUtils;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChatRoomManager</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> ChatRoomManager instance = <span class="keyword">new</span> ChatRoomManager();</div><div class="line"></div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String SUB = <span class="string">"video:chat:"</span>;<span class="comment">//用于在Redis中订阅的订阅号前缀</span></div><div class="line"></div><div class="line">	<span class="keyword">private</span> Map&lt;String,ChatRoom&gt; rooms = <span class="keyword">new</span> HashMap&lt;String, ChatRoom&gt;();</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="title">ChatRoomManager</span><span class="params">()</span></span>&#123;&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ChatRoomManager <span class="title">getInstance</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> instance;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">public</span> &lt;V&gt; <span class="function">ChatRoom&lt;V&gt;  <span class="title">getChatRoom</span><span class="params">(String roomId)</span></span>&#123;</div><div class="line">		ChatRoom room = rooms.get(roomId);</div><div class="line">		<span class="keyword">if</span>(room == <span class="keyword">null</span>)&#123;</div><div class="line">			<span class="keyword">synchronized</span>(<span class="keyword">this</span>)&#123;</div><div class="line">				room = rooms.get(roomId);</div><div class="line">				<span class="keyword">if</span>(room == <span class="keyword">null</span>)&#123;</div><div class="line">					room = <span class="keyword">new</span> ChatRoom&lt;String&gt;(roomId);</div><div class="line">					rooms.put(roomId, room);</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> room;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">public</span> &lt;V&gt; <span class="function">ChatRoom&lt;V&gt;  <span class="title">getChatRoomAndRefresh</span><span class="params">(String roomId,String uid)</span></span>&#123;</div><div class="line">		ChatRoom room = rooms.get(roomId);</div><div class="line">		<span class="keyword">if</span>(room == <span class="keyword">null</span>)&#123;</div><div class="line">			<span class="keyword">synchronized</span>(<span class="keyword">this</span>)&#123;</div><div class="line">				room = rooms.get(roomId);</div><div class="line">				<span class="keyword">if</span>(room == <span class="keyword">null</span>)&#123;</div><div class="line">					room = <span class="keyword">new</span> ChatRoom&lt;String&gt;(roomId);</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		refresh(roomId,uid);<span class="comment">//刷新房间内用户在线列表</span></div><div class="line">		<span class="keyword">return</span> room;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> ChatRoom <span class="title">removeRoom</span><span class="params">(String roomId)</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> rooms.remove(roomId);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">containsRoom</span><span class="params">(String roomId)</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> rooms.containsKey(roomId);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">public</span> &lt;V&gt; <span class="function">ChatRoom&lt;V&gt; <span class="title">addRoom</span><span class="params">(ChatRoom&lt;V&gt; room)</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> rooms.put(room.getChannelId(), room);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">//发送消息到指定Channel</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Long <span class="title">pushMessage</span><span class="params">(String channel,String message)</span></span>&#123;</div><div class="line"></div><div class="line">		Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line">		Long count = jedis.publish(channel, message);</div><div class="line">		RedisPoolUtils.release(jedis);</div><div class="line"></div><div class="line">		<span class="keyword">return</span> count;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">refresh</span><span class="params">(String roomId,String uid)</span></span>&#123;</div><div class="line">		Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line">		jedis.setex(<span class="string">"chat:room:"</span>+roomId+<span class="string">":"</span>+uid, <span class="number">30</span>, <span class="string">"1"</span>);</div><div class="line">		RedisPoolUtils.release(jedis);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="MessageListener"><a href="#MessageListener" class="headerlink" title="MessageListener"></a>MessageListener</h3><p>订阅Redis服务，监听消息并做分发处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> org.slf4j.Logger;</div><div class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</div><div class="line"></div><div class="line"><span class="keyword">import</span> redis.clients.jedis.JedisPubSub;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MessageListener</span> <span class="keyword">extends</span> <span class="title">JedisPubSub</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger log = LoggerFactory.getLogger(MessageListener.class);</div><div class="line"></div><div class="line">	<span class="keyword">private</span> ChatRoomManager manager = ChatRoomManager.getInstance();</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMessage</span><span class="params">(String chanel, String message)</span> </span>&#123;</div><div class="line">		log.debug(<span class="string">"onMessage"</span>);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPMessage</span><span class="params">(String pattern, String channel, String message)</span> </span>&#123;</div><div class="line">		log.debug(<span class="string">"onPMessage[pattern:"</span>+pattern+<span class="string">",channel:"</span>+channel+<span class="string">",message:"</span>+message+<span class="string">"]"</span>);</div><div class="line">		<span class="comment">//用来处理psubscribe的消息,Dispatcher Message</span></div><div class="line">		ChatRoom&lt;String&gt; room = manager.getChatRoom(channel);</div><div class="line">		room.addMessage(message);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPSubscribe</span><span class="params">(String arg0, <span class="keyword">int</span> arg1)</span> </span>&#123;</div><div class="line">		log.debug(<span class="string">"onPSubscribe"</span>);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPUnsubscribe</span><span class="params">(String arg0, <span class="keyword">int</span> arg1)</span> </span>&#123;</div><div class="line">		log.debug(<span class="string">"onPUnsubscribe"</span>);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSubscribe</span><span class="params">(String arg0, <span class="keyword">int</span> arg1)</span> </span>&#123;</div><div class="line">		log.debug(<span class="string">"onSubscribe"</span>);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onUnsubscribe</span><span class="params">(String arg0, <span class="keyword">int</span> arg1)</span> </span>&#123;</div><div class="line">		log.debug(<span class="string">"onUnsubscribe"</span>);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="ChatListener"><a href="#ChatListener" class="headerlink" title="ChatListener"></a>ChatListener</h3><p>异步监听类，有新消息就Publish到Redis中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> javax.jms.Message;</div><div class="line"><span class="keyword">import</span> javax.jms.MessageListener;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.apache.activemq.command.ActiveMQMapMessage;</div><div class="line"><span class="keyword">import</span> org.slf4j.Logger;</div><div class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</div><div class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</div><div class="line"></div><div class="line"><span class="keyword">import</span> redis.clients.jedis.Jedis;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.xxx.core.redis.RedisPoolUtils;</div><div class="line"></div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChatListener</span> <span class="keyword">implements</span> <span class="title">MessageListener</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Logger log = LoggerFactory.getLogger(ChatListener.class);</div><div class="line"></div><div class="line">	<span class="keyword">private</span> Jedis client = RedisPoolUtils.getJedis();</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMessage</span><span class="params">(Message message)</span> </span>&#123;</div><div class="line">		ActiveMQMapMessage msg = (ActiveMQMapMessage) message;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			<span class="keyword">if</span>(client == <span class="keyword">null</span> || !client.isConnected())&#123;</div><div class="line">				client = RedisPoolUtils.getJedis();</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			String roomId = msg.getString(<span class="string">"roomId"</span>);</div><div class="line">			String content = msg.getString(<span class="string">"content"</span>);</div><div class="line"></div><div class="line">			client.publish(roomId, content);</div><div class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">			log.error(<span class="string">"异步实时交互信息发送异常"</span>, e);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>发送异步聊天消息的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">sendChatComment</span><span class="params">(String roomId,Map content)</span></span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">try</span>&#123;</div><div class="line">		<span class="keyword">final</span> ActiveMQMapMessage message = <span class="keyword">new</span> ActiveMQMapMessage();</div><div class="line">		JSONObject obj = JSONObject.fromObject(content);</div><div class="line">		message.setString(<span class="string">"roomId"</span>, ChatRoomManager.SUB+ roomId);</div><div class="line">		message.setString(<span class="string">"content"</span>, obj.toString());</div><div class="line"></div><div class="line">		jmsTemplate.send(chatDestination, <span class="keyword">new</span> MessageCreator() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> Message <span class="title">createMessage</span><span class="params">(Session session)</span> <span class="keyword">throws</span> JMSException </span>&#123;</div><div class="line">				<span class="keyword">return</span> message;</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line"></div><div class="line">	&#125;<span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">		log.error(<span class="string">"实时交互信息发送失败！"</span>,e);</div><div class="line"></div><div class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="消息监听"><a href="#消息监听" class="headerlink" title="消息监听"></a>消息监听</h3><p>系统启动时，单启线程监听消息：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Date;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.slf4j.Logger;</div><div class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.InitializingBean;</div><div class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</div><div class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</div><div class="line"></div><div class="line"><span class="keyword">import</span> redis.clients.jedis.Jedis;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.xxx.common.util.DateUtils;</div><div class="line"><span class="keyword">import</span> com.xxx.core.chat.ChatRoomManager;</div><div class="line"><span class="keyword">import</span> com.xxx.core.chat.MessageListener;</div><div class="line"><span class="keyword">import</span> com.xxx.core.redis.RedisPoolUtils;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 系统启动时监听通讯</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MessageChatBootstrap</span> <span class="keyword">implements</span> <span class="title">InitializingBean</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> Logger log = LoggerFactory.getLogger(MessageChatBootstrap.class);</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterPropertiesSet</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">		log.info(<span class="string">"ChatSystem Starting... At "</span>+DateUtils.formatDateTime(<span class="keyword">new</span> Date(), <span class="string">"yyyy-MM-dd HH:mm:ss"</span>));</div><div class="line"></div><div class="line">		<span class="keyword">try</span>&#123;</div><div class="line">			<span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">				<span class="meta">@Override</span></div><div class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">					Jedis jedis = RedisPoolUtils.getJedis();</div><div class="line">					jedis.psubscribe(<span class="keyword">new</span> MessageListener(), ChatRoomManager.SUB+<span class="string">"*"</span>);<span class="comment">//订阅所有 video:chat:*</span></div><div class="line">				&#125;</div><div class="line">			&#125;).start();</div><div class="line">		&#125;<span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">			log.error(<span class="string">"即时聊天服务运行出错"</span>);</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">		log.info(<span class="string">"ChatSystem Starting finished! At "</span>+DateUtils.formatDateTime(<span class="keyword">new</span> Date(), <span class="string">"yyyy-MM-dd HH:mm:ss"</span>));</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="前端访问接口-SpringMVC"><a href="#前端访问接口-SpringMVC" class="headerlink" title="前端访问接口(SpringMVC)"></a>前端访问接口(SpringMVC)</h3><p>前端Ajax长连接轮询接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Iterator;</div><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpSession;</div><div class="line"></div><div class="line"><span class="keyword">import</span> net.sf.json.JSONArray;</div><div class="line"><span class="keyword">import</span> net.sf.json.JSONObject;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.slf4j.Logger;</div><div class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</div><div class="line"><span class="keyword">import</span> org.springframework.stereotype.Controller;</div><div class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</div><div class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.ResponseBody;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.xxx.common.util.StringUtil;</div><div class="line"><span class="keyword">import</span> com.xxx.core.chat.ChatRoom;</div><div class="line"><span class="keyword">import</span> com.xxx.core.chat.ChatRoomManager;</div><div class="line"></div><div class="line"><span class="meta">@Controller</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChatController</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_WAIT = <span class="number">10</span>;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger log = LoggerFactory.getLogger(ChatController.class);</div><div class="line"></div><div class="line">	<span class="meta">@RequestMapping</span>(value=<span class="string">"/chat/refresh"</span>,produces=<span class="string">"text/html;charset=utf-8"</span>)</div><div class="line">	<span class="meta">@ResponseBody</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">refresh</span><span class="params">(String roomId,HttpServletRequest request)</span></span>&#123;</div><div class="line">		log.debug(<span class="string">"roomId:"</span>+roomId);</div><div class="line">		ChatRoom&lt;String&gt; room = ChatRoomManager.getInstance().getChatRoom(ChatRoomManager.SUB+roomId);</div><div class="line"></div><div class="line">		String sid = request.getSession().getId();</div><div class="line"></div><div class="line">		List&lt;String&gt; messages = room.getAllMessage(sid);</div><div class="line"></div><div class="line">		<span class="keyword">if</span>(messages.size() == <span class="number">0</span>)&#123;</div><div class="line">			<span class="keyword">int</span> passTime = <span class="number">0</span>;</div><div class="line">			<span class="keyword">try</span> &#123;</div><div class="line">				<span class="keyword">while</span>(passTime &lt; MAX_WAIT &amp;&amp; messages.size() == <span class="number">0</span>)&#123; <span class="comment">//等待10秒,Hold住请求</span></div><div class="line">					Thread.sleep(<span class="number">2000</span>);</div><div class="line">					passTime += <span class="number">2</span>;</div><div class="line"></div><div class="line">					messages = room.getAllMessage(sid);</div><div class="line">				&#125;</div><div class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">				e.printStackTrace();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		fileterSelf(messages,request.getSession());</div><div class="line"></div><div class="line">		String result =wrapMessage(messages);</div><div class="line"></div><div class="line">		log.debug(<span class="string">"result:"</span>+ result);</div><div class="line"></div><div class="line">		<span class="keyword">return</span> result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 *</div><div class="line">	 * <span class="doctag">@Title</span>: fileterSelf</div><div class="line">	 * <span class="doctag">@Description</span>: 过滤掉自己发的消息</div><div class="line">	 * <span class="doctag">@param</span> <span class="doctag">@param</span> messages</div><div class="line">	 * <span class="doctag">@return</span> void</div><div class="line">	 * <span class="doctag">@throws</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">fileterSelf</span><span class="params">(List&lt;String&gt; messages,HttpSession session)</span></span>&#123;</div><div class="line">		String uid = (String) session.getAttribute(<span class="string">"clientUserId"</span>);</div><div class="line">		<span class="keyword">if</span>(StringUtil.isNotBlank(uid)&amp;&amp;messages != <span class="keyword">null</span>&amp;&amp;messages.size()&gt;<span class="number">0</span>)&#123;</div><div class="line">			Iterator&lt;String&gt; iterator = messages.iterator();</div><div class="line">			<span class="keyword">while</span>(iterator.hasNext())&#123;</div><div class="line">				String contetnt = iterator.next();</div><div class="line">				<span class="keyword">if</span>(contetnt.contains(uid))&#123;</div><div class="line">					iterator.remove();</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">private</span> String <span class="title">wrapMessage</span><span class="params">(List&lt;String&gt; message)</span></span>&#123;</div><div class="line"></div><div class="line">		JSONArray array = JSONArray.fromObject(message);</div><div class="line"></div><div class="line">		<span class="keyword">return</span> array.toString();</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="基于JQuery的JS模块实现"><a href="#基于JQuery的JS模块实现" class="headerlink" title="基于JQuery的JS模块实现"></a>基于JQuery的JS模块实现</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">(function($)&#123;</div><div class="line"></div><div class="line">	$.Chat = (function()&#123;</div><div class="line">			var config = &#123;roomId:&apos;room1&apos;,url:&apos;/chat/refresh.html&apos;&#125;;</div><div class="line">			function init(conf)&#123;</div><div class="line">				config = $.extend(config,conf);</div><div class="line">			&#125;;</div><div class="line">			function start()&#123;</div><div class="line">				$.ajax(&#123;</div><div class="line">					type: &apos;post&apos;,</div><div class="line">					url: config.url,</div><div class="line">					data: &#123;</div><div class="line">						roomId: config.roomId</div><div class="line">					&#125;,</div><div class="line">					dataType: &apos;json&apos;,</div><div class="line">					success: function(response) &#123;</div><div class="line">					    $.Chat.execute(response);</div><div class="line">					    if(response.length &gt; 0)&#123;</div><div class="line">					    	setTimeout( start,1000);</div><div class="line">					    &#125;else&#123;</div><div class="line">					    	setTimeout( start,6000);</div><div class="line">					    &#125;</div><div class="line">					&#125;,</div><div class="line">					error: function(e) &#123;</div><div class="line">						console.log(e);</div><div class="line">					&#125;,</div><div class="line">					timeout: 20000</div><div class="line">				&#125;);</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			function execute(data)&#123;</div><div class="line">				console.log(data);</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			return &#123;</div><div class="line">				start:start,</div><div class="line">				init:init,</div><div class="line">				execute:execute</div><div class="line">			&#125;;</div><div class="line">	&#125;)($);</div><div class="line"></div><div class="line">&#125;)(jQuery);</div></pre></td></tr></table></figure>
+<p>使用方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$.Chat.init(&#123;roomId:&apos;xxxx&apos;&#125;); //url根据实际情况而定,ChatRoomManager.SUB + roomId即后台Redis发布订阅需要的ChannelID</div><div class="line">$.Chat.start();</div></pre></td></tr></table></figure>
+<blockquote>
+<p>Q &amp; A:<br><br>既然消息要缓存在服务器本地，为什么还要先发送到Redis，然后再从Redis中取回本地？<br><br><em>这样便使得消息可以分布式，以实现在分布式的环境下，客户端从每台服务器都可以获得订阅的消息</em></p>
+<p>目前在自己的项目中基本能满足需求，且可以很容易的进行分布式，很容易扩展至多终端。</p>
+</blockquote>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-12-25T08:22:36.291Z" title="2016-12-25 16:22" itemprop="dateUpdated">2016年12月25日 16:22</time>
+</span><br>
+
+
+        
+        转载请注明来源：<a href="/2014/09/ChatRoomBaseOnRedis.html" target="_blank" rel="external">http://builderqiu.com/2014/09/ChatRoomBaseOnRedis.html</a>
+        
+    </div>
+    <footer>
+        <a href="http://builderqiu.com">
+            <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" alt="BuilderQiu">
+            BuilderQiu
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ActiveMQ/">ActiveMQ</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/">Redis</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/09/ChatRoomBaseOnRedis.html&title=《基于Redis与ActiveMQ、Spring的简单聊天室系统设计》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/09/ChatRoomBaseOnRedis.html&title=《基于Redis与ActiveMQ、Spring的简单聊天室系统设计》 — 一本正经的扯淡&source=其他相关
+基于Redis的在线用户列表解决方案
+基于Spring的异步系统实现方案
+
+系统概述1.系统功能用于实现以页面为房间基数的聊天室系统，以达到访问..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/09/ChatRoomBaseOnRedis.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《基于Redis与ActiveMQ、Spring的简单聊天室系统设计》 — 一本正经的扯淡&url=http://builderqiu.com/2014/09/ChatRoomBaseOnRedis.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/09/ChatRoomBaseOnRedis.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2015/03/BridgeMethod.html" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Bridge Method (桥接方法)</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/09/ShellDetails.html" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">LinuxShell基础</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="ChatRoomBaseOnRedis" data-title="基于Redis与ActiveMQ、Spring的简单聊天室系统设计" data-url="http://builderqiu.com/2014/09/ChatRoomBaseOnRedis.html"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'builderqiu', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.2');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/BuilderQiu/hexo-theme-indigo" target="_blank">indigo</a> Base On <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>一本正经的扯淡 &copy; 2016</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/09/ChatRoomBaseOnRedis.html&title=《基于Redis与ActiveMQ、Spring的简单聊天室系统设计》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/09/ChatRoomBaseOnRedis.html&title=《基于Redis与ActiveMQ、Spring的简单聊天室系统设计》 — 一本正经的扯淡&source=其他相关
+基于Redis的在线用户列表解决方案
+基于Spring的异步系统实现方案
+
+系统概述1.系统功能用于实现以页面为房间基数的聊天室系统，以达到访问..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/09/ChatRoomBaseOnRedis.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《基于Redis与ActiveMQ、Spring的简单聊天室系统设计》 — 一本正经的扯淡&url=http://builderqiu.com/2014/09/ChatRoomBaseOnRedis.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/09/ChatRoomBaseOnRedis.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACMklEQVR42u3aS26EQAxFUfa/aSJlFCkpuM+GVjC3RihqKA4Dx5/aNrz27/X7evXLn+v4aat7tzuWDBkyHsvYD9eKsdqSAI4/yvFey+fLkCHjBQwSZNMt0+fz4C5DhgwZnXQwDaP9TyBDhgwZvDQl6SZPLmXIkCGjVsSSsMtLWdKku6UWlyFDxgMZncHA3dcfmm/IkCHjHzP2cKVBk/+GB9k/7pIhQ8ZoBmmN1f5OhqBpG+4kHMuQIWMo45MBMW3SBQfFZMiQ8TJGf0tyOKN2pKw12ZAhQ8Y4RjqGrI0/eaP/5C4ZMmSMZvAjDnyzDpWPImTIkPE2RvpyPEDzoMmbbku8DBkyhjI6x7/Stlra7g9GpDJkyBjN6Cd2adqXPjPeXYYMGeMY6ZGIWkO/VgAHCaUMGTJexqi18tNCN00i0QhThgwZQxlBcdgZK1468lySZMiQMZSRloud9K42FkVvIkOGjNGMO4rVWml6HPoRVYYMGaMZnYSvU9yS100HpTJkyJjH4BvzthcP1sVgyiefMmTIGMSotebJumrMcPIfQ4YMGaMZ5La0uK2dTeOjiDhBlCFDxsMZe7juyNnSAcDJsTAZMmSMY3ReKA2maRuOjw1kyJDxBgYvRNPAeu2hCjTTkCFDxmgGH2d2wu5V/f9W71CGDBmjGek1GQbUjoXJkCFDBn/dq1JM/tInRawMGTJGM3gorDXROlUnGgnIkCFjNKMzGKgd56oNFTqfTIYMGY9lfAEkwNsZehoRfQAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

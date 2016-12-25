@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Groovy基础语法 | 一本正经的扯淡 | U Still Don&#39;t Know</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Java,Groovy">
+    <meta name="description" content="1.Groovy 是没有类型的Java，所以定义变量的时候可以不指定类型,Groovy会根据对象的值来判断其类型12def str = &quot;Hello world&quot;  println str.class">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Groovy基础语法">
+<meta property="og:url" content="http://builderqiu.com/2014/06/GroovyBase.html">
+<meta property="og:site_name" content="一本正经的扯淡">
+<meta property="og:description" content="1.Groovy 是没有类型的Java，所以定义变量的时候可以不指定类型,Groovy会根据对象的值来判断其类型12def str = &quot;Hello world&quot;  println str.class">
+<meta property="og:updated_time" content="2016-12-25T08:22:41.464Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Groovy基础语法">
+<meta name="twitter:description" content="1.Groovy 是没有类型的Java，所以定义变量的时候可以不指定类型,Groovy会根据对象的值来判断其类型12def str = &quot;Hello world&quot;  println str.class">
+    
+        <link rel="alternative" href="/atom.xml" title="一本正经的扯淡" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.2">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">BuilderQiu</h5>
+          
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/BuilderQiu" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Groovy基础语法</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Groovy基础语法</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-06-03T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-06-04
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-Groovy-是没有类型的Java，所以定义变量的时候可以不指定类型-Groovy会根据对象的值来判断其类型"><span class="post-toc-text">1.Groovy 是没有类型的Java，所以定义变量的时候可以不指定类型,Groovy会根据对象的值来判断其类型</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-通过Groovy进行循环"><span class="post-toc-text">2.通过Groovy进行循环</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-操作集合"><span class="post-toc-text">3. 操作集合</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-映射"><span class="post-toc-text">4.映射</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-闭包"><span class="post-toc-text">5.闭包</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-Groovy-中的类"><span class="post-toc-text">6.Groovy 中的类</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-GroovyBase"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        
+          <h1 class="post-card-title" >Groovy基础语法</h1>
+        
+        <div class="post-meta">
+            <time class="post-time" title="2014-6-4 0:00" datetime="2014-06-03T16:00:00.000Z"  itemprop="datePublished">2014-06-04</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h3 id="1-Groovy-是没有类型的Java，所以定义变量的时候可以不指定类型-Groovy会根据对象的值来判断其类型"><a href="#1-Groovy-是没有类型的Java，所以定义变量的时候可以不指定类型-Groovy会根据对象的值来判断其类型" class="headerlink" title="1.Groovy 是没有类型的Java，所以定义变量的时候可以不指定类型,Groovy会根据对象的值来判断其类型"></a>1.Groovy 是没有类型的Java，所以定义变量的时候可以不指定类型,Groovy会根据对象的值来判断其类型</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">def str = <span class="string">"Hello world"</span>  </div><div class="line">println str.class</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="2-通过Groovy进行循环"><a href="#2-通过Groovy进行循环" class="headerlink" title="2.通过Groovy进行循环"></a>2.通过Groovy进行循环</h3><p>在Groovy中，for循环变得更简洁，更易阅读。首先，范围的定义方式更加简洁：0..4表明包含整数0,1,2,3,4; 0..&lt;4 表示0,1,2,3; a..e 表示 a,b,c,d,e</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span>(i in <span class="number">1</span>..<span class="number">5</span>)&#123;  </div><div class="line">  println i  </div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>Groovy也支持默认参数值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function">def <span class="title">repeat</span><span class="params">(val, repeat=<span class="number">5</span>)</span></span>&#123;  </div><div class="line"> <span class="keyword">for</span>(i in <span class="number">0</span>..&lt;repeat)&#123;  </div><div class="line">  println val  </div><div class="line"> &#125;  </div><div class="line">&#125;</div><div class="line"></div><div class="line">repeat(<span class="string">"Hello world"</span>,<span class="number">2</span>)  </div><div class="line">repeat(<span class="string">"foo"</span>,<span class="number">4</span>)</div></pre></td></tr></table></figure>
+<h3 id="3-操作集合"><a href="#3-操作集合" class="headerlink" title="3. 操作集合"></a>3. 操作集合</h3><p>在Groovy中，我们可以用范围来定义集合或者数组。<br>如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">def range = <span class="number">0</span>..<span class="number">4</span>   </div><div class="line">println range.class  </div><div class="line">def coll = [<span class="string">"Groovy"</span>,<span class="string">"Java"</span>,<span class="string">"Ruby"</span>]  </div><div class="line">println coll.class</div></pre></td></tr></table></figure>
+<p>为某个集合添加元素时，我们可以使用以下几种方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">coll.add(<span class="string">"Python"</span>)  </div><div class="line">coll &lt;&lt; <span class="string">"Smalltalk"</span>  </div><div class="line">coll[<span class="number">5</span>] = <span class="string">"Perl"</span></div></pre></td></tr></table></figure>
+<p>检索方式也更加灵活</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">println coll[<span class="number">1</span>]</div></pre></td></tr></table></figure>
+<p>Groovy还允许在集合中增加或去掉集合</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">def numbers = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]  </div><div class="line">def numbers2 = numbers +<span class="number">5</span> <span class="comment">//=[1,2,3,4,5]  </span></div><div class="line">println numbers2  </div><div class="line">def numbers3 = numbers - [<span class="number">2</span>,<span class="number">3</span>]<span class="comment">//=[1,4]  </span></div><div class="line">println numbers3</div></pre></td></tr></table></figure>
+<p>一些特殊调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">def numbers = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]  </div><div class="line">println numbers.join(<span class="string">";"</span>) <span class="comment">//= 1;2;3;4 ,将集合的元素拼接成了字符串  </span></div><div class="line">println [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">3</span>].count(<span class="number">3</span>) <span class="comment">//=2 统计元素出现的次数  </span></div><div class="line">[<span class="string">"Java"</span>,<span class="string">"Groovy"</span>]*.toUpperCase() <span class="comment">// 全部转换成大写</span></div></pre></td></tr></table></figure>
+<p>请注意 *. 标记。对于以上列表中的每个值，都会调用 toUpperCase()，生成的集合中每个 String 实例都是大写的.</p>
+<h3 id="4-映射"><a href="#4-映射" class="headerlink" title="4.映射"></a>4.映射</h3><p>定义Map</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">def hash = [name:<span class="string">"Andy"</span>, <span class="string">"VPN-#"</span>:<span class="number">45</span>]  </div><div class="line">println hash.getClass() <span class="comment">//=java.util.LinkedHashMap</span></div></pre></td></tr></table></figure>
+<p>name 看起来像一个变量，但是在幕后，Groovy 会将它变成 String。<br>操作键值对</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">hash.put(<span class="string">"id"</span>,<span class="number">23</span>)  </div><div class="line">hash.get(<span class="string">"name"</span>)  </div><div class="line">hash.dob = <span class="string">"01/29/76"</span>  </div><div class="line">println hash[<span class="string">"name"</span>] <span class="comment">//="Andy"</span></div></pre></td></tr></table></figure>
+<p>请注意，在使用 [] 语法从映射获取项时，必须将项作为 String 引用。</p>
+<h3 id="5-闭包"><a href="#5-闭包" class="headerlink" title="5.闭包"></a>5.闭包</h3><p>使用闭包对集合进行迭代</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">def acoll = [<span class="string">"Groovy"</span>, <span class="string">"Java"</span>, <span class="string">"Ruby"</span>]  </div><div class="line"></div><div class="line">acoll.each&#123;  </div><div class="line"> println it  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>请注意，each 直接在 acoll 实例内调用，而 acoll 实例的类型是 ArrayList。在 each 调用之后，引入了一种新的语法 — {，然后是一些代码，然后是 }。由 {} 包围起来的代码块就是闭包。</p>
+<p>闭包中的 it 变量是一个关键字，指向被调用的外部集合的每个值 — 它是默认值，可以用传递给闭包的参数覆盖它。下面的代码执行同样的操作，但使用自己的项变量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">def acoll = [<span class="string">"Groovy"</span>, <span class="string">"Java"</span>, <span class="string">"Ruby"</span>]  </div><div class="line"></div><div class="line">acoll.each&#123; value -&gt;  </div><div class="line"> println value  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>使用闭包迭代Map</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">def hash = [name:<span class="string">"Andy"</span>, <span class="string">"VPN-#"</span>:<span class="number">45</span>]  </div><div class="line">hash.each&#123; key, value -&gt;  </div><div class="line"> println <span class="string">"$&#123;key&#125; : $&#123;value&#125;"</span>  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>闭包的其他用途：因为闭包是一个代码块，所以能够作为参数进行传递（Groovy 中的函数或方法不能这样做）。闭包在调用的时候才会执行这一事实（不是在定义的时候）使得它们在某些场合上特别有用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">def excite = &#123; word -&gt;  </div><div class="line"> <span class="keyword">return</span> <span class="string">"$&#123;word&#125;!!"</span>  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以通过两种方法调用闭包：直接调用或者通过 call() 方法调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">assert</span> <span class="string">"Groovy!!"</span> == excite(<span class="string">"Groovy"</span>)  </div><div class="line"><span class="keyword">assert</span> <span class="string">"Java!!"</span> == excite.call(<span class="string">"Java"</span>)</div></pre></td></tr></table></figure>
+<h3 id="6-Groovy-中的类"><a href="#6-Groovy-中的类" class="headerlink" title="6.Groovy 中的类"></a>6.Groovy 中的类</h3><p>Groovy类就是Java类，我们先定义一个bean.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Song</span> </span>&#123;  </div><div class="line"> <span class="function">def name  </span></div><div class="line"> def artist  </div><div class="line"> def genre  </div><div class="line"> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(args)</span> &#123;  </div><div class="line">  def sng = <span class="keyword">new</span> Song(name:<span class="string">"Le Freak"</span>,   </div><div class="line">    artist:<span class="string">"Chic"</span>, genre:<span class="string">"Disco"</span>)  </div><div class="line"> &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Groovy 自动提供一个构造函数，构造函数接受一个名称-值对的映射，这些名称-值对与类的属性相对应。这是 Groovy 的一项开箱即用的功能,除此之外，Groovy还生成了标准的 setter 和 getter 方法,所以可以像下面这样直接操纵类的属性，这些操作实际上都是通过setter,getter方法进行的，默认情况下，类的属性是私有的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">def sng3 = <span class="keyword">new</span> Song()  </div><div class="line">sng3.name = <span class="string">"Funkytown"</span>  </div><div class="line">sng3.artist = <span class="string">"Lipps Inc."</span>  </div><div class="line">sng3.setGenre(<span class="string">"Disco"</span>)  </div><div class="line"></div><div class="line"><span class="keyword">assert</span> sng3.getArtist() == <span class="string">"Lipps Inc."</span></div></pre></td></tr></table></figure>
+<p>方法覆盖：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function">String <span class="title">toString</span><span class="params">()</span></span>&#123;  </div><div class="line"> <span class="string">"$&#123;name&#125;, $&#123;artist&#125;, $&#123;genre&#125;"</span>  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在 Groovy 中可以省略 return 语句。Groovy 默认返回方法的最后一行。所以在这个示例中，返回包含类属性的 String。</p>
+<p>空指针安全性<br>Groovy 通过 ? 操作符提供了一个安全网 — 在方法调用前面添加一个 ? 就相当于在调用前面放了一个条件，可以防止在 null 对象上调用方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">def d=<span class="keyword">null</span>  </div><div class="line">println d?.toUpperCase()  </div><div class="line">d=<span class="string">"Hello world"</span>  </div><div class="line">println d?.toUpperCase()</div></pre></td></tr></table></figure>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-12-25T08:22:41.464Z" title="2016-12-25 16:22" itemprop="dateUpdated">2016年12月25日 16:22</time>
+</span><br>
+
+
+        
+    </div>
+    <footer>
+        <a href="http://builderqiu.com">
+            <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" alt="BuilderQiu">
+            BuilderQiu
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Groovy/">Groovy</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/06/GroovyBase.html&title=《Groovy基础语法》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/06/GroovyBase.html&title=《Groovy基础语法》 — 一本正经的扯淡&source=1.Groovy 是没有类型的Java，所以定义变量的时候可以不指定类型,Groovy会根据对象的值来判断其类型12def str = "Hello wo..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/06/GroovyBase.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Groovy基础语法》 — 一本正经的扯淡&url=http://builderqiu.com/2014/06/GroovyBase.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/06/GroovyBase.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/06/MysqlUserOperate.html" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Mysql用户相关操作</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/06/JavaGenricUtils.html" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">获取泛型类型工具类</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="GroovyBase" data-title="Groovy基础语法" data-url="http://builderqiu.com/2014/06/GroovyBase.html"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'builderqiu', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.2');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/BuilderQiu/hexo-theme-indigo" target="_blank">indigo</a> Base On <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>一本正经的扯淡 &copy; 2016</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/06/GroovyBase.html&title=《Groovy基础语法》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/06/GroovyBase.html&title=《Groovy基础语法》 — 一本正经的扯淡&source=1.Groovy 是没有类型的Java，所以定义变量的时候可以不指定类型,Groovy会根据对象的值来判断其类型12def str = "Hello wo..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/06/GroovyBase.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Groovy基础语法》 — 一本正经的扯淡&url=http://builderqiu.com/2014/06/GroovyBase.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/06/GroovyBase.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJElEQVR42u3awW7DQAhF0fz/T7tSVlnUk/vAjmTmehW1zpTTBYKB1ws/x/vhP//87ec76fsXPzJkyHgs41g+Z++sMeR9cj6JTYYMGfsw1sn0yxHL93mCPjsHJXoZMmTIaISeniZDhgwZfQYJYp1qSSEoQ4YMGbUmtvMt0tD+qBeXIUPGAxnpYOCXn2+cb8iQIeMhjCN8ePvaSYtxVDJkyBjNIC0l/5N8naKf+lGFK0OGjEEMjuEX+lcNQS+4dJMhQ8bDGXydKw2IB5derv3zWYYMGaMZ6aV/rfjrr4ihf5wMGTI2YJDLNZ4QL0ujfKVDhgwZGzA66xGdlrU24JQhQ8Y+DJIWa0kzLuxKJakMGTJ2YJD0V7tWq80W+fgBzWNlyJAxiNEvB2uLGrXhJRoMyJAhYzSDNI284Eu/WztfhgwZsxlIeVHZx5vYeE1NhgwZoxn8gp4sTPCgSREZp3gZMmQMZaRh1b5VG2HGwwAZMmQMZdSO7mPSRMxjkCFDxjzG+sJrzesMJmXIkCGjw+h0w3cn2dMzZciQMZrBa8Y06FYLivtTGTJk7MA4wicNpTNgCAaiMmTIGM1I01w6JCAhBusUuLmVIUPGPEa6WpoWlJ1FjaC4lCFDxgaMNMl2wuqXm2hzRIYMGVsy+mUfH4vGwwYZMmTICIvFO4YHX/5BMmTI2IDBm9h0eau4MBG22TJkyJjN6Awjyfv8ZA4uLm3IkCHjeYw/OtxGvFbxPD8AAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>

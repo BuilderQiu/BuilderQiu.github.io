@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Java类加载器 | 一本正经的扯淡 | U Still Don&#39;t Know</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="ClassLoader">
+    <meta name="description" content="ClassLoader
+            
+一、分类：1.BootStrap Class Loader：启动类加载器，负责加载rt.jar文件中所有的Java类，即Java的核心类都是由该ClassLoade">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java类加载器">
+<meta property="og:url" content="http://builderqiu.com/2014/08/JavaClassLoaderDetail.html">
+<meta property="og:site_name" content="一本正经的扯淡">
+<meta property="og:description" content="ClassLoader
+            
+一、分类：1.BootStrap Class Loader：启动类加载器，负责加载rt.jar文件中所有的Java类，即Java的核心类都是由该ClassLoade">
+<meta property="og:image" content="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/classloader.gif">
+<meta property="og:updated_time" content="2016-12-25T08:22:52.937Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java类加载器">
+<meta name="twitter:description" content="ClassLoader
+            
+一、分类：1.BootStrap Class Loader：启动类加载器，负责加载rt.jar文件中所有的Java类，即Java的核心类都是由该ClassLoade">
+<meta name="twitter:image" content="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/classloader.gif">
+    
+        <link rel="alternative" href="/atom.xml" title="一本正经的扯淡" type="application/atom+xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.4.2">
+    <script>window.lazyScripts=[]</script>
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">BuilderQiu</h5>
+          
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/BuilderQiu" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Java类加载器</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Java类加载器</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2014-08-12T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-08-13
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一、分类："><span class="post-toc-text">一、分类：</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二、工作原理："><span class="post-toc-text">二、工作原理：</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-装载"><span class="post-toc-text">1.装载</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-链接"><span class="post-toc-text">2.链接</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-初始化"><span class="post-toc-text">3.初始化</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-JavaClassLoaderDetail"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        
+          <h1 class="post-card-title" >Java类加载器</h1>
+        
+        <div class="post-meta">
+            <time class="post-time" title="2014-8-13 0:00" datetime="2014-08-12T16:00:00.000Z"  itemprop="datePublished">2014-08-13</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/classloader.gif" alt="ClassLoader" title="">
+                </div>
+                <div class="image-caption">ClassLoader</div>
+            </figure>
+<h2 id="一、分类："><a href="#一、分类：" class="headerlink" title="一、分类："></a>一、分类：</h2><p>1.BootStrap Class Loader：启动类加载器，负责加载rt.jar文件中所有的Java类，即Java的核心类都是由该ClassLoader加载。在Sun JDK中，这个类加载器是由C++实现的，并且在Java语言中无法获得它的引用。</p>
+<p>2.Extension Class Loader：扩展类加载器，负责加载一些扩展功能的jar包。</p>
+<p>3.System Class Loader：系统类加载器，负责加载启动参数中指定的Classpath中的jar包及目录，通常我们自己写的Java类也是由该ClassLoader加载。在Sun JDK中，系统类加载器的名字叫AppClassLoader。</p>
+<p>4.User Defined Class Loader：用户自定义类加载器，由用户自定义类的加载规则，可以手动控制加载过程中的步骤。<br><a id="more"></a></p>
+<h2 id="二、工作原理："><a href="#二、工作原理：" class="headerlink" title="二、工作原理："></a>二、工作原理：</h2><p>类加载分为装载、链接、初始化三步。</p>
+<h3 id="1-装载"><a href="#1-装载" class="headerlink" title="1.装载"></a>1.装载</h3><p>通过类的全限定名和ClassLoader加载类，主要是将指定的.class文件加载至JVM。当类被加载以后，在JVM内部就以“类的全限定名+ClassLoader实例ID”来标明类。</p>
+<p>在内存中，ClassLoader实例和类的实例都位于堆中，它们的类信息都位于方法区。</p>
+<p>装载过程采用了一种被称为“双亲委派模型（Parent Delegation Model）”的方式，当一个ClassLoader要加载类时，它会先请求它的双亲ClassLoader（其实这里只有两个ClassLoader，所以称为父ClassLoader可能更容易理解）加载类，而它的双亲ClassLoader会继续把加载请求提交再上一级的ClassLoader，直到启动类加载器。只有其双亲ClassLoader无法加载指定的类时，它才会自己加载类。</p>
+<p>双亲委派模型是JVM的第一道安全防线，它保证了类的安全加载，这里同时依赖了类加载器隔离的原理：不同类加载器加载的类之间是无法直接交互的，即使是同一个类，被不同的ClassLoader加载，它们也无法感知到彼此的存在。这样即使有恶意的类冒充自己在核心包（例如java.lang）下，由于它无法被启动类加载器加载，也造成不了危害。</p>
+<p>由此也可见，如果用户自定义了类加载器，那就必须自己保障类加载过程中的安全。</p>
+<h3 id="2-链接"><a href="#2-链接" class="headerlink" title="2.链接"></a>2.链接</h3><p>链接的任务是把二进制的类型信息合并到JVM运行时状态中去。</p>
+<p>链接分为以下三步：</p>
+<p>a.验证：校验.class文件的正确性，确保该文件是符合规范定义的，并且适合当前JVM使用。</p>
+<p>b.准备：为类分配内存，同时初始化类中的静态变量赋值为默认值。</p>
+<p>c.解析（可选）：主要是把类的常量池中的符号引用解析为直接引用，这一步可以在用到相应的引用时再解析。</p>
+<h3 id="3-初始化"><a href="#3-初始化" class="headerlink" title="3.初始化"></a>3.初始化</h3><p>初始化类中的静态变量，并执行类中的static代码、构造函数。</p>
+<p>JVM规范严格定义了何时需要对类进行初始化：</p>
+<p>a、通过new关键字、反射、clone、反序列化机制实例化对象时。</p>
+<p>b、调用类的静态方法时。</p>
+<p>c、使用类的静态字段或对其赋值时。</p>
+<p>d、通过反射调用类的方法时。</p>
+<p>e、初始化该类的子类时（初始化子类前其父类必须已经被初始化）。</p>
+<p>f、JVM启动时被标记为启动类的类（简单理解为具有main方法的类）。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-12-25T08:22:52.937Z" title="2016-12-25 16:22" itemprop="dateUpdated">2016年12月25日 16:22</time>
+</span><br>
+
+
+        
+    </div>
+    <footer>
+        <a href="http://builderqiu.com">
+            <img src="http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" alt="BuilderQiu">
+            BuilderQiu
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ClassLoader/">ClassLoader</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/08/JavaClassLoaderDetail.html&title=《Java类加载器》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/08/JavaClassLoaderDetail.html&title=《Java类加载器》 — 一本正经的扯淡&source=
+                
+                    
+                    
+                
+..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/08/JavaClassLoaderDetail.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Java类加载器》 — 一本正经的扯淡&url=http://builderqiu.com/2014/08/JavaClassLoaderDetail.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/08/JavaClassLoaderDetail.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2014/08/JavaWebSessionFramework.html" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">如何构建Java Web应用的session框架</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2014/07/MySQLExplainDetailFav.html" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">MySQL之Explain详解</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+<div class="comments" id="comments">
+    <div class="ds-thread" data-thread-key="JavaClassLoaderDetail" data-title="Java类加载器" data-url="http://builderqiu.com/2014/08/JavaClassLoaderDetail.html"></div>
+</div>
+<script>
+lazyScripts.push('//cdn.bootcss.com/marked/0.3.6/marked.min.js');
+
+var duoshuoQuery = {short_name:'builderqiu', theme: 'none'};
+lazyScripts.push('/js/embed.min.js?v=1.4.2');
+
+
+</script>
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            <span>博客内容遵循 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/BuilderQiu/hexo-theme-indigo" target="_blank">indigo</a> Base On <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>一本正经的扯淡 &copy; 2016</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://builderqiu.com/2014/08/JavaClassLoaderDetail.html&title=《Java类加载器》 — 一本正经的扯淡&pic=http://7vzn9h.com1.z0.glb.clouddn.com/images/blog/face.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://builderqiu.com/2014/08/JavaClassLoaderDetail.html&title=《Java类加载器》 — 一本正经的扯淡&source=
+                
+                    
+                    
+                
+..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://builderqiu.com/2014/08/JavaClassLoaderDetail.html" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Java类加载器》 — 一本正经的扯淡&url=http://builderqiu.com/2014/08/JavaClassLoaderDetail.html&via=http://builderqiu.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://builderqiu.com/2014/08/JavaClassLoaderDetail.html" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACMklEQVR42u3aQW7DMAwF0dz/0i7QVYHC6nxSLhJqtAoCx9LTgpFIvl54XN/j9+e7J3+O9dvufvt6YsiQIeNjGddy3DHWT6bfr7dsPaMMGTLOYZAgS8LoGkCCOAnuMmTIkEFeTb7hh0sejmXIkCEjPaKly0rfJkOGDBnpJZYMkjhLj4mb7+IyZMj4QEanMPD053+qb8iQIeONGVc4yCW2k5grrkqGDBmjGeSgVisVdEqbaSJPhgwZsxm7CpNxcARnPF7+lCFDxjkM0ki6XgqfPp03KAnIkCFjNIO3VvAFpbPUGjVkyJAxm7GrLYxcONOrKd8gGTJkzGak19dOSYCH7LQVQ4YMGacx+HLTxgheBE0bxWTIkDGb0Q9/tStxrf0CJeZkyJAxjsGbHmrZLZ7u51t2+78hQ4aM0Yx+oZEfFnnwDTZFhgwZxzDSZH1agCSpvRpJhgwZsxm1eNVpHasdLtERU4YMGaMZ6aNpAq7WxpEeImXIkDGbcZUGb4zoJOYCmAwZMoYyeEItPQ6Sq2xaMIj/JWTIkDGIsTeVxlu+0uB+ux4ZMmSMZuy6lNYSarzwiQoMMmTIGMrYFfiCxgh8uQ0aQWTIkDGaUQudTxwoa3PJkCHjHEZaAEh3pVYQTbdGhgwZJzDSfDtPotUuwHw9MmTIkMGPg50gnpY5WwFXhgwZxzB2LT1NsW0OuDJkyPgoRr9hopO242XOPyqxMmTIGMroT/9EyCapt231DRkyZLwv4ws9KMdlWNkV2AAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.4.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.4.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>
