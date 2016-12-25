@@ -312,6 +312,62 @@
         </li>
     
         <li class="post-list-item fade">
+            <article id="post-RestartTomcatShell"
+  class="article-card article-type-post" itemprop="blogPost">
+
+
+    
+
+
+  
+    
+      <h3 class="post-title" itemprop="name">
+        <a class="post-title-link" href="/2014/06/RestartTomcatShell.html">
+          
+          重启Tomcat应用Shell脚本
+        </a>
+      </h3>
+    
+  
+
+
+
+    <div class="post-meta">
+        <time class="post-time" title="2014-6-24 0:00" datetime="2014-06-23T16:00:00.000Z"  itemprop="datePublished">2014-06-24</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="脚本："><a href="#脚本：" class="headerlink" title="脚本："></a>脚本：</h2><p>杀死并重启tomcat进程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line"></div><div class="line"># DEFINE</div><div class="line"></div><div class="line"># 获取tomcat进程ID</div><div class="line">TomcatID=$(ps -ef |grep red5 |grep -w &apos;red5Server&apos;|grep -v &apos;grep&apos;|awk &apos;NR==1 &#123;print $2&#125;&apos;)</div><div class="line">#NR==1 每次只取一个pid</div><div class="line"></div><div class="line"># tomcat启动程序</div><div class="line">StartTomcat=/opt/red5Server/bin/startup.sh</div><div class="line">TomcatCache=/opt/red5Server/work</div><div class="line"></div><div class="line"># 日志输出</div><div class="line">TomcatMonitorLog=/tmp/TomcatMonitor.log</div><div class="line"></div><div class="line">Monitor()</div><div class="line">&#123;</div><div class="line">  echo &quot;[info]开始监控tomcat...[$(date +&apos;%F %H:%M:%S&apos;)]&quot;</div><div class="line">  while [ $TomcatID ];do</div><div class="line">    echo &quot;[info]当前tomcat进程ID为:$TomcatID,Kill掉...&quot;</div><div class="line">    kill -9 $TomcatID</div><div class="line">    TomcatID=$(ps -ef |grep red5 |grep -w &apos;red5Server&apos;|grep -v &apos;grep&apos;|awk &apos;&#123;print $2&#125;&apos;)</div><div class="line">  done;</div><div class="line">  echo &quot;[info]当前没有tomcat进程&quot;</div><div class="line">  sleep 5</div><div class="line">  rm -rf $TomcatCache # 清理tomcat缓存</div><div class="line">  sleep 5</div><div class="line">  $StartTomcat</div><div class="line">  echo &quot;------------------------------&quot;</div><div class="line">&#125;</div><div class="line"></div><div class="line">Monitor&gt;&gt;$TomcatMonitorLog</div></pre></td></tr></table></figure>
+    
+        <div>
+          <a href="/2014/06/RestartTomcatShell.html" class="post-more waves-effect waves-button">
+              ReadMore...
+          </a>
+        </div>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Crontab/">Crontab</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/">Shell</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Tomcat/">Tomcat</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-AsyncSystemBaseOnSpring"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -362,62 +418,6 @@
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ActiveMQ/">ActiveMQ</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Async/">Async</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-RestartTomcatShell"
-  class="article-card article-type-post" itemprop="blogPost">
-
-
-    
-
-
-  
-    
-      <h3 class="post-title" itemprop="name">
-        <a class="post-title-link" href="/2014/06/RestartTomcatShell.html">
-          
-          重启Tomcat应用Shell脚本
-        </a>
-      </h3>
-    
-  
-
-
-
-    <div class="post-meta">
-        <time class="post-time" title="2014-6-24 0:00" datetime="2014-06-23T16:00:00.000Z"  itemprop="datePublished">2014-06-24</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/琢琢磨磨/">琢琢磨磨</a></li></ul>
-
-
-
-        
-
-    </div>
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        <h2 id="脚本："><a href="#脚本：" class="headerlink" title="脚本："></a>脚本：</h2><p>杀死并重启tomcat进程</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line"></div><div class="line"># DEFINE</div><div class="line"></div><div class="line"># 获取tomcat进程ID</div><div class="line">TomcatID=$(ps -ef |grep red5 |grep -w &apos;red5Server&apos;|grep -v &apos;grep&apos;|awk &apos;NR==1 &#123;print $2&#125;&apos;)</div><div class="line">#NR==1 每次只取一个pid</div><div class="line"></div><div class="line"># tomcat启动程序</div><div class="line">StartTomcat=/opt/red5Server/bin/startup.sh</div><div class="line">TomcatCache=/opt/red5Server/work</div><div class="line"></div><div class="line"># 日志输出</div><div class="line">TomcatMonitorLog=/tmp/TomcatMonitor.log</div><div class="line"></div><div class="line">Monitor()</div><div class="line">&#123;</div><div class="line">  echo &quot;[info]开始监控tomcat...[$(date +&apos;%F %H:%M:%S&apos;)]&quot;</div><div class="line">  while [ $TomcatID ];do</div><div class="line">    echo &quot;[info]当前tomcat进程ID为:$TomcatID,Kill掉...&quot;</div><div class="line">    kill -9 $TomcatID</div><div class="line">    TomcatID=$(ps -ef |grep red5 |grep -w &apos;red5Server&apos;|grep -v &apos;grep&apos;|awk &apos;&#123;print $2&#125;&apos;)</div><div class="line">  done;</div><div class="line">  echo &quot;[info]当前没有tomcat进程&quot;</div><div class="line">  sleep 5</div><div class="line">  rm -rf $TomcatCache # 清理tomcat缓存</div><div class="line">  sleep 5</div><div class="line">  $StartTomcat</div><div class="line">  echo &quot;------------------------------&quot;</div><div class="line">&#125;</div><div class="line"></div><div class="line">Monitor&gt;&gt;$TomcatMonitorLog</div></pre></td></tr></table></figure>
-    
-        <div>
-          <a href="/2014/06/RestartTomcatShell.html" class="post-more waves-effect waves-button">
-              ReadMore...
-          </a>
-        </div>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Crontab/">Crontab</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/">Shell</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Tomcat/">Tomcat</a></li></ul>
 
     </div>
     
