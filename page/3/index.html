@@ -141,7 +141,7 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
-            <article id="post-GitComand"
+            <article id="post-OnlineListByRedis"
   class="article-card article-type-post" itemprop="blogPost">
 
 
@@ -151,9 +151,9 @@
   
     
       <h3 class="post-title" itemprop="name">
-        <a class="post-title-link" href="/2014/05/GitComand.html">
+        <a class="post-title-link" href="/2014/05/OnlineListByRedis.html">
           
-          Git常用命令
+          基于Redis的在线用户列表解决方案
         </a>
       </h3>
     
@@ -176,10 +176,12 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="创建版本库"><a href="#创建版本库" class="headerlink" title="创建版本库"></a>创建版本库</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ git clone &lt;url&gt; #克隆远程版本库</div><div class="line">$ git init #初始化本地版本库</div></pre></td></tr></table></figure>
+        <h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>由于项目需求，需要在集群环境下实现在线用户列表的功能，并依靠在线列表实现用户单一登陆（同一账户只能一处登陆）功能：</p>
+<p>在单机环境下，在线列表的实现方案可以采用SessionListener来完成，当有Session创建和销毁的时候做相应的操作即可完成功能及将相应的Session的引用存放于内存中，由于持有了所有的Session的引用，故可以方便的实现用户单一登陆的功能（比如在第二次登陆的时候使之前登陆的账户所在的Session失效）。</p>
+<p>而在集群环境下，由于用户的请求可能分布在不同的Web服务器上，继续将在线用户列表储存在单机内存中已经不能满足需要，不同的Web服务器将会产生不同的在线列表，并且不能有效的实现单一用户登陆的功能，因为某一用户可能并不在接受到退出请求的Web服务器的在线用户列表中（在集群中的某台服务器上完成的登陆操作，而在其他服务器上完成退出操作）。</p>
     
         <div>
-          <a href="/2014/05/GitComand.html" class="post-more waves-effect waves-button">
+          <a href="/2014/05/OnlineListByRedis.html" class="post-more waves-effect waves-button">
               ReadMore...
           </a>
         </div>
@@ -187,7 +189,7 @@
     
     <div class="post-footer">
         
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li></ul>
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/">Redis</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SessionListener/">SessionListener</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/在线列表/">在线列表</a></li></ul>
 
     </div>
     
@@ -410,61 +412,6 @@
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-UseSpringInServlet"
-  class="article-card article-type-post" itemprop="blogPost">
-
-
-    
-
-
-  
-    
-      <h3 class="post-title" itemprop="name">
-        <a class="post-title-link" href="/2014/05/UseSpringInServlet.html">
-          
-          在Servlet(或者Filter，或者Listener)中使用spring的IOC容器
-        </a>
-      </h3>
-    
-  
-
-
-
-    <div class="post-meta">
-        <time class="post-time" title="2014-5-21 0:00" datetime="2014-05-20T16:00:00.000Z"  itemprop="datePublished">2014-05-21</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
-
-
-
-        
-
-    </div>
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        <p>web.xml中的加载顺序为：listener &gt; filter &gt; servlet &gt; spring。<br>其中filter的执行顺序是filter-mapping在web.xml中出现的先后顺序。<br>加载顺序会影响对Spring bean的调用。比如filter需要用到bean ，但是加载顺序是先加载filter后加载Spring，则filter中初始化操作中的bean为null。所以，如果过滤器中要使用到 bean，可以将spring 的加载改成Listener的方式。</p>
-    
-        <div>
-          <a href="/2014/05/UseSpringInServlet.html" class="post-more waves-effect waves-button">
-              ReadMore...
-          </a>
-        </div>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
             <article id="post-MemcacheAnnotationBaseOnSpringAop"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -514,6 +461,61 @@
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Annotation/">Annotation</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-UseSpringInServlet"
+  class="article-card article-type-post" itemprop="blogPost">
+
+
+    
+
+
+  
+    
+      <h3 class="post-title" itemprop="name">
+        <a class="post-title-link" href="/2014/05/UseSpringInServlet.html">
+          
+          在Servlet(或者Filter，或者Listener)中使用spring的IOC容器
+        </a>
+      </h3>
+    
+  
+
+
+
+    <div class="post-meta">
+        <time class="post-time" title="2014-5-21 0:00" datetime="2014-05-20T16:00:00.000Z"  itemprop="datePublished">2014-05-21</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/他山之石/">他山之石</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <p>web.xml中的加载顺序为：listener &gt; filter &gt; servlet &gt; spring。<br>其中filter的执行顺序是filter-mapping在web.xml中出现的先后顺序。<br>加载顺序会影响对Spring bean的调用。比如filter需要用到bean ，但是加载顺序是先加载filter后加载Spring，则filter中初始化操作中的bean为null。所以，如果过滤器中要使用到 bean，可以将spring 的加载改成Listener的方式。</p>
+    
+        <div>
+          <a href="/2014/05/UseSpringInServlet.html" class="post-more waves-effect waves-button">
+              ReadMore...
+          </a>
+        </div>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/">Spring</a></li></ul>
 
     </div>
     
@@ -615,6 +617,8 @@
 var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
 
 
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1261057501&web_id=1261057501')
 
 </script>
 
